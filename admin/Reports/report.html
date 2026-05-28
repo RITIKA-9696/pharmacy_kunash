@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pharmacy - Reports</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Added jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="report.css">
+
+  <style>
+       /* Smooth transition classes */
+#sidebar {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar.collapsed {
+    width: 64px !important;
+}
+
+#sidebar:not(.collapsed) {
+    width: 256px !important;
+}
+
+.nav-text {
+    transition: all 0.3s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.nav-icon {
+    transition: all 0.3s ease-in-out;
+    min-width: 20px;
+}
+
+/* For smoother hover effects */
+li {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Staggered animation for nav items */
+li:nth-child(1) { transition-delay: 0ms; }
+li:nth-child(2) { transition-delay: 20ms; }
+li:nth-child(3) { transition-delay: 40ms; }
+li:nth-child(4) { transition-delay: 60ms; }
+li:nth-child(5) { transition-delay: 80ms; }
+li:nth-child(6) { transition-delay: 100ms; }
+li:nth-child(7) { transition-delay: 120ms; }
+li:nth-child(8) { transition-delay: 140ms; }
+li:nth-child(9) { transition-delay: 160ms; }
+li:nth-child(10) { transition-delay: 180ms; }
+li:nth-child(11) { transition-delay: 200ms; }
+
+
+  </style>
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="border w-64 bg-white text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static transition-all duration-300 ease-in-out">
+    <div class="border-b p-4 sticky top-0 z-10 flex justify-between items-center">
+        <div class="ml-6 transition-all duration-300 ease-in-out overflow-hidden">
+            <img src="../Images/kunash-logo.png" alt="pharmacy Logo"
+                class="w-full h-[44px] sidebar-logo-expanded transition-all duration-300 ease-in-out">
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="toggle-sidebar-logo" class="flex items-center transition-all duration-300 ease-in-out">
+                <i id="sidebar-arrow"
+                    class="fas fa-chevron-left ml-2 text-black transition-transform duration-300 ease-in-out"></i>
+            </button>
+            <button id="close-sidebar" class="md:hidden text-black transition-all duration-300 ease-in-out">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4 transition-all duration-300 ease-in-out">
+        <ul class="space-y-1">
+            <!-- Each list item -->
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Dashboard/dashboard.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-home mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Inventory/inventory.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-pills mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Inventory Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Prescriptions/prescription.html"
+                    class="flex items-center py-3 px-4  text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-file-prescription mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Prescriptions</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Customer/customer management.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-users mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Customers Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Order/ordermanagment.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-shopping-cart mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Order Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Product Management/product.html"
+                    class="flex items-center py-3 px-4 text-gray-700  hover:text-white transition-colors duration-200">
+                    <i class="fas fa-box mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200 ">Medicine Product Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Mother and Baby Care/motherbabycare.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fa-solid fa-baby mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Mother & Baby Care Product Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Banner/banner.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-image mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Banner Management</span>
+                </a>
+            </li>
+
+            <li class="bg-blue-700 text-white rounded-md transition-all duration-200 ease-in-out">
+                <a href="../Reports/report.html"
+                    class="flex items-center py-3 px-4 text-white transition-colors duration-200">
+                    <i class="fas fa-file-invoice mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Reports</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md mb-4">
+                <a href="../Admin/admin.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-user-shield mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Admin Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <button id="logoutBtn"
+                    class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-white font-semibold text-left transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Logout</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-white shadow sticky top-0 z-10">
+      <div class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+          <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+          <h1 class="text-xl font-semibold text-gray-800">Reports</h1>
+        </div>
+        <div class="flex items-center">
+          <div class="relative mr-4">
+            <input id="searchInput" type="text" placeholder="Search reports..." class="border rounded-full py-2 px-4 w-64 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+            <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+          </div>
+          <div class="relative mr-4">
+            <!-- <button id="toggle-notifications" class="text-gray-600 text-xl"><i class="fas fa-bell"></i></button> -->
+            <!-- <span class="absolute -top-1 -right-1 bg-red-500 text-red-100 rounded-full text-xs w-5 h-5 flex items-center justify-center">3</span> -->
+          </div>
+          <div class="flex items-center">
+            <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold">A</div>
+            <div class="ml-2">
+              <span id="user-name" class="text-gray-800">Admin</span>
+              <span id="user-role" class="text-gray-500 text-sm block">Admin</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Reports Content -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+      <!-- Filters -->
+      <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 mb-8 flex flex-wrap gap-4 items-end">
+        <div>
+          <label class="block text-sm font-medium text-gray-600">From Date</label>
+          <input type="date" id="fromDate" class="mt-1 border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-48">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600">To Date</label>
+          <input type="date" id="toDate" class="mt-1 border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-48">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600">Category</label>
+          <select id="categoryFilter" class="mt-1 border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-48">
+            <option value="">All Categories</option>
+            <option value="Prescription Medicines (Upload Prescription)">Prescription Medicines (Upload Prescription)</option>
+            <option value="Wellness">Wellness</option>
+            <option value="Baby Care">Baby Care</option>
+            <option value="LifeStyle Disorder">LifeStyle Disorder</option>
+            <option value="Fertility Essentials">Fertility Essentials</option>
+            <option value="Monitoring Devices (BP Monitors, Glucometers)">Monitoring Devices (BP Monitors, Glucometers)</option>
+            <option value="Over-the-Counter (OTC) Medicines">Over-the-Counter (OTC) Medicines</option>
+            <option value="Mobility Aids (Walkers, Wheelchairs)">Mobility Aids (Walkers, Wheelchairs)</option>
+            <option value="Respiratory Care (Nebulizers, Oxygen)">Respiratory Care (Nebulizers, Oxygen)</option>
+            <option value="Surgical">Surgical Items</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600">Subcategory</label>
+          <select id="subcategoryFilter" class="mt-1 border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-48">
+            <option value="">All Subcategories</option>
+          </select>
+        </div>
+        <button id="generateBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md"><i class="fas fa-play mr-2"></i>Generate</button>
+      </div>
+
+      <!-- Tabs (Report Types) -->
+      <div class="mb-8">
+        <nav class="flex space-x-4">
+          <button class="tab-btn bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md" data-tab="sales">Sales</button>
+          <button class="tab-btn bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition shadow-sm hover:shadow-md" data-tab="inventory">Inventory</button>
+          <button class="tab-btn bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition shadow-sm hover:shadow-md" data-tab="customers">Customers</button>
+          <!-- <button class="tab-btn bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition shadow-sm hover:shadow-md" data-tab="financial">Financial</button> -->
+        </nav>
+      </div>
+
+      <!-- Summary Cards -->
+      <div id="summaryCards" class="flex gap-6 mb-8">
+        <!-- Dynamic cards populated by JS -->
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h2 class="text-xl font-semibold text-gray-800">Report Details</h2>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center">
+              <label for="entriesPerPage" class="text-sm text-gray-600 mr-2">Show</label>
+              <select id="entriesPerPage" class="border rounded-lg py-1 px-2 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+              <span class="text-sm text-gray-600 ml-2">entries</span>
+            </div>
+            <div class="flex gap-3">
+              <button id="exportExcel" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition shadow-sm hover:shadow-md"><i class="fas fa-file-excel mr-2"></i>Excel</button>
+              <button id="exportPdf" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md"><i class="fas fa-file-pdf mr-2"></i>PDF</button>
+            </div>
+          </div>
+        </div>
+        <table id="reportTable" class="min-w-full text-left text-sm text-gray-700">
+          <thead id="tableHeader" class="bg-gray-200 text-gray-600 uppercase text-xs"></thead>
+          <tbody id="reportTableBody" ></tbody>
+        </table>
+        <div class="flex justify-between items-center mt-4">
+          <div id="pageInfo" class="text-sm text-gray-600"></div>
+          <div class="flex gap-2">
+            <button id="prevPage" class="bg-blue-600 text-white py-1 px-3 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400" disabled>Previous</button>
+            <button id="nextPage" class="bg-blue-600 text-white py-1 px-3 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../auth.js"></script>
+    <script src="./report.js"></script>
+ <script>
+
+   function displayUserProfile() {
+  const admin = Auth.getCurrentAdmin();
+  const userInitials = document.getElementById('user-initials');
+  const userName = document.getElementById('user-name');
+  const userRole = document.getElementById('user-role');
+
+  if (!admin || !admin.firstName) {
+    userName.textContent = "Guest";
+    userRole.textContent = "Unknown";
+    userInitials.textContent = "??";
+    return;
+  }
+
+  const fullName = `${admin.firstName} ${admin.lastName || ''}`.trim();
+  const role = `${admin.role}`;
+  
+  const nameParts = fullName.trim().split(' ');
+  const initials = nameParts.length > 1
+    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+    : (nameParts[0]?.[0] || '?');
+
+  userInitials.textContent = initials.toUpperCase();
+  userName.textContent = fullName;
+  userRole.textContent = role;
+}
+    // This will redirect to login if session is missing or expired
+    Auth.requireAuth();
+
+    // Optional: start background timer to warn on expiration
+    Auth.startSessionTimer();
+
+    // Example: display admin name
+    document.addEventListener("DOMContentLoaded", () => {
+      
+    displayUserProfile();
+        const admin = Auth.getCurrentAdmin();
+        if (admin) {
+            console.log("Logged in as:", admin.firstName + " " + admin.lastName);
+            // e.g., document.getElementById('adminName').textContent = admin.firstName;
+        }
+    });
+</script>
+<script src="../orderBadge.js"></script>
+</body>
+</html>

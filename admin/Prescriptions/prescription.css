@@ -1,0 +1,424 @@
+/* prescriptions.css */
+
+/* Styling for DataTable controls */
+.top-controls {
+  margin-bottom: 1rem; /* Adds space below the show entries and search filter */
+}
+
+.bottom-controls {
+  margin-top: 1rem; /* Adds space above the pagination and info */
+}
+
+/* Updated: Styling for DataTable with scrollbars */
+.dataTables_wrapper .dataTables_scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.dataTables_wrapper .dataTables_scrollHead {
+  overflow: hidden; /* Changed to hidden for proper alignment and sync with body scroll */
+}
+
+.dataTables_wrapper .dataTables_scrollBody {
+  overflow-x: hidden; /* Changed to hidden to let parent handle horizontal scroll */
+  overflow-y: auto; /* Enable vertical scrollbar */
+  max-height: 400px; /* Match the scrollY height in DataTable config */
+  scrollbar-gutter: stable; /* Reserve space for scrollbar to prevent layout shifts */
+}
+
+/* Ensure table container has proper spacing */
+.table-container {
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* Modal styling */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Updated: Style scrollbars to match the theme */
+.dataTables_scrollBody::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dataTables_scrollBody::-webkit-scrollbar-track {
+  background: #f1f5f9; /* Matches bg-gray-50 */
+  border-radius: 4px;
+}
+
+.dataTables_scrollBody::-webkit-scrollbar-thumb {
+  background: #2563eb; /* Matches blue-600 */
+  border-radius: 4px;
+}
+
+.dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8; /* Matches blue-700 */
+}
+
+/* Updated: Status badge styling to match HTML */
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  color: white;
+  font-size: 0.875rem;
+}
+
+.status-approved {
+  background-color: #10b981; /* Matches green-500 */
+}
+
+.status-dispensed {
+  background-color: #3b82f6; /* Matches blue-500 */
+}
+
+.status-pending {
+  background-color: #f59e0b; /* Matches yellow-500 */
+}
+
+.status-expired {
+  background-color: #ef4444; /* Matches red-500 */
+}
+
+/* Updated: Action button styling */
+.action-btn {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+/* Existing styles assumed to include .modal, .modal-content, .status-badge, etc. */
+
+/* Updated: Status badge styles for new statuses */
+.status-pending {
+  background-color: #fef3c7;
+  color: #b45309;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.status-approved, .status-dispensed {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.status-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.status-expired {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Updated: Action button styling */
+.action-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+
+/* Updated: Ensure modal images are scrollable */
+#verificationImages {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+/* Updated: Notification modal styling */
+#notificationModal .modal-content {
+  max-width: 800px;
+}
+
+/* Updated: Table styling consistency */
+table.dataTable {
+  width: 100% !important;
+}
+table.dataTable thead th {
+  background-color:#e2ecfe;
+  padding: 12px;
+  text-align: left;
+}
+table.dataTable tbody td {
+  padding: 8px;
+}
+
+/* Status badge styles */
+.status-pending {
+  background-color: #fef3c7;
+  color: #b45309;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.status-approved, .status-dispensed {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.status-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.status-expired {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Action button styling */
+.action-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+
+/* Updated: Image overlay styling */
+#imageOverlay .modal-content {
+  max-width: 900px;
+}
+#prescriptionImages {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Notification modal styling */
+#notificationModal .modal-content {
+  max-width: 800px;
+}
+
+/* Table styling consistency */
+table.dataTable {
+  width: 100% !important;
+}
+
+table.dataTable thead th {
+  background-color: #e2ecfe;
+  padding: 12px;
+  text-align: left;
+}
+
+table.dataTable tbody td {
+  padding: 8px;
+}
+
+/* Force DataTables header and body cells to align */
+.dataTables_scrollHeadInner,
+.dataTables_scrollHeadInner table {
+  width: 100% !important;
+  table-layout: fixed; /* Ensure fixed column widths */
+}
+
+.dataTables_scrollHeadInner th,
+.dataTables_scrollBody td {
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      overflow: auto;
+    }
+    .modal-content {
+      background-color: #ffffff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 95%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+    }
+    .close {
+      color: #374151;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #991b1b;
+    }
+    #prescriptionsTable th, #historyTable th {
+      background-color: #f9fafb;
+      color: #1f2937;
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 2px solid #e5e7eb;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    #prescriptionsTable td, #historyTable td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #374151;
+    }
+    #prescriptionsTable tr:nth-child(even), #historyTable tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+    #prescriptionsTable tr:hover, #historyTable tr:hover {
+      background-color: #f3f4f6;
+    }
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-align: center;
+      display: inline-block;
+    }
+    .status-pending {
+      background-color: #fef3c7;
+      color: #d97706;
+    }
+    .status-approved {
+      background-color: #d1fae5;
+      color: #059669;
+    }
+    .status-rejected {
+      background-color: #fee2e2;
+      color: #dc2626;
+    }
+    .status-dispensed {
+      background-color: #dbeafe;
+      color: #2563eb;
+    }
+    .status-expired {
+      background-color: #f3e8ff;
+      color: #7c3aed;
+    }
+    .action-btn {
+      padding: 6px;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+    .image-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      position: relative;
+      justify-content: center;
+    }
+    .image-gallery img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #e5e7eb;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .image-gallery img:hover {
+      transform: scale(1.05);
+      border-color: #3b82f6;
+    }
+    .image-gallery img.active {
+      border-color: #3b82f6;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    }
+    .main-image {
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      width: 100%;
+      transition: transform 0.2s ease;
+    }
+    .main-image:hover {
+      transform: scale(1.02);
+    }
+    .gallery-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      z-index: 10;
+    }
+    .gallery-nav-left {
+      left: -30px;
+    }
+    .gallery-nav-right {
+      right: -30px;
+    }
+    .gallery-nav:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    @media (max-width: 640px) {
+      .image-gallery {
+        flex-direction: column;
+        align-items: center;
+      }
+      .image-gallery img {
+        width: 100px;
+        height: 100px;
+      }
+      .gallery-nav-left {
+        left: 0;
+      }
+      .gallery-nav-right {
+        right: 0;
+      }
+      #prescriptionsTable th, #prescriptionsTable td,
+      #historyTable th, #historyTable td {
+        font-size: 0.875rem;
+        padding: 8px 12px;
+      }
+    }
+  

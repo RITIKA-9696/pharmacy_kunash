@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pharmacy- Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body class="flex items-center justify-center min-h-screen">
+    <!-- Medical Icons as Background Decorations -->
+    <i
+      class="medical-icon floating"
+      style="top: 10%; left: 10%; animation-delay: 0s"
+      ><i class="fas fa-pills"></i
+    ></i>
+    <i
+      class="medical-icon floating"
+      style="top: 20%; right: 15%; animation-delay: 1s"
+      ><i class="fas fa-stethoscope"></i
+    ></i>
+    <i
+      class="medical-icon floating"
+      style="bottom: 30%; left: 15%; animation-delay: 2s"
+      ><i class="fas fa-heartbeat"></i
+    ></i>
+    <i
+      class="medical-icon floating"
+      style="bottom: 20%; right: 10%; animation-delay: 3s"
+      ><i class="fas fa-syringe"></i
+    ></i>
+    <i
+      class="medical-icon floating"
+      style="top: 40%; left: 20%; animation-delay: 4s"
+      ><i class="fas fa-prescription-bottle"></i
+    ></i>
+
+    <!-- Pop-up Container -->
+    <div
+      id="popup"
+      class="fixed inset-0 flex items-center justify-center bg-black/50 hidden z-50"
+    >
+      <div
+        class="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg text-center pulse"
+      >
+        <div class="flex justify-end">
+          <button
+            id="closePopup"
+            class="text-gray-500 hover:text-gray-700 text-xl"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <h3 id="popupTitle" class="text-xl font-semibold mb-2"></h3>
+        <p id="popupMessage" class="text-gray-600 mb-4"></p>
+      </div>
+    </div>
+
+    <!-- Container -->
+    <div
+      class="relative w-[900px] h-[550px] bg-white rounded-2xl shadow-3xl overflow-hidden flex"
+    >
+      <!-- Forms Section -->
+      <div
+        id="formSection"
+        class="absolute w-1/2 h-full flex flex-col justify-center px-10 transition-form z-10 bg-white"
+      >
+        <!-- Signup Form -->
+        <form id="signupForm" class="space-y-5">
+          <h2 class="text-3xl font-bold text-[#E8988A]">Create Account</h2>
+
+          <!-- First Name -->
+          <div
+            class="flex flex-col border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300"
+          >
+            <div class="flex items-center">
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First Name"
+                class="flex-1 outline-none bg-transparent"
+                required
+              />
+              <i class="fas fa-user text-[#E8988A]"></i>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+          </div>
+
+          <!-- Last Name -->
+          <div
+            class="flex flex-col border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300"
+          >
+            <div class="flex items-center">
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last Name"
+                class="flex-1 outline-none bg-transparent"
+                required
+              />
+              <i class="fas fa-user text-[#E8988A]"></i>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+          </div>
+
+          <!-- Phone -->
+          <div
+            class="flex flex-col border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300"
+          >
+            <div class="flex items-center">
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone Number"
+                class="flex-1 outline-none bg-transparent"
+                required
+              />
+              <i class="fas fa-phone text-[#E8988A]"></i>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+          </div>
+
+          <!-- Email -->
+          <div
+            class="flex flex-col border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300"
+          >
+            <div class="flex items-center">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                class="flex-1 outline-none bg-transparent"
+                required
+              />
+              <i class="fas fa-envelope text-[#E8988A]"></i>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+          </div>
+
+          <!-- Password -->
+          <div
+            class="flex flex-col border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300 relative"
+          >
+            <div class="flex items-center">
+              <input
+                type="password"
+                name="password"
+                placeholder="Create Password"
+                class="flex-1 outline-none bg-transparent password-field"
+                required
+              />
+              <button type="button" class="toggle-password text-[#E8988A] ml-2">
+                <i class="fas fa-eye-slash"></i>
+              </button>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+            <div
+              class="password-strength hidden absolute top-full left-0 bg-white border border-[#E8988A] rounded p-2 text-sm shadow-md z-20 w-full mt-2"
+            >
+              <p>Password must include:</p>
+              <ul class="space-y-1">
+                <li class="flex items-center strength-length">
+                  <i class="fas fa-times text-red-500 mr-2"></i>8–20 characters
+                </li>
+                <li class="flex items-center strength-uppercase">
+                  <i class="fas fa-times text-red-500 mr-2"></i>Uppercase letter
+                </li>
+                <li class="flex items-center strength-lowercase">
+                  <i class="fas fa-times text-red-500 mr-2"></i>Lowercase letter
+                </li>
+                <li class="flex items-center strength-number">
+                  <i class="fas fa-times text-red-500 mr-2"></i>Number
+                </li>
+                <li class="flex items-center strength-special">
+                  <i class="fas fa-times text-red-500 mr-2"></i>Special character (!@#$%^&*)
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div
+            class="flex flex-col border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300"
+          >
+            <div class="flex items-center">
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                class="flex-1 outline-none bg-transparent password-field"
+                required
+              />
+              <button type="button" class="toggle-password text-[#E8988A] ml-2">
+                <i class="fas fa-eye-slash"></i>
+              </button>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+          </div>
+
+          <!-- Register Button -->
+          <button
+            class="w-full bg-gradient-to-r from-[#F08787] to-[#E8988A] text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 pulse button"
+          >
+            Register
+          </button>
+        </form>
+
+        <!-- Login Form -->
+        <form
+          id="loginForm"
+          class="space-y-5 w-full max-w-md px-6 hidden bg-white"
+        >
+          <h2 class="text-3xl font-bold text-[#E8988A]">Admin Login</h2>
+
+          <!-- Username -->
+          <div
+            class="flex flex-col w-full border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300"
+          >
+            <div class="flex items-center">
+              <input
+                type="text"
+                name="email"
+                placeholder="email"
+                class="flex-1 outline-none bg-transparent"
+                required
+              />
+              <i class="fas fa-user text-[#E8988A]"></i>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+          </div>
+
+          <!-- Password -->
+          <div
+            class="flex flex-col w-full border border-[#E8988A] rounded-xl px-4 py-3 input-focus transition-all duration-300"
+          >
+            <div class="flex items-center">
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                class="flex-1 outline-none bg-transparent password-field"
+                required
+              />
+              <button type="button" class="toggle-password text-[#E8988A] ml-2">
+                <i class="fas fa-eye-slash"></i>
+              </button>
+            </div>
+            <span class="error text-red-500 text-sm mt-1 hidden"></span>
+          </div>
+
+          <!-- Login button -->
+          <button
+            class="w-full bg-gradient-to-r from-[#F08787] to-[#E8988A] text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 pulse button"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+
+      <!-- Side Panel -->
+      <div
+        id="sidePanel"
+        class="absolute right-0 w-1/2 h-full bg-gradient-to-br from-[#F08787] to-[#FFAAAA] text-white flex flex-col justify-center items-center transition-panel rounded-l-[100px] p-10"
+      >
+        <div class="text-center mb-8">
+          <div
+            class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 floating"
+            style="animation-delay: 0.5s"
+          >
+            <i class="fas fa-prescription-bottle text-white text-3xl"></i>
+          </div>
+          <h2 id="panelTitle" class="text-3xl font-bold mb-2">
+            Welcome to Good Neews Admin!
+          </h2>
+          <p id="panelDesc" class="mb-6 text-[#FFF2EB]">
+            Manage your pharmacy with our professional admin tools
+          </p>
+        </div>
+
+        <div class="space-y-4 mb-10">
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-[#FFF2EB] mr-3"></i>
+            <span>Inventory Management</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-[#FFF2EB] mr-3"></i>
+            <span>Patient Records</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-[#FFF2EB] mr-3"></i>
+            <span>Prescription Tracking</span>
+          </div>
+        </div>
+
+        <button
+          id="toggleBtn"
+          class="px-8 py-3 bg-white/20 border-2 border-white rounded-xl font-semibold hover:bg-white hover:text-[#E8988A] transition-all duration-300 shine"
+        >
+          Login
+        </button>
+      </div>
+    </div>
+
+    <script src="login.js?v=1.0.5"></script>
+  </body>
+</html>

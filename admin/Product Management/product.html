@@ -1,0 +1,2712 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Product Management Module</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
+        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+        <!-- Add SheetJS for Excel export -->
+        <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+
+
+    /* Sidebar Styles - SIMPLE VERSION like mother & baby care */
+    #sidebar {
+        transition: transform 0.3s ease;
+        width: 16rem; /* 64px equivalent */
+    }
+
+    /* Mobile: Hidden by default with -translate-x-full */
+    #sidebar {
+        transform: translateX(-100%);
+    }
+
+    /* Desktop: Show by default */
+    @media (min-width: 768px) {
+        #sidebar {
+            transform: translateX(0);
+        }
+    }
+
+    /* When sidebar is visible/open */
+    #sidebar.translate-x-0 {
+        transform: translateX(0);
+    }
+
+    /* Collapsed state styles (if you need them for desktop toggle) */
+    #sidebar.collapsed {
+        width: 4rem; /* 16px equivalent for collapsed state */
+    }
+
+    #sidebar.collapsed .nav-text,
+    #sidebar.collapsed .logo-text,
+    #sidebar.collapsed .sidebar-logo-expanded {
+        display: none !important;
+    }
+
+    #sidebar.collapsed .nav-icon {
+        margin-right: 0 !important;
+        justify-content: center !important;
+    }
+
+    #sidebar.collapsed nav a {
+        justify-content: center !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    /* Modal Styles - WIDE FOR PRICES */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    /* MODAL CONTAINER - EXTRA WIDE SPECIFICALLY FOR EDIT FORM */
+    #editProductModal .modal-container {
+        background-color: white;
+        border-radius: 12px;
+        width: 95%; /* Takes almost full screen width */
+        max-width: none !important; /* Remove any max-width limit */
+        max-height: 92vh;
+        overflow-y: auto;
+        overflow-x: hidden !important; /* Prevent horizontal scroll */
+        padding: 35px;
+        position: relative;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        animation: modalSlideIn 0.3s ease-out;
+        margin: 20px;
+    }
+
+    /* Regular modals keep normal size */
+    .modal-container {
+        background-color: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 700px;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 24px;
+        position: relative;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ============ ULTRA COMPACT STOCK & PRICING FORM ============ */
+    /* Ultra-compact form styling */
+    .product-form-container {
+        max-width: 100%;
+        margin: 0;
+        padding: 15px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 13px;
+        background: #fff;
+    }
+
+    /* Header */
+    .product-form-title {
+        margin: 0 0 20px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+        color: #2c3e50;
+    }
+
+    .section-title {
+        margin: 20px 0 10px 0;
+        color: #34495e;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .required-star {
+        color: #e74c3c;
+        margin-left: 3px;
+    }
+
+    /* Basic Information Section */
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    /* Ultra Compact Inputs */
+    .ultra-compact-input {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: 12px;
+        border: 1px solid #bdc3c7;
+        border-radius: 3px;
+        height: 32px;
+        line-height: 1.3;
+    }
+
+    .ultra-compact-select {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: 12px;
+        border: 1px solid #bdc3c7;
+        border-radius: 3px;
+        height: 32px;
+        background-color: white;
+    }
+
+    /* Radio buttons compact */
+    .radio-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 5px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .radio-option input {
+        margin: 0;
+    }
+
+    /* Stock & Pricing Section - ULTRA COMPACT */
+    .pricing-section {
+        margin-top: 25px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+    }
+
+    /* ULTRA COMPACT TABLE - Fits in form */
+    .ultra-compact-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+        font-size: 12px;
+        table-layout: fixed; /* Prevents overflow */
+    }
+
+    .ultra-compact-table th {
+        text-align: left;
+        padding: 8px 5px;
+        background: #e9ecef;
+        font-weight: 600;
+        border: 1px solid #dee2e6;
+        font-size: 11px;
+    }
+
+    .ultra-compact-table td {
+        padding: 5px;
+        border: 1px solid #dee2e6;
+        vertical-align: top;
+    }
+
+    /* ULTRA COMPACT TABLE INPUTS - Very small */
+    .table-input-micro {
+        width: 100%;
+        min-width: 0; /* Prevents overflow */
+        padding: 4px 6px;
+        font-size: 11px;
+        border: 1px solid #ced4da;
+        border-radius: 2px;
+        height: 28px;
+        line-height: 1.2;
+    }
+
+    .table-input-micro:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 1px rgba(52, 152, 219, 0.2);
+    }
+
+    /* Example text in table */
+    .example-micro {
+        font-size: 10px;
+        color: #7f8c8d;
+        margin-top: 2px;
+        font-style: italic;
+        line-height: 1.2;
+    }
+
+    /* Column width distribution - Ensures no overflow */
+    .ultra-compact-table th:nth-child(1),
+    .ultra-compact-table td:nth-child(1) {
+        width: 22%; /* Variant/Size */
+    }
+
+    .ultra-compact-table th:nth-child(2),
+    .ultra-compact-table td:nth-child(2) {
+        width: 13%; /* Current Price */
+    }
+
+    .ultra-compact-table th:nth-child(3),
+    .ultra-compact-table td:nth-child(3) {
+        width: 13%; /* Original Price */
+    }
+
+    .ultra-compact-table th:nth-child(4),
+    .ultra-compact-table td:nth-child(4) {
+        width: 15%; /* Stock Quantity */
+    }
+
+    .ultra-compact-table th:nth-child(5),
+    .ultra-compact-table td:nth-child(5) {
+        width: 17%; /* MFG Date */
+    }
+
+    .ultra-compact-table th:nth-child(6),
+    .ultra-compact-table td:nth-child(6) {
+        width: 20%; /* Expiry Date */
+    }
+
+    /* Add Item Button */
+    .add-item-btn-micro {
+        background: #f8f9fa;
+        border: 1px dashed #adb5bd;
+        border-radius: 3px;
+        padding: 6px 12px;
+        font-size: 11px;
+        cursor: pointer;
+        margin-top: 8px;
+        color: #495057;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .add-item-btn-micro:hover {
+        background: #e9ecef;
+        border-color: #6c757d;
+    }
+
+    /* Rating Section */
+    .rating-section-micro {
+        margin: 15px 0;
+    }
+
+    .rating-input-micro {
+        width: 80px;
+        padding: 6px 8px;
+        font-size: 12px;
+        border: 1px solid #bdc3c7;
+        border-radius: 3px;
+        height: 32px;
+    }
+
+    /* Batch Number */
+    .batch-input-micro {
+        width: 100%;
+        max-width: 200px;
+        padding: 6px 8px;
+        font-size: 12px;
+        border: 1px solid #bdc3c7;
+        border-radius: 3px;
+        height: 32px;
+    }
+
+    /* Form groups container */
+    .form-groups-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 25px; /* Adjusted */
+        right: 25px; /* Adjusted */
+        font-size: 24px;
+        cursor: pointer;
+        color: #6b7280;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+        background-color: #f3f4f6;
+        color: #374151;
+    }
+
+    .info-section {
+        background-color: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 16px;
+        border: 1px solid #e5e7eb;
+    }
+
+    /* EDIT FORM SPECIFIC - ADJUSTED LAYOUT */
+    #editProductModal .edit-form.grid {
+        display: grid;
+        grid-template-columns: 40% 60%; /* Left smaller (40%), Right larger (60%) */
+        gap: 30px; /* More space between columns */
+        width: 100%;
+        overflow: visible !important;
+    }
+
+    /* Right side gets more space for price section */
+    #editProductModal .edit-form .info-section:nth-child(2) {
+        width: 100%;
+    }
+
+    /* Full width sections */
+    #editProductModal .edit-form .info-section.md\\:col-span-2 {
+        grid-column: span 2;
+        width: 100%;
+    }
+
+    .info-item {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 14px;
+        align-items: start;
+    }
+
+    .info-label {
+        font-weight: 500;
+        color: #6b7280;
+        text-align: right;
+    }
+
+    .info-value {
+        color: #374151;
+        word-break: break-word;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    /* Form Styles - APPLIED TO BOTH ADD AND EDIT FORMS */
+    #editProductModal .edit-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #374151;
+        font-size: 14px;
+    }
+
+    #editProductModal .edit-form input,
+    #editProductModal .edit-form select,
+    #editProductModal .edit-form textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background-color: white;
+    }
+
+    #editProductModal .edit-form input:focus,
+    #editProductModal .edit-form select:focus,
+    #editProductModal .edit-form textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #editProductModal .edit-form textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    /* ============ MULTIPLE PRICE SECTION - ONLY OPTION ============ */
+    /* SINGLE PRICE SECTION REMOVED - ONLY MULTIPLE PRICES SHOWN */
+    #single-price-section {
+        display: none !important;
+    }
+    
+/* Multiple Price Section - ALWAYS VISIBLE */
+#multiple-price-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    position: relative;
+    display: block !important;
+}
+
+#multiple-price-section .border {
+    padding: 15px !important;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    margin-top: 15px;
+    border: 1px solid #d1d5db !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box;
+}
+
+    /* COMPACT Price headers */
+    .price-headers {
+        display: grid;
+        grid-template-columns: 120px 90px 90px 80px 110px 110px 60px;
+        gap: 10px;
+        width: fit-content;
+        min-width: 100%;
+        padding: 10px 12px;
+        background-color: #f1f5f9;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+        color: #334155;
+        align-items: center;
+        white-space: nowrap;
+        position: sticky;
+        left: 0;
+        top: 0;
+        z-index: 5;
+    }
+
+    /* COMPACT Price item rows */
+    .price-item-row {
+        display: grid;
+        grid-template-columns: 120px 90px 90px 80px 110px 110px 60px;
+        gap: 10px;
+        width: fit-content;
+        min-width: 100%;
+        align-items: center;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    /* COMPACT Price items container */
+    .price-items-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        min-height: 120px;
+        max-height: 280px;
+        padding: 8px 3px;
+        position: relative;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #f9fafb;
+        margin-bottom: 12px;
+    }
+
+    /* COMPACT Input fields */
+    .price-item-row input[type="text"],
+    .price-item-row input[type="number"],
+    .price-item-row input[type="date"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        padding: 8px 10px !important;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 13px !important;
+        background-color: white;
+        transition: all 0.2s;
+        box-sizing: border-box;
+        height: 38px;
+    }
+
+    .price-item-row input[type="text"]:focus,
+    .price-item-row input[type="number"]:focus,
+    .price-item-row input[type="date"]:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    }
+
+    /* COMPACT Date inputs */
+    .price-item-row input[type="date"] {
+        min-width: 0 !important;
+        width: 100% !important;
+        cursor: pointer;
+        font-size: 13px !important;
+    }
+
+    /* COMPACT Remove button */
+    .price-item-row .remove-price-btn {
+        width: 35px !important;
+        min-width: 35px !important;
+        max-width: 35px !important;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        background-color: transparent;
+        border: 1px solid #fecaca;
+        color: #ef4444;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-left: 0;
+        flex-shrink: 0;
+        padding: 0;
+    }
+
+    .price-item-row .remove-price-btn:hover {
+        background-color: #fee2e2;
+        border-color: #f87171;
+        transform: scale(1.05);
+    }
+
+    .price-item-row .remove-price-btn i {
+        font-size: 16px;
+    }
+
+    /* COMPACT Add Price Button */
+    .add-price-btn {
+        margin-top: 12px;
+        padding: 10px 20px;
+        width: 100%;
+        background-color: #10b981;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .add-price-btn:hover {
+        background-color: #059669;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .add-price-btn i {
+        margin-right: 8px;
+        font-size: 16px;
+    }
+
+    /* Scrollbar styling for price container */
+    .price-items-container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .price-items-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .price-items-container::-webkit-scrollbar-thumb {
+        background: #94a3b8;
+        border-radius: 4px;
+    }
+
+    .price-items-container::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+    }
+
+    /* Popup Styles */
+    .popup-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 32px;
+        text-align: center;
+        max-width: 400px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .popup-container i {
+        font-size: 48px;
+        color: #10b981;
+        margin-bottom: 20px;
+    }
+
+    .popup-container p {
+        margin-bottom: 24px;
+        color: #374151;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .popup-container button {
+        background-color: #3b82f6;
+        color: white;
+        padding: 10px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        border: none;
+        transition: background-color 0.2s;
+    }
+
+    .popup-container button:hover {
+        background-color: #2563eb;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+        text-align: center;
+        min-width: 80px;
+    }
+
+    .status-in-stock {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+
+    .status-out-of-stock {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+    .status-low-stock {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-available {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+
+    .status-unavailable {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+    .status-discontinued {
+        background-color: #d1d5db;
+        color: #6b7280;
+    }
+
+    /* Verification Status Badges */
+    .status-approved {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+
+    .status-pending {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-rejected {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* Table Status Indicators */
+    .low-stock {
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    .expiring-soon {
+        color: #d97706;
+        font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .action-buttons button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+    }
+
+    .action-buttons button:hover {
+        background-color: #f3f4f6;
+    }
+
+    .action-buttons .view-btn {
+        color: #3b82f6;
+    }
+
+    .action-buttons .edit-btn {
+        color: #f59e0b;
+    }
+
+    .action-buttons .delete-btn {
+        color: #ef4444;
+    }
+
+    .action-buttons .verify-btn {
+        color: #10b981;
+    }
+
+    .action-buttons .reject-btn {
+        color: #ef4444;
+    }
+
+
+    /* Action Buttons - Updated with verification colors */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .action-buttons button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+    }
+
+    .action-buttons button:hover {
+        background-color: #f3f4f6;
+    }
+
+    .action-buttons .view-btn {
+        color: #3b82f6;
+    }
+
+    .action-buttons .edit-btn {
+        color: #f59e0b;
+    }
+
+    .action-buttons .delete-btn {
+        color: #ef4444;
+    }
+
+    /* Verification action buttons with specific colors */
+    .action-buttons .verify-btn {
+        color: #10b981 !important;
+    }
+
+    .action-buttons .reject-btn {
+        color: #ef4444 !important;
+    }
+
+    .action-buttons .unapprove-btn {
+        color: #ef4444 !important;
+    }
+
+    .action-buttons .reapprove-btn {
+        color: #10b981 !important;
+    }
+
+    /* Make sure icon colors override any parent styles */
+    .action-buttons .verify-btn i,
+    .action-buttons .reapprove-btn i {
+        color: #10b981 !important;
+    }
+
+    .action-buttons .reject-btn i,
+    .action-buttons .unapprove-btn i {
+        color: #ef4444 !important;
+    }
+
+    /* Status colors for reference */
+    .status-approved {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+
+    .status-rejected {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+    .status-pending {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+
+
+    /* ============ PRODUCT TABLE FIXES - START ============ */
+    /* Product Table Container */
+    .product-table-container {
+        position: relative;
+        width: 100%;
+        overflow-x: auto !important;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+    }
+
+    /* Table Base Styles */
+    table {
+        table-layout: fixed !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    #productTable {
+        width: 100% !important;
+        table-layout: fixed !important;
+        min-width: 1600px !important;
+    }
+
+    /* FixedColumns Styling */
+    .DTFC_RightWrapper {
+        background: white !important;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.1) !important;
+    }
+
+    .DTFC_RightBodyLiner {
+        background: white !important;
+    }
+
+    .DTFC_RightHeadWrapper th {
+        background: #f9fafb !important;
+        border-bottom: 2px solid #e5e7eb !important;
+    }
+
+    /* ============ COLUMN WIDTH DEFINITIONS - 14 COLUMNS ============ */
+    #productTable thead th:nth-child(1), 
+    #productTable tbody td:nth-child(1) { 
+        width: 50px !important; 
+        min-width: 50px !important; 
+        max-width: 50px !important; 
+    } /* ID */
+
+    #productTable thead th:nth-child(2), 
+    #productTable tbody td:nth-child(2) { 
+        width: 70px !important; 
+        min-width: 70px !important; 
+        max-width: 70px !important; 
+    } /* Image */
+
+    #productTable thead th:nth-child(3), 
+    #productTable tbody td:nth-child(3) { 
+        width: 100px !important; 
+        min-width: 100px !important; 
+        max-width: 100px !important; 
+    } /* SKU */
+
+    #productTable thead th:nth-child(4), 
+    #productTable tbody td:nth-child(4) { 
+        width: 150px !important; 
+        min-width: 150px !important; 
+        max-width: 150px !important; 
+    } /* Product Name */
+
+    #productTable thead th:nth-child(5), 
+    #productTable tbody td:nth-child(5) { 
+        width: 120px !important; 
+        min-width: 120px !important; 
+        max-width: 120px !important; 
+    } /* Category */
+
+    #productTable thead th:nth-child(6), 
+    #productTable tbody td:nth-child(6) { 
+        width: 130px !important; 
+        min-width: 130px !important; 
+        max-width: 130px !important; 
+    } /* Subcategory */
+
+    #productTable thead th:nth-child(7), 
+    #productTable tbody td:nth-child(7) { 
+        width: 110px !important; 
+        min-width: 110px !important; 
+        max-width: 110px !important; 
+    } /* Brand */
+
+    #productTable thead th:nth-child(8), 
+    #productTable tbody td:nth-child(8) { 
+        width: 130px !important; 
+        min-width: 130px !important; 
+        max-width: 130px !important; 
+    } /* Stock */
+
+    #productTable thead th:nth-child(9), 
+    #productTable tbody td:nth-child(9) { 
+        width: 130px !important; 
+        min-width: 130px !important; 
+        max-width: 130px !important; 
+    } /* Price */
+
+    #productTable thead th:nth-child(10), 
+    #productTable tbody td:nth-child(10) { 
+        width: 80px !important; 
+        min-width: 80px !important; 
+        max-width: 80px !important; 
+    } /* Rating */
+
+    #productTable thead th:nth-child(11), 
+    #productTable tbody td:nth-child(11) { 
+        width: 100px !important; 
+        min-width: 100px !important; 
+        max-width: 100px !important; 
+    } /* Expiry Date */
+
+    #productTable thead th:nth-child(12), 
+    #productTable tbody td:nth-child(12) { 
+        width: 100px !important; 
+        min-width: 100px !important; 
+        max-width: 100px !important; 
+    } /* Status */
+
+    #productTable thead th:nth-child(13), 
+    #productTable tbody td:nth-child(13) { 
+        width: 110px !important; 
+        min-width: 110px !important; 
+        max-width: 110px !important; 
+    } /* Verification */
+
+    #productTable thead th:nth-child(14), 
+    #productTable tbody td:nth-child(14) { 
+        width: 120px !important; 
+        min-width: 120px !important; 
+        max-width: 120px !important; 
+    } /* Actions */
+
+    /* ============ TABLE HEADER STYLING ============ */
+    #productTable thead th {
+        font-size: 12px !important;
+        font-weight: 600;
+        background-color: #f9fafb;
+        padding: 12px 8px !important;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+        white-space: nowrap;
+        text-align: center !important;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    /* ============ TABLE BODY CELL STYLING ============ */
+    #productTable tbody td {
+        padding: 10px 8px !important;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: middle !important;
+        font-size: 13px !important;
+        line-height: 1.4;
+        height: 60px !important;
+        word-wrap: break-word !important;
+        overflow: hidden !important;
+    }
+
+    /* ============ TEXT ALIGNMENT BY COLUMN ============ */
+    /* Center aligned columns */
+    #productTable tbody td:nth-child(1),  /* ID */
+    #productTable tbody td:nth-child(2),  /* Image */
+    #productTable tbody td:nth-child(10), /* Rating */
+    #productTable tbody td:nth-child(11), /* Expiry Date */
+    #productTable tbody td:nth-child(12), /* Status */
+    #productTable tbody td:nth-child(13), /* Verification */
+    #productTable tbody td:nth-child(14)  /* Actions */ {
+        text-align: center !important;
+    }
+
+    /* Left aligned columns */
+    #productTable tbody td:nth-child(3), /* SKU */
+    #productTable tbody td:nth-child(4), /* Product Name */
+    #productTable tbody td:nth-child(5), /* Category */
+    #productTable tbody td:nth-child(6), /* Subcategory */
+    #productTable tbody td:nth-child(7), /* Brand */
+    #productTable tbody td:nth-child(8), /* Stock */
+    #productTable tbody td:nth-child(9)  /* Price */ {
+        text-align: left !important;
+    }
+
+    /* ============ ROW STYLING ============ */
+    #productTable tbody tr {
+        background-color: #f8f9fa !important;
+        height: 60px !important;
+    }
+
+    #productTable tbody tr:hover {
+        background-color: #e9ecef !important;
+    }
+
+    /* Fix for FixedColumns hover */
+    .DTFC_RightBodyWrapper tr:hover td {
+        background-color: #e9ecef !important;
+    }
+
+    /* Row Highlighting */
+    .status-low-stock-row {
+        background-color: #fef3c7 !important;
+    }
+
+    .status-expiring-row {
+        background-color: #fee2e2 !important;
+    }
+
+    .status-in-stock-row {
+        background-color: #dcfce7 !important;
+    }
+
+    /* Verification Row Highlighting */
+    .verification-pending-row {
+        background-color: #fff7ed !important;
+    }
+
+    .verification-rejected-row {
+        background-color: #fef2f2 !important;
+    }
+
+    /* ============ PRODUCT IMAGES ============ */
+    .product-thumbnail {
+        width: 50px !important;
+        height: 50px !important;
+        object-fit: cover;
+        border-radius: 6px !important;
+        border: 1px solid #e5e7eb;
+        margin: 0 auto;
+        display: block;
+        background-color: #f3f4f6;
+    }
+
+    .product-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        transition: transform 0.2s;
+    }
+
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+
+    /* ============ TEXT TRUNCATION ============ */
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        max-width: 100%;
+    }
+
+    /* Rating Stars */
+    .rating-stars {
+        color: #fbbf24;
+        font-size: 11px !important;
+        display: inline-block;
+    }
+
+    .rating-stars i {
+        margin-right: 1px;
+    }
+
+    /* Old Price */
+    .old-price {
+        text-decoration: line-through;
+        color: #9ca3af;
+        font-size: 11px !important;
+        margin-top: 2px;
+        display: block;
+    }
+
+    /* ============ SCROLLBAR ============ */
+    .dataTables_scrollBody::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+    }
+
+    /* ============ OTHER STYLES ============ */
+    /* Logout Modal */
+    #logoutModal.hidden {
+        display: none;
+    }
+
+    #logoutModal .bg-white {
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Stats cards */
+    .stats-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Filter inputs styling */
+    select.border {
+        transition: all 0.2s;
+    }
+
+    select.border:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+
+    /* Pagination styling */
+    .dataTables_paginate .paginate_button {
+        border: 1px solid #d1d5db !important;
+        border-radius: 4px !important;
+        padding: 4px 8px !important;
+        margin: 0 2px !important;
+        color: #374151 !important;
+        background: white !important;
+        font-size: 12px !important;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background: #f3f4f6 !important;
+        border-color: #9ca3af !important;
+    }
+
+    /* Dropdown styling */
+    .dropdown-arrow {
+        pointer-events: none;
+    }
+
+    /* ============ MOBILE RESPONSIVENESS FOR EDIT FORM ============ */
+    @media (max-width: 768px) {
+        /* Edit modal adjustments for mobile */
+        #editProductModal .modal-container {
+            width: 100% !important;
+            padding: 20px !important;
+            margin: 10px !important;
+        }
+        
+        #editProductModal .edit-form.grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+        
+        .modal-container {
+            width: 95% !important;
+            padding: 16px !important;
+        }
+        
+        .product-table-container {
+            max-height: 400px;
+            min-width: 1400px !important;
+        }
+        
+        #productTable {
+            min-width: 1400px !important;
+        }
+        
+        #productTable thead th,
+        #productTable tbody td {
+            font-size: 11px !important;
+            padding: 8px 6px !important;
+        }
+        
+        /* Mobile column width adjustments */
+        #productTable thead th:nth-child(1), #productTable tbody td:nth-child(1) { 
+            width: 40px !important; min-width: 40px !important; 
+        }
+        #productTable thead th:nth-child(2), #productTable tbody td:nth-child(2) { 
+            width: 50px !important; min-width: 50px !important; 
+        }
+        #productTable thead th:nth-child(3), #productTable tbody td:nth-child(3) { 
+            width: 80px !important; min-width: 80px !important; 
+        }
+        #productTable thead th:nth-child(4), #productTable tbody td:nth-child(4) { 
+            width: 120px !important; min-width: 120px !important; 
+        }
+        #productTable thead th:nth-child(14), #productTable tbody td:nth-child(14) { 
+            width: 100px !important; min-width: 100px !important; 
+        }
+        
+        .product-thumbnail {
+            width: 40px !important;
+            height: 40px !important;
+        }
+        
+        .info-item {
+            grid-template-columns: 1fr;
+            gap: 4px;
+        }
+        
+        .info-label {
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .action-buttons button {
+            width: 26px;
+            height: 26px;
+        }
+        
+        .profile-actions {
+            flex-direction: column;
+        }
+        
+        .profile-actions button {
+            width: 100%;
+        }
+        
+        /* Price section mobile adjustments - COMPACT FOR EDIT FORM */
+        #editProductModal .price-headers {
+            display: none !important;
+        }
+        
+        #editProductModal .price-item-row {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            padding: 12px !important;
+            min-width: 100% !important;
+            width: 100% !important;
+        }
+        
+        #editProductModal .price-item-row input[type="text"],
+        #editProductModal .price-item-row input[type="number"],
+        #editProductModal .price-item-row input[type="date"] {
+            width: 100% !important;
+            min-width: 100% !important;
+            padding: 10px !important;
+            font-size: 14px !important;
+            height: 40px;
+        }
+        
+        #editProductModal .price-item-row .remove-price-btn {
+            width: 100% !important;
+            height: 40px !important;
+            margin-top: 5px !important;
+        }
+        
+        #editProductModal .price-items-container {
+            max-height: 250px !important;
+            padding: 6px 2px !important;
+        }
+        
+        #editProductModal #multiple-price-section .border {
+            padding: 12px !important;
+        }
+        
+        #editProductModal .add-price-btn {
+            padding: 10px 18px !important;
+            font-size: 14px !important;
+        }
+        
+        /* Ultra compact form mobile adjustments */
+        .product-form-container {
+            padding: 10px;
+        }
+        
+        .ultra-compact-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .ultra-compact-table th,
+        .ultra-compact-table td {
+            min-width: 100px;
+            white-space: nowrap;
+        }
+        
+        .form-groups-container {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .table-input-micro {
+            font-size: 10px;
+            padding: 3px 5px;
+            height: 26px;
+        }
+    }
+
+    /* Medium screens (769px to 1024px) - EDIT FORM */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        #editProductModal .modal-container {
+            width: 97% !important;
+            padding: 30px !important;
+        }
+        
+        #editProductModal .edit-form.grid {
+            grid-template-columns: 45% 55% !important;
+        }
+        
+        /* Compact pricing for medium screens - EDIT FORM */
+        #editProductModal .price-headers {
+            grid-template-columns: 110px 85px 85px 75px 100px 100px 55px !important;
+            gap: 8px !important;
+            font-size: 11px !important;
+            padding: 8px 10px !important;
+        }
+        
+        #editProductModal .price-item-row {
+            grid-template-columns: 110px 85px 85px 75px 100px 100px 55px !important;
+            gap: 8px !important;
+            padding: 8px 10px !important;
+        }
+        
+        #editProductModal .price-items-container {
+            max-height: 250px !important;
+        }
+    }
+
+    /* Large screens (1025px and above) - EDIT FORM */
+    @media (min-width: 1025px) {
+        #editProductModal .modal-container {
+            width: 96% !important;
+        }
+        
+        #editProductModal .edit-form.grid {
+            grid-template-columns: 38% 62% !important;
+        }
+        
+        /* Compact pricing for large screens - EDIT FORM */
+        #editProductModal .price-headers {
+            grid-template-columns: 130px 95px 95px 85px 115px 115px 65px !important;
+            gap: 12px !important;
+            font-size: 12px !important;
+            padding: 12px 15px !important;
+        }
+        
+        #editProductModal .price-item-row {
+            grid-template-columns: 130px 95px 95px 85px 115px 115px 65px !important;
+            gap: 12px !important;
+            padding: 12px 15px !important;
+        }
+        
+        #editProductModal .price-item-row input[type="text"],
+        #editProductModal .price-item-row input[type="number"],
+        #editProductModal .price-item-row input[type="date"] {
+            padding: 10px 12px !important;
+            font-size: 14px !important;
+        }
+        
+        #editProductModal .price-items-container {
+            max-height: 320px !important;
+        }
+    }
+
+    /* Extra small screens for ultra compact form */
+    @media (max-width: 480px) {
+        .product-form-container {
+            font-size: 12px;
+        }
+        
+        .ultra-compact-table {
+            font-size: 11px;
+        }
+        
+        .table-input-micro {
+            font-size: 10px;
+            height: 24px;
+        }
+        
+        .ultra-compact-input,
+        .ultra-compact-select {
+            font-size: 11px;
+            height: 30px;
+        }
+        
+        #editProductModal .price-items-container {
+            max-height: 220px !important;
+        }
+        
+        #editProductModal .add-price-btn {
+            padding: 8px 16px !important;
+            font-size: 13px !important;
+        }
+    }
+
+    /* Force table to stay within bounds */
+    .ultra-compact-table-container {
+        width: 100%;
+        overflow-x: auto;
+        margin: 10px 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Remove default browser styling on number inputs */
+    .table-input-micro[type="number"]::-webkit-inner-spin-button,
+    .table-input-micro[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .table-input-micro[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    /* Date input adjustments */
+    .table-input-micro[type="date"] {
+        padding: 4px 4px;
+        font-size: 10px;
+    }
+
+    /* Ensure no element overflows */
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Container max width for entire form */
+    .form-max-width {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    /* Horizontal rule styling */
+    .form-divider {
+        border: none;
+        border-top: 1px solid #e0e0e0;
+        margin: 20px 0;
+    }
+
+    /* Print styles */
+    @media print {
+        .product-table-container {
+            overflow: visible !important;
+            min-width: 100% !important;
+        }
+        
+        #productTable {
+            min-width: 100% !important;
+            width: 100% !important;
+        }
+        
+        .ultra-compact-table {
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+        
+        .add-item-btn-micro {
+            display: none;
+        }
+        
+        .table-input-micro,
+        .ultra-compact-input,
+        .ultra-compact-select {
+            border: 1px solid #999 !important;
+            background-color: white !important;
+        }
+    }
+
+    /* Smooth transition classes */
+    #sidebar {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    #sidebar.collapsed {
+        width: 64px !important;
+    }
+    
+    #sidebar:not(.collapsed) {
+        width: 16rem !important; /* Original sidebar width */
+    }
+    
+    .nav-text {
+        transition: all 0.3s ease-in-out;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    
+    .nav-icon {
+        transition: all 0.3s ease-in-out;
+        min-width: 20px;
+    }
+    
+    /* For smoother hover effects */
+    li {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Staggered animation for nav items */
+    li:nth-child(1) { transition-delay: 0ms; }
+    li:nth-child(2) { transition-delay: 20ms; }
+    li:nth-child(3) { transition-delay: 40ms; }
+    li:nth-child(4) { transition-delay: 60ms; }
+    li:nth-child(5) { transition-delay: 80ms; }
+    li:nth-child(6) { transition-delay: 100ms; }
+    li:nth-child(7) { transition-delay: 120ms; }
+    li:nth-child(8) { transition-delay: 140ms; }
+    li:nth-child(9) { transition-delay: 160ms; }
+    li:nth-child(10) { transition-delay: 180ms; }
+    li:nth-child(11) { transition-delay: 200ms; }
+
+    /* Additional missing styles for better form layout */
+    .form-header-compact {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .form-group-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .form-full-width {
+        grid-column: span 2;
+    }
+    
+    .input-with-icon {
+        position: relative;
+    }
+    
+    .input-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+    }
+    
+    .input-with-icon input {
+        padding-right: 35px;
+    }
+    
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+    }
+    
+    .checkbox-group label {
+        margin: 0;
+        font-weight: normal;
+    }
+    
+    .text-danger {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+    }
+    
+    .btn-primary {
+        background-color: #3b82f6;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2563eb;
+    }
+    
+    .btn-secondary {
+        background-color: #6b7280;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #4b5563;
+    }
+    
+    .btn-outline {
+        background-color: transparent;
+        border: 1px solid #d1d5db;
+        color: #374151;
+    }
+    
+    .btn-outline:hover {
+        background-color: #f3f4f6;
+    }
+    
+    .btn-success {
+        background-color: #10b981;
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background-color: #059669;
+    }
+    
+    .btn-danger {
+        background-color: #ef4444;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background-color: #dc2626;
+    }
+    
+    /* Loading spinner */
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Tooltip */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: #374151;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 10px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+    }
+    
+    .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    /* Badge variants */
+    .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .badge-primary {
+        background-color: #dbeafe;
+        color: #1d4ed8;
+    }
+    
+    .badge-success {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+    
+    .badge-warning {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+    
+    .badge-danger {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+    
+    .badge-info {
+        background-color: #e0f2fe;
+        color: #0369a1;
+    }
+    
+     .menu-hidden {
+            display: none !important;
+        }
+</style>
+    </head>
+    <body class="bg-gray-50 h-screen flex overflow-hidden">
+        <!-- Sidebar - UPDATED with working structure -->
+        <aside id="sidebar"
+        class="border w-64 bg-white text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static transition-all duration-300 ease-in-out">
+        <div class="border-b  h-[75px] p-4 sticky top-0 z-10 flex justify-between items-center">
+            <div class="ml-6 transition-all duration-300 ease-in-out overflow-hidden">
+                <img src="../Images/kunash-logo.png" alt="PharmaCare Logo"
+                    class="w-full h-[44px] sidebar-logo-expanded transition-all duration-300 ease-in-out">
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="toggle-sidebar-logo" class="flex items-center transition-all duration-300 ease-in-out">
+                    <i id="sidebar-arrow"
+                        class="fas fa-chevron-left ml-2 text-black transition-transform duration-300 ease-in-out"></i>
+                </button>
+                <button id="close-sidebar" class="md:hidden text-black transition-all duration-300 ease-in-out">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 transition-all duration-300 ease-in-out">
+            <ul class="space-y-1">
+                <!-- Each list item -->
+                <li data-menu-type="dashboard" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Dashboard/dashboard.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-home mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Inventory/inventory.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-pills mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Inventory Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Prescriptions/prescription.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-file-prescription mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Prescriptions</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="customers" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Customer/customer management.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-users mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Customers Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Order/ordermanagment.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-shopping-cart mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Order Management</span>
+                    </a>
+                </li>
+
+                <li class="bg-blue-700 text-white rounded-md transition-all duration-200 ease-in-out">
+                    <a href="../Product Management/product.html"
+                        class="flex items-center py-3 px-4 text-white transition-colors duration-200">
+                        <i class="fas fa-box mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Medicine Product Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Mother and Baby Care/motherbabycare.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-box mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Mother & Baby Care Product Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Banner/banner.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-image mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Banner Management</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="reports" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Reports/report.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-file-invoice mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Reports</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="admin-management" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md mb-4">
+                    <a href="../Admin/admin.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-user-shield mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Admin Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <button id="logoutBtn"
+                        class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-white font-semibold text-left transition-colors duration-200">
+                        <i class="fas fa-sign-out-alt mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Logout</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow sticky top-0 z-10">
+                <div class="flex justify-between items-center p-4">
+                    <div class="flex items-center">
+                        <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+                        <button id="toggle-sidebar-desktop" class="text-gray-500 mr-4 hidden md:block"></button>
+                        <h1 class="text-xl font-semibold text-gray-800">Product Management</h1>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="relative mr-4">
+                            <input id="searchInput" type="text" placeholder="Search products..." class="border rounded-full py-2 px-4 w-64 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+                            <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+                        </div>
+                        <!-- <div class="relative mr-4">
+                            <button id="toggle-notifications" class="text-gray-600 text-xl"><i class="fas fa-bell"></i></button>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-red-100 rounded-full text-xs w-5 h-5 flex items-center justify-center">3</span>
+                        </div> -->
+                        <div class="flex items-center">
+                            <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold">A</div>
+                            <div class="ml-2">
+                                <span id="user-name" class="text-gray-800"></span>
+                                <span id="user-role" class="text-gray-500 text-sm block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Product Content -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <!-- Stats Cards - UPDATED with verification stats -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 stats-card">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Total Products</p>
+                                <h2 id="totalProducts" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-pills text-blue-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5 stats-card">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Low Stock Items</p>
+                                <h2 id="lowStockItems" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-md p-5 stats-card">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">In Stock Products</p>
+                                <h2 id="inStockProducts" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-l-4 border-red-500 shadow-md p-5 stats-card">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Expiring Soon</p>
+                                <h2 id="expiringSoon" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <i class="fas fa-hourglass-end text-red-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- New Verification Stats Card -->
+                    <div class="bg-white rounded-xl border-l-4 border-purple-500 shadow-md p-5 stats-card">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Pending Verification</p>
+                                <h2 id="pendingVerification" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-clock text-purple-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product List -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Product List</h2>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <!-- Category Filter -->
+                            <div class="relative">
+                                <select id="categoryFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                                    <option value="">All Categories</option>
+                                </select>
+                                <div class="absolute right-3 top-3 text-gray-400 dropdown-arrow">
+                                    <!-- <i class="fas fa-chevron-down"></i> -->
+                                </div>
+                            </div>
+                            
+                            <!-- Subcategory Filter -->
+                            <div class="relative">
+                                <select id="subcategoryFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48" disabled>
+                                    <option value="">All Subcategories</option>
+                                </select>
+                                <div class="absolute right-3 top-3 text-gray-400 dropdown-arrow">
+                                    <!-- <i class="fas fa-chevron-down"></i> -->
+                                </div>
+                            </div>
+                            
+                            <!-- Prescription Filter -->
+                            <div class="relative">
+                                <select id="prescriptionFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                                    <option value="">Prescription Required</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                <div class="absolute right-3 top-3 text-gray-400 dropdown-arrow">
+                                    <!-- <i class="fas fa-chevron-down"></i> -->
+                                </div>
+                            </div>
+                            
+                            <!-- Stock Filter -->
+                            <div class="relative">
+                                <select id="stockFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                                    <option value="">Stock Status</option>
+                                    <option value="in-stock">In Stock</option>
+                                    <option value="low-stock">Low Stock</option>
+                                    <option value="out-of-stock">Out of Stock</option>
+                                </select>
+                                <div class="absolute right-3 top-3 text-gray-400 dropdown-arrow">
+                                    <!-- <i class="fas fa-chevron-down"></i> -->
+                                </div>
+                            </div>
+                            
+                            <!-- Verification Filter -->
+                            <div class="relative">
+                                <select id="verificationFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                                    <option value="">Verification Status</option>
+                                    <option value="PENDING">Pending</option>
+                                    <option value="APPROVED">Approved</option>
+                                    <option value="REJECTED">Rejected</option>
+                                </select>
+                                <div class="absolute right-3 top-3 text-gray-400 dropdown-arrow">
+                                    <!-- <i class="fas fa-chevron-down"></i> -->
+                                </div>
+                            </div>
+                            
+                            <!-- Add Product Button -->
+                            <button id="addProductBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap">
+                                <i class="fas fa-plus mr-2"></i>Add Product
+                            </button>
+                            
+                            <!-- Export Button with Dropdown -->
+                            <div class="relative group">
+                                <button id="exportBtn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition shadow-sm hover:shadow-md whitespace-nowrap">
+                                    <i class="fas fa-file-excel mr-2"></i>Export
+                                    <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                                </button>
+                                <div class="absolute right-0 mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-200 hidden group-hover:block z-50">
+                                    <div class="py-1">
+                                        <button onclick="exportToExcel('csv')" class="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+                                            <i class="fas fa-file-csv mr-3 text-green-500"></i>
+                                            <div>
+                                                <div class="font-medium">Export as CSV</div>
+                                                <div class="text-xs text-gray-500">Quick export in CSV format</div>
+                                            </div>
+                                        </button>
+                                        <button onclick="exportToExcel('excel')" class="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+                                            <i class="fas fa-file-excel mr-3 text-green-600"></i>
+                                            <div>
+                                                <div class="font-medium">Export as Excel</div>
+                                                <div class="text-xs text-gray-500">Complete Excel file with formatting</div>
+                                            </div>
+                                        </button>
+                                        <button onclick="exportToExcel('detailed')" class="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">
+                                            <i class="fas fa-file-alt mr-3 text-blue-600"></i>
+                                            <div>
+                                                <div class="font-medium">Export Detailed Report</div>
+                                                <div class="text-xs text-gray-500">Full product details with summary</div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-table-container">
+                        <table id="productTable" class="w-full display">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Image</th>
+                                    <th>SKU</th>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Subcategory</th>
+                                    <th>Brand</th>
+                                    <th>Stock</th>
+                                    <th>Price (₹)</th>
+                                    <th>Rating</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Verification</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTableBody" class="text-gray-700">
+                                <!-- Table rows will be populated by DataTables -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modals -->
+                <!-- Product Detail Modal -->
+                <div id="productDetailModal" class="modal">
+                    <div class="modal-container" style="max-width: 800px;">
+                        <span class="close-btn" id="closeDetailModal">&times;</span>
+                        <div class="profile-header mb-3">
+                            <h2 class="text-lg font-semibold text-gray-800">Product Details</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="info-section">
+                                <h3>Basic Information</h3>
+                                <div class="info-item">
+                                    <span class="info-label">ID:</span>
+                                    <span class="info-value" id="detail-id"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">SKU:</span>
+                                    <span class="info-value" id="detail-sku"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Name:</span>
+                                    <span class="info-value" id="detail-name"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Category:</span>
+                                    <span class="info-value" id="detail-category"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Subcategory:</span>
+                                    <span class="info-value" id="detail-type"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Brand:</span>
+                                    <span class="info-value" id="detail-brand"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Prescription:</span>
+                                    <span class="info-value" id="detail-prescription"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Status:</span>
+                                    <span class="info-value" id="detail-status"></span>
+                                </div>
+                            </div>
+                            <div class="info-section">
+                                <h3>Stock & Pricing</h3>
+                                <div class="info-item">
+                                    <span class="info-label">Quantity:</span>
+                                    <span class="info-value" id="detail-quantity"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Unit:</span>
+                                    <span class="info-value" id="detail-unit"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Current Price:</span>
+                                    <span class="info-value" id="detail-price"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Old Price:</span>
+                                    <span class="info-value" id="detail-old-price"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">MRP:</span>
+                                    <span class="info-value" id="detail-mrp"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Rating:</span>
+                                    <span class="info-value" id="detail-rating"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Batch:</span>
+                                    <span class="info-value" id="detail-batch"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">MFG Date:</span>
+                                    <span class="info-value" id="detail-mfg-date"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Expiry:</span>
+                                    <span class="info-value" id="detail-expiry"></span>
+                                </div>
+                            </div>
+                            <div class="info-section md:col-span-2">
+                                <h3>Additional Information</h3>
+                                <div class="info-item">
+                                    <span class="info-label">Description:</span>
+                                    <span class="info-value" id="detail-description"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Benefits:</span>
+                                    <ul id="detail-benefits" class="benefits-list info-value"></ul>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Directions:</span>
+                                    <ul id="detail-directions" class="directions-list info-value"></ul>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Ingredients:</span>
+                                    <ul id="detail-ingredients" class="ingredients-list info-value"></ul>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Available Sizes:</span>
+                                    <div id="detail-sizes" class="sizes-container info-value"></div>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Dynamic Fields:</span>
+                                    <div id="detail-dynamic-fields" class="info-value"></div>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Stock Status:</span>
+                                    <span class="info-value" id="detail-stock-status"></span>
+                                </div>
+                                <!-- Verification Details -->
+                                <div class="info-item">
+                                    <span class="info-label">Verification Status:</span>
+                                    <span class="info-value" id="detail-verification-status"></span>
+                                </div>
+                                <div class="info-item" id="detail-verified-by-container" style="display: none;">
+                                    <span class="info-label">Verified By:</span>
+                                    <span class="info-value" id="detail-verified-by"></span>
+                                </div>
+                                <div class="info-item" id="detail-verified-at-container" style="display: none;">
+                                    <span class="info-label">Verified At:</span>
+                                    <span class="info-value" id="detail-verified-at"></span>
+                                </div>
+                                <div class="info-item" id="detail-rejection-reason-container" style="display: none;">
+                                    <span class="info-label">Rejection Reason:</span>
+                                    <span class="info-value" id="detail-rejection-reason"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Added:</span>
+                                    <span class="info-value" id="detail-added"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Updated:</span>
+                                    <span class="info-value" id="detail-updated"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Main Image:</span>
+                                    <div id="detail-main-image" class="info-value"></div>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">All Images:</span>
+                                    <div id="detail-images" class="info-value grid grid-cols-2 md:grid-cols-4 gap-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button id="editProductBtn" class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition">
+                                <i class="fas fa-edit mr-2"></i>Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add/Edit Product Modal -->
+                <div id="editProductModal" class="modal">
+                    <div class="modal-container" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+                        <span class="close-btn" id="closeEditModal">&times;</span>
+                        <h2 class="text-xl font-semibold text-gray-800 mb-6" id="editModalTitle">Add New Product</h2>
+                        <form id="editProductForm" class="edit-form grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="info-section">
+                                <h3>Basic Information</h3>
+                                <div class="mb-4">
+                                    <label for="edit-sku">SKU *</label>
+                                    <input type="text" id="edit-sku" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-name">Product Name *</label>
+                                    <input type="text" id="edit-name" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-category">Category *</label>
+                                    <div class="relative">
+                                        <select id="edit-category" class="w-full" required>
+                                            <option value="">Select Category</option>
+                                        </select>
+                                        <div class="absolute right-3 top-3 text-gray-400 dropdown-arrow">
+                                            <!-- <i class="fas fa-chevron-down"></i> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4 hidden" id="category-other-container">
+                                    <label for="edit-category-other">Specify Other Category *</label>
+                                    <input type="text" id="edit-category-other" placeholder="Enter custom category">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-type">Subcategory *</label>
+                                    <div class="relative">
+                                        <select id="edit-type" class="w-full" required disabled>
+                                            <option value="">Select Subcategory</option>
+                                        </select>
+                                        <div class="absolute right-3 top-3 text-gray-400 dropdown-arrow">
+                                            <!-- <i class="fas fa-chevron-down"></i> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4 hidden" id="type-other-container">
+                                    <label for="edit-type-other">Specify Other Subcategory *</label>
+                                    <input type="text" id="edit-type-other" placeholder="Enter custom subcategory">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-brand">Brand/Manufacturer *</label>
+                                    <input type="text" id="edit-brand" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-prescription">Prescription Required *</label>
+                                    <select id="edit-prescription" required>
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-status">Product Status *</label>
+                                    <select id="edit-status" required>
+                                        <option value="Available">Available</option>
+                                        <option value="Unavailable">Unavailable</option>
+                                        <option value="Discontinued">Discontinued</option>
+                                    </select>
+                                </div>
+                                <!-- Verification Status (for existing products) -->
+                                <div class="mb-4 hidden" id="verification-status-container">
+                                    <label for="edit-verification-status">Verification Status</label>
+                                    <select id="edit-verification-status" disabled>
+                                        <option value="PENDING">Pending</option>
+                                        <option value="APPROVED">Approved</option>
+                                        <option value="REJECTED">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+<!-- Line 406-460: Update this section in your editProductModal -->
+<div class="info-section">
+    <h3>Stock & Pricing</h3>
+    
+    <!-- REMOVED: Price Type Selection -->
+    <!-- ONLY SHOW MULTIPLE PRICES SECTION -->
+    
+    <!-- Multiple Prices Section - ALWAYS VISIBLE -->
+    <div id="multiple-price-section" class="mt-4">
+        <div class="border border-gray-200 rounded-lg bg-white p-4">
+            <!-- Updated headers with proper column names -->
+            <div class="price-headers">
+                <span>Variant/Size</span>
+                <span>Current Price (₹)</span>
+                <span>Original Price (₹)</span>
+                <span>Stock Quantity</span>
+                <span>MFG Date</span>
+                <span>Expiry Date</span>
+                <span>Actions</span>
+            </div>
+            
+            <div class="price-items-container space-y-3 mb-4">
+                <!-- Initial price item row -->
+                <div class="price-item-row">
+                    <input type="text" placeholder="e.g., 500ml, 100 tablets" 
+                        class="variant-input">
+                    <input type="number" placeholder="0.00" step="0.01" min="0"
+                        class="price-input">
+                    <input type="number" placeholder="0.00" step="0.01" min="0"
+                        class="old-price-input">
+                    <input type="text" placeholder="e.g., 100 units"
+                        class="stock-input">
+                    <input type="date" 
+                        class="mfg-date-input">
+                    <input type="date" 
+                        class="exp-date-input">
+                    <button type="button" class="remove-price-btn">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button type="button" class="add-price-btn">
+                <i class="fas fa-plus"></i> Add Price Item
+            </button>
+        </div>
+    </div>
+    
+    <!-- REMOVED: Single Price Section Completely -->
+    
+    <div class="mb-4">
+        <label for="edit-rating">Rating (0-5) *</label>
+        <input type="number" id="edit-rating" min="0" max="5" step="0.1" required>
+    </div>
+    <div class="mb-4">
+        <label for="edit-batch">Batch Number *</label>
+        <input type="text" id="edit-batch" required>
+    </div>
+</div>
+                            <div class="info-section md:col-span-2">
+                                <h3>Additional Information</h3>
+                                <div class="mb-4">
+                                    <label for="edit-description">Description *</label>
+                                    <textarea id="edit-description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-benefits">Benefits (One per line) *</label>
+                                    <textarea id="edit-benefits" rows="3" placeholder="Enter each benefit on a new line" required></textarea>
+                                </div>
+                                <!-- <div class="mb-4">
+                                    <label for="edit-directions">Directions for Use (One per line) *</label>
+                                    <textarea id="edit-directions" rows="3" placeholder="Enter each direction on a new line" required></textarea>
+                                </div> -->
+                                <div class="mb-4">
+                                    <label for="edit-ingredients">Ingredients (Comma separated) *</label>
+                                    <textarea id="edit-ingredients" rows="2" placeholder="Enter ingredients separated by commas" required></textarea>
+                                </div>
+                                <!-- <div class="mb-4">
+                                    <label for="edit-sizes">Available Sizes (Comma separated)</label>
+                                    <input type="text" id="edit-sizes" placeholder="e.g., 50 tablets bottle, 100 tablets bottle">
+                                </div> -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label for="edit-strength">Strength</label>
+                                        <input type="text" id="edit-strength" placeholder="e.g., 500mg">
+                                    </div>
+                                    <div>
+                                        <label for="edit-form">Form</label>
+                                        <input type="text" id="edit-form" placeholder="e.g., Tablet, Syrup, Cream">
+                                    </div>
+                                    <div>
+                                        <label for="edit-dosage">Dosage</label>
+                                        <input type="text" id="edit-dosage" placeholder="e.g., Oral, Topical">
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-main-image">Main Product Image</label>
+                                    <input type="file" id="edit-main-image" accept="image/*">
+                                    <p class="text-sm text-gray-500 mt-1">Required for new products. Leave empty to keep existing image.</p>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-image1">Product Image 1</label>
+                                    <input type="file" id="edit-image1" accept="image/*">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-image2">Product Image 2</label>
+                                    <input type="file" id="edit-image2" accept="image/*">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-image3">Product Image 3</label>
+                                    <input type="file" id="edit-image3" accept="image/*">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-image4">Product Image 4</label>
+                                    <input type="file" id="edit-image4" accept="image/*">
+                                </div>
+                            </div>
+                            <div class="md:col-span-2 flex justify-end gap-3 mt-6">
+                                <button type="button" id="cancelEdit" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">Cancel</button>
+                                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Save Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Verification Modal Overlay -->
+    <div id="verificationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <!-- Header -->
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-clipboard-check text-blue-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800" id="verificationModalTitle">Verify Product</h3>
+                        <p class="text-sm text-gray-500" id="verificationModalSubtitle">Review product details before action</p>
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-semibold text-gray-700 mb-2" id="verificationProductName">Product Name</h4>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-gray-500">SKU:</span>
+                            <span class="font-medium ml-2" id="verificationSku">N/A</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Category:</span>
+                            <span class="font-medium ml-2" id="verificationCategory">N/A</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Brand:</span>
+                            <span class="font-medium ml-2" id="verificationBrand">N/A</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Status:</span>
+                            <span class="font-medium ml-2" id="verificationStatus">N/A</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Selection -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Verification Action</h4>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-blue-50 cursor-pointer transition-colors">
+                            <input type="radio" name="verificationAction" value="APPROVE" class="mr-3 h-5 w-5 text-blue-600">
+                            <div>
+                                <div class="font-medium text-gray-800">Approve Product</div>
+                                <div class="text-sm text-gray-500">Product will be visible to customers</div>
+                            </div>
+                            <i class="fas fa-check-circle text-green-500 text-xl ml-auto"></i>
+                        </label>
+                        
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-red-50 cursor-pointer transition-colors">
+                            <input type="radio" name="verificationAction" value="REJECT" class="mr-3 h-5 w-5 text-red-600">
+                            <div>
+                                <div class="font-medium text-gray-800">Reject Product</div>
+                                <div class="text-sm text-gray-500">Product will be hidden from customers</div>
+                            </div>
+                            <i class="fas fa-times-circle text-red-500 text-xl ml-auto"></i>
+                        </label>
+                    </div>
+                </div>
+
+                
+
+                <!-- Buttons -->
+                <div class="flex space-x-3">
+                    <button 
+                        id="cancelVerification" 
+                        class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        id="submitVerification" 
+                        class="flex-1 px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        Submit Verification
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+              
+
+                <!-- Success Popup -->
+                <div id="successPopup" class="modal">
+                    <div class="popup-container">
+                        <i id="popupIcon" class="fas fa-check-circle"></i>
+                        <p id="successMessage"></p>
+                        <button id="closeSuccessPopup">OK</button>
+                    </div>
+                </div>
+
+                <!-- Logout Confirmation Modal -->
+                <div id="logoutModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Confirm Logout</h3>
+                            <button id="closeLogoutModal" class="text-gray-400 hover:text-gray-600 transition">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <p class="text-gray-600 mb-6 text-center">Are you sure you want to logout?</p>
+                        <div class="flex justify-center gap-3">
+                            <button id="confirmLogout" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition">
+                                Yes
+                            </button>
+                            <button id="cancelLogout" class="bg-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-400 transition">
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+       
+       
+        <script src="./product.js"></script>
+        <script src="../auth.js"></script>
+       
+       
+       <script>
+
+
+        function hideMenuItemsByRole() {
+            const admin = Auth.getCurrentAdmin();
+            if (!admin?.role) return;
+
+            const role = admin.role.trim().toUpperCase();
+            const menuItems = document.querySelectorAll('aside li[data-menu-type]');
+
+            menuItems.forEach(item => {
+                const type = item.getAttribute('data-menu-type');
+                if (role === 'ROLE_ADMIN') {
+                    if (['dashboard','customers','reports','admin-management'].includes(type)) {
+                        item.classList.add('menu-hidden');
+                    }
+                }
+            });
+        }
+        
+        function displayUserProfile() {
+        const admin = Auth.getCurrentAdmin(); // This returns the admin object like { id: 4, firstName: "Sumer", lastName: "Khan", ... }
+
+        const userInitials = document.getElementById('user-initials');
+        const userName = document.getElementById('user-name');
+        const userRole = document.getElementById('user-role');
+
+        if (!admin || !admin.firstName) {
+            // Fallback if no admin is logged in (shouldn't happen due to Auth.requireAuth())
+            userName.textContent = "Guest";
+            userRole.textContent = "Unknown";
+            userInitials.textContent = "??";
+            return;
+        }
+
+        // Full name
+        const fullName = `${admin.firstName} ${admin.lastName || ''}`.trim();
+        const role = `${admin.role}`
+
+        // Generate initials (e.g., "SK" for Sumer Khan)
+        const nameParts = fullName.trim().split(' ');
+        const initials = nameParts.length > 1
+            ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+            : (nameParts[0]?.[0] || '?');
+
+        // Update DOM
+        userInitials.textContent = initials.toUpperCase();
+        userName.textContent = fullName;
+        userRole.textContent = role; // You can make this dynamic later if needed
+        }
+
+        Auth.requireAuth();
+        Auth.startSessionTimer();
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            const admin = Auth.getCurrentAdmin();
+            if (admin) {
+                console.log("Logged in as:", admin.firstName + " " + admin.lastName);
+            }
+            displayUserProfile();
+            hideMenuItemsByRole();
+        });
+    </script>
+        
+     <script src="../orderBadge.js"></script>
+    </body>
+    </html>

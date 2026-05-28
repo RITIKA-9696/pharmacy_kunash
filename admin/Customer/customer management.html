@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pharmacy- Customer Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="customer.css" />
+
+    <style>
+         /* Smooth transition classes */
+#sidebar {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar.collapsed {
+    width: 64px !important;
+}
+
+#sidebar:not(.collapsed) {
+    width: 256px !important;
+}
+
+.nav-text {
+    transition: all 0.3s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.nav-icon {
+    transition: all 0.3s ease-in-out;
+    min-width: 20px;
+}
+
+/* For smoother hover effects */
+li {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Staggered animation for nav items */
+li:nth-child(1) { transition-delay: 0ms; }
+li:nth-child(2) { transition-delay: 20ms; }
+li:nth-child(3) { transition-delay: 40ms; }
+li:nth-child(4) { transition-delay: 60ms; }
+li:nth-child(5) { transition-delay: 80ms; }
+li:nth-child(6) { transition-delay: 100ms; }
+li:nth-child(7) { transition-delay: 120ms; }
+li:nth-child(8) { transition-delay: 140ms; }
+li:nth-child(9) { transition-delay: 160ms; }
+li:nth-child(10) { transition-delay: 180ms; }
+li:nth-child(11) { transition-delay: 200ms; }
+
+
+.menu-hidden {
+   display: none !important;
+ }
+
+
+    </style>
+</head>
+
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar"
+    class="border w-64 bg-white text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static transition-all duration-300 ease-in-out">
+    <div class="border-b p-4  sticky top-0 z-10 flex justify-between items-center">
+        <div class="ml-6 transition-all duration-300 ease-in-out overflow-hidden">
+            <img src="../Images/kunash-logo.png" alt="PharmaCare Logo"
+                class="w-full h-[44px] sidebar-logo-expanded transition-all duration-300 ease-in-out">
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="toggle-sidebar-logo" class="flex items-center transition-all duration-300 ease-in-out">
+                <i id="sidebar-arrow"
+                    class="fas fa-chevron-left ml-2 text-black transition-transform duration-300 ease-in-out"></i>
+            </button>
+            <button id="close-sidebar" class="md:hidden text-black transition-all duration-300 ease-in-out">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4 transition-all duration-300 ease-in-out">
+        <ul class="space-y-1">
+            <!-- Each list item -->
+            <li data-menu-type="dashboard" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Dashboard/dashboard.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-home mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Inventory/inventory.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-pills mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Inventory Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Prescriptions/prescription.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-file-prescription mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Prescriptions</span>
+                </a>
+            </li>
+
+            <li data-menu-type="customers" class="bg-blue-700 text-white rounded-md transition-all duration-200 ease-in-out">
+                <a href="../Customer/customer management.html"
+                    class="flex items-center py-3 px-4 text-gray-700 text-white transition-colors duration-200">
+                    <i class="fas fa-users mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Customers Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Order/ordermanagment.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-shopping-cart mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Order Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Product Management/product.html"
+                    class="flex items-center py-3 px-4 text-gray-700  hover:text-white transition-colors duration-200">
+                    <i class="fas fa-box mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200 ">Medicine Product Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Mother and Baby Care/motherbabycare.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fa-solid fa-baby mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Mother & Baby Care Product Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Banner/banner.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-image mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Banner Management</span>
+                </a>
+            </li>
+
+            <li data-menu-type="reports" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Reports/report.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-file-invoice mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Reports</span>
+                </a>
+            </li>
+
+            <li data-menu-type="admin-management" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md mb-4">
+                <a href="../Admin/admin.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-user-shield mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Admin Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <button id="logoutBtn"
+                    class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-white font-semibold text-left transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Logout</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+
+    <!-- Main Content -->
+    <div class="main-content-wrapper flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white shadow sticky top-0 z-10">
+            <div class="flex justify-between items-center p-4">
+                <div class="flex items-center">
+                    <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold text-gray-800">
+                        Customer Management
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <div id="user-initials"
+                            class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold">
+                        </div>
+                        <div class="ml-2">
+                            <span id="user-name" class="text-gray-800"></span>
+                            <span id="user-role" class="text-gray-500 text-sm block"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Customer Content -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Total Customers</p>
+                            <h2 id="totalCustomers" class="text-2xl font-bold text-gray-800 mt-1">
+                                0
+                            </h2>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-users text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">
+                                Active Customers
+                            </p>
+                            <h2 id="activeCustomers" class="text-2xl font-bold text-gray-800 mt-1">
+                                0
+                            </h2>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-user-check text-yellow-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">New Customers</p>
+                            <h2 id="newCustomers" class="text-2xl font-bold text-gray-800 mt-1">
+                                0
+                            </h2>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-user-plus text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-red-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">
+                                Deactivated Customers
+                            </p>
+                            <h2 id="deactivatedCustomers" class="text-2xl font-bold text-gray-800 mt-1">
+                                0
+                            </h2>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <i class="fas fa-user-times text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer List -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Customer List</h2>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="cityFilter"
+                            class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40">
+                            <option value="">All Cities</option>
+                            <option value="Phaltan">Phaltan</option>
+                        </select>
+                        <select id="stateFilter"
+                            class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-32">
+                            <option value="">All States</option>
+                            <option value="MH">Maharashtra</option>
+                            
+                        </select>
+                        <select id="addressTypeFilter"
+                            class="border rounded-lg py-2 px-3 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-40">
+                            <option value="">All Address Types</option>
+                            <option value="HOME">Home</option>
+                            <option value="WORK">Work</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                        <button id="exportBtn"
+                            class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap">
+                            <i class="fas fa-download mr-2"></i>Export to Excel
+                        </button>
+                        <button id="deleteSelectedBtn"
+                            class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition shadow-sm hover:shadow-md whitespace-nowrap"
+                            style="display: none;">
+                            <i class="fas fa-trash mr-2"></i>Delete Selected
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table id="customerTable" class="min-w-full display">
+                        <thead>
+                            <tr>
+                                <th class="w-16 text-center">
+                                    <input type="checkbox" id="selectAll" class="w-4 h-4 cursor-pointer">
+                                </th>
+                                <th class="w-32">Customer ID</th>
+                                <th class="w-48">First Name</th>
+                                <th class="w-48">Last Name</th>
+                                <th class="w-64">Email</th>
+                                <th class="w-48">Phone</th>
+                                <th class="w-48">City</th>
+                                <th class="w-32">State</th>
+                                <th class="w-40">Address Type</th>
+                                <th class="w-48 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody" class="text-gray-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Customer Profile Modal -->
+    <div id="customerProfile" class="modal">
+        <div class="modal-container">
+            <span class="close-btn" id="closeProfile">&times;</span>
+            <div class="profile-header">
+                <h2 class="text-xl font-semibold text-gray-800">
+                    Customer Profile
+                </h2>
+            </div>
+            <div class="info-section">
+                <h3>Personal Information</h3>
+                <div class="info-item">
+                    <span class="info-label">Customer ID:</span>
+                    <span class="info-value" id="profile-id"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">First Name:</span>
+                    <span class="info-value" id="profile-firstname"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Last Name:</span>
+                    <span class="info-value" id="profile-lastname"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value" id="profile-email"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value" id="profile-phone"></span>
+                </div>
+            </div>
+            <div class="info-section">
+                <h3>Address Information</h3>
+                <div class="info-item">
+                    <span class="info-label">Address Type:</span>
+                    <span class="info-value" id="profile-addrtype"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Landmark:</span>
+                    <span class="info-value" id="profile-landmark"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Area:</span>
+                    <span class="info-value" id="profile-area"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Street/City:</span>
+                    <span class="info-value" id="profile-city"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">State:</span>
+                    <span class="info-value" id="profile-state"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pincode:</span>
+                    <span class="info-value" id="profile-pincode"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Country:</span>
+                    <span class="info-value" id="profile-country"></span>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <button id="editProfileBtn"
+                    class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition">
+                    <i class="fas fa-edit mr-2"></i>Edit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Customer Modal -->
+    <div id="editCustomerModal" class="modal">
+        <div class="modal-container">
+            <span class="close-btn" id="closeEditModal">&times;</span>
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">
+                Edit Customer
+            </h2>
+            <form id="editCustomerForm" class="edit-form grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="info-section">
+                    <h3>Personal Information</h3>
+                    <div class="mb-4">
+                        <label for="edit-id">Customer ID</label>
+                        <input type="text" id="edit-id" readonly class="bg-gray-100 cursor-not-allowed" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-firstname">First Name</label>
+                        <input type="text" id="edit-firstname" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-lastname">Last Name</label>
+                        <input type="text" id="edit-lastname" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-email">Email</label>
+                        <input type="email" id="edit-email" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-phone">Phone</label>
+                        <input type="tel" id="edit-phone" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-password">Password (Optional)</label>
+                        <input type="password" id="edit-password" />
+                    </div>
+                </div>
+                <div class="info-section">
+                    <h3>Address Information</h3>
+                    <div class="mb-4">
+                        <label for="edit-addrtype">Address Type</label>
+                        <select id="edit-addrtype" required>
+                            <option value="HOME">Home</option>
+                            <option value="WORK">Work</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-landmark">Landmark</label>
+                        <input type="text" id="edit-landmark" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-area">Area</label>
+                        <input type="text" id="edit-area" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-city">City</label>
+                        <input type="text" id="edit-city" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-state">State</label>
+                        <input type="text" id="edit-state" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-pincode">Pincode</label>
+                        <input type="text" id="edit-pincode" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-country">Country</label>
+                        <input type="text" id="edit-country" required />
+                    </div>
+                </div>
+                <div class="md:col-span-2 flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancelEdit"
+                        class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Customer Modal -->
+    <div id="createCustomerModal" class="modal">
+        <div class="modal-container">
+            <span class="close-btn" id="closeCreateModal">&times;</span>
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">
+                Create New Customer
+            </h2>
+            <form id="createCustomerForm" class="edit-form grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="info-section">
+                    <h3>Personal Information</h3>
+                    <div class="mb-4">
+                        <label for="create-firstname">First Name</label>
+                        <input type="text" id="create-firstname" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-lastname">Last Name</label>
+                        <input type="text" id="create-lastname" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-email">Email</label>
+                        <input type="email" id="create-email" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-phone">Phone</label>
+                        <input type="tel" id="create-phone" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-password">Password</label>
+                        <input type="password" id="create-password" required />
+                    </div>
+                </div>
+                <div class="info-section">
+                    <h3>Address Information</h3>
+                    <div class="mb-4">
+                        <label for="create-addrtype">Address Type</label>
+                        <select id="create-addrtype" required>
+                            <option value="HOME">Home</option>
+                            <option value="WORK">Work</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-landmark">Landmark</label>
+                        <input type="text" id="create-landmark" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-area">Area</label>
+                        <input type="text" id="create-area" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-city">City</label>
+                        <input type="text" id="create-city" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-state">State</label>
+                        <input type="text" id="create-state" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-pincode">Pincode</label>
+                        <input type="text" id="create-pincode" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="create-country">Country</label>
+                        <input type="text" id="create-country" value="USA" required />
+                    </div>
+                </div>
+                <div class="md:col-span-2 flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancelCreate"
+                        class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">
+                        Create Customer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Popup -->
+    <div id="successPopup" class="modal">
+        <div class="popup-container">
+            <i class="fas fa-check-circle"></i>
+            <p id="successMessage"></p>
+            <button id="closeSuccessPopup">OK</button>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutConfirmModal" class="modal">
+        <div class="modal-content max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">Confirm Logout</h2>
+                <span id="closeLogoutModal"
+                    class="cursor-pointer text-gray-500 hover:text-red-500 text-2xl">&times;</span>
+            </div>
+
+            <p class="text-gray-700 mb-6">Are you sure you want to logout?</p>
+
+            <div class="flex justify-end gap-3">
+                <button id="confirmLogout"
+                    class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition shadow-sm">
+                    Yes
+                </button>
+                <button id="cancelLogout"
+                    class="bg-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-400 transition shadow-sm">
+                    No
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="./customer.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../orderBadge.js"></script>
+
+  <script>
+        function hideMenuItemsByRole() {
+            const admin = Auth.getCurrentAdmin();
+            if (!admin?.role) return;
+
+            const role = admin.role.trim().toUpperCase();
+            const menuItems = document.querySelectorAll('aside li[data-menu-type]');
+
+            menuItems.forEach(item => {
+                const type = item.getAttribute('data-menu-type');
+                if (role === 'ROLE_ADMIN') {
+                    if (['dashboard','customers','reports','admin-management'].includes(type)) {
+                        item.classList.add('menu-hidden');
+                    }
+                }
+            });
+        }
+
+        function displayUserProfile() {
+        const admin = Auth.getCurrentAdmin(); // This returns the admin object like { id: 4, firstName: "Sumer", lastName: "Khan", ... }
+
+        const userInitials = document.getElementById('user-initials');
+        const userName = document.getElementById('user-name');
+        const userRole = document.getElementById('user-role');
+
+        if (!admin || !admin.firstName) {
+            // Fallback if no admin is logged in (shouldn't happen due to Auth.requireAuth())
+            userName.textContent = "Guest";
+            userRole.textContent = "Unknown";
+            userInitials.textContent = "??";
+            return;
+        }
+
+        // Full name
+        const fullName = `${admin.firstName} ${admin.lastName || ''}`.trim();
+        const role = `${admin.role}`
+
+        // Generate initials (e.g., "SK" for Sumer Khan)
+        const nameParts = fullName.trim().split(' ');
+        const initials = nameParts.length > 1
+            ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+            : (nameParts[0]?.[0] || '?');
+
+        // Update DOM
+        userInitials.textContent = initials.toUpperCase();
+        userName.textContent = fullName;
+        userRole.textContent = role; // You can make this dynamic later if needed
+        }
+
+
+        // This will redirect to login if session is missing or expired
+        Auth.requireAuth();
+        // Optional: start background timer to warn on expiration
+        Auth.startSessionTimer();
+    
+        // Example: display admin name
+        document.addEventListener("DOMContentLoaded", () => {
+            const admin = Auth.getCurrentAdmin();
+            if (admin) {
+                console.log("Logged in as:", admin.firstName + " " + admin.lastName);
+                // e.g., document.getElementById('adminName').textContent = admin.firstName;
+            }
+
+            displayUserProfile();
+            hideMenuItemsByRole();
+        });
+    </script>
+</body>
+
+</html>

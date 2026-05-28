@@ -1,0 +1,104 @@
+
+.footer {
+  background-color: #ffffff;
+  padding: 40px 20px 20px;
+  border-top: 1px solid #e0e0e0;
+  font-family: Arial, sans-serif;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-logo {
+  height: 60px;
+}
+
+.tagline {
+  font-size: 14px;
+  color: #666;
+  margin: 10px 0;
+}
+
+.excellence {
+  font-size: 14px;
+  color: #36C2CE;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #36C2CE;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li a {
+  text-decoration: none;
+  color: #666;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+ul li a:hover {
+  color: #36C2CE;
+}
+
+.get-in-touch p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.icon-location, .icon-email, .icon-phone, .icon-clock, .icon-headset {
+  margin-right: 10px;
+  color: #36C2CE;
+  font-size: 16px;
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+}
+
+.whatsapp-icon {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 30px;
+  color: #25D366;
+}
+
+.copyright {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 12px;
+  color: #666;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+/* For icons, since we're using custom CSS/JS only, you can use Unicode or images. For simplicity, assume CSS content for icons. */
+.icon-location::before { content: '\1F4CD'; } /* Pin emoji as placeholder */
+.icon-email::before { content: '\2709'; }
+.icon-phone::before { content: '\260E'; }
+.icon-clock::before { content: '\23F0'; }
+.icon-headset::before { content: '\1F3A7'; }
+.icon-whatsapp::before { content: '\1F4AC'; } /* Chat bubble as placeholder */

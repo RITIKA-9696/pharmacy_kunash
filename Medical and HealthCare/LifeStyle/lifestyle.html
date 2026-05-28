@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lifestyle Disorder Management – Diabetes, Heart, Thyroid & Nutritional Support</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../Header/header.css">
+  <link rel="stylesheet" href="../../Footer/footer.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#36C2CE',
+            secondary: '#0ea5e9',
+            accent: '#10b981',
+            dark: '#1e293b',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Hide footer only on mobile & tablet (≤1024px) */
+    @media (max-width: 1024px) {
+      #footer-placeholder {
+        display: none !important;
+      }
+    }
+    @media (max-width: 1023px) {
+      body { padding-bottom: 90px !important; }
+    }
+
+    /* General Hover Effects */
+    .product-card:hover {
+      transform: translateY(-6px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    .image-zoom:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+    .sub-level-1:not(.hidden) ~ .flex > i,
+    .sub-level-2:not(.hidden) ~ .flex > i,
+    [sub-level-1]:not(.hidden) ~ .flex > i,
+    [sub-level-2]:not(.hidden) ~ .flex > i {
+      transform: rotate(180deg) !important;
+    }
+    @media (min-width: 1024px) {
+      .sub-level-1 { display: block !important; }
+    }
+
+    /* Dual Thumb Price Slider Styling */
+    .price-slider-container h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0a7272;
+      margin-bottom: 2px;
+    }
+    .slider-wrapper {
+      position: relative;
+      height: 4px;
+      background: #c3e6e9;
+      border-radius: 4px;
+      margin: 20px 10px 20px;
+    }
+    .slider-fill {
+      position: absolute;
+      height: 100%;
+      background: linear-gradient(90deg, #36C2CE, #0ea5e9);
+      border-radius: 4px;
+      top: 0;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      margin: 0;
+      pointer-events: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #36C2CE;
+      border: 4px solid white;
+      cursor: pointer;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(54, 194, 206, 0.4);
+    }
+    input[type="range"]::-moz-range-thumb {
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #36C2CE;
+      border: 4px solid white;
+      cursor: pointer;
+      pointer-events: all;
+      border: none;
+    }
+    .price-values {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #0a7272;
+      font-size: 14px;
+      padding: 0 10px;
+    }
+
+    #applySortBtn {
+      background: #0a7272;
+    }
+
+    /* Product Card */
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #fff;
+      border: 1px solid #e0f2fe;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .product-card img, .product-image {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      background: #f0fdfa;
+      padding: 0.5rem;
+    }
+    .product-card .content {
+      padding: 1rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .text-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: auto;
+      padding: 0.75rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    /* Stock Status Badge */
+    .stock-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 20;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .stock-badge.in-stock {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+    
+    .stock-badge.out-of-stock {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+    
+    /* Dim effect for out of stock products */
+    .product-card.out-of-stock {
+      opacity: 0.7;
+      filter: grayscale(20%);
+    }
+    
+    .product-card.out-of-stock img {
+      filter: brightness(0.9);
+    }
+    
+    .product-card.out-of-stock .view-details-btn {
+      background-color: #9ca3af !important;
+      cursor: not-allowed !important;
+    }
+    
+    .product-card.out-of-stock .view-details-btn:hover {
+      background-color: #9ca3af !important;
+      transform: none !important;
+    }
+
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up { animation: fade-in-up 1s ease forwards; }
+    .delay-200 { animation-delay: 0.2s; }
+    .active-dot {
+      width: 0.75rem;
+      height: 0.75rem;
+      opacity: 1 !important;
+    }
+    @media (max-width: 640px) {
+      .button-container { flex-direction: column; align-items: center; }
+      .view-details { width: 100%; max-width: 250px; }
+      .product-card { width: 100%; min-height: auto; }
+    }
+    .filter-sidebar {
+      background: linear-gradient(135deg, #f0fdfa, #e0f2fe);
+    }
+    .banner-slide {
+      opacity: 0;
+      transition: opacity 1s ease;
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .banner-slide.active {
+      opacity: 1;
+    }
+    .banner-dot {
+      transition: all 0.3s;
+    }
+    .banner-dot.active {
+      width: 1rem;
+      height: 1rem;
+      background-color: #36C2CE;
+    }
+  </style>
+</head>
+
+<body class="bg-[#D9EAFD]">
+  <div id="header-placeholder"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+   <section class="relative w-full 
+  h-[180px] md:h-[420px]           
+   mt-[14px] md:mt-12                                     
+  mb-[2px] md:mb-8                     
+  mx-auto 
+  max-w-[calc(90%+16px)] md:max-w-6xl          
+  rounded-2xl overflow-hidden shadow-2xl">
+
+  <div id="bannerWrapper" class="relative w-full h-full">
+    <!-- Your existing slides – unchanged -->
+    <div class="banner-slide active" style="background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1600&h=600&fit=crop')">
+      <div class="absolute inset-0 bg-gradient-to-r from-green-600/70 to-blue-600/70"></div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 text-white">
+        <h2 class="text-3xl md:text-4xl font-bold">Lifestyle Disorder Management</h2>
+        <p class="mt-4 text-lg">Comprehensive care for diabetes, heart health & thyroid support</p>
+      </div>
+    </div>
+
+    <div class="banner-slide" style="background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1600&h=600&fit=crop')">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-600/70 to-emerald-600/70"></div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 text-white">
+        <h2 class="text-3xl md:text-4xl font-bold">Diabetes Care</h2>
+        <p class="mt-4 text-lg">Supportive products for blood sugar management</p>
+      </div>
+    </div>
+
+    <div class="banner-slide" style="background-image: url('https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=1600&h=600&fit=crop')">
+      <div class="absolute inset-0 bg-gradient-to-r from-emerald-600/70 to-teal-600/70"></div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 text-white">
+        <h2 class="text-3xl md:text-4xl font-bold">Heart Health Support</h2>
+        <p class="mt-4 text-lg">Products for cardiovascular wellness</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dots – unchanged -->
+  <!-- <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+    <button class="banner-dot w-1 h-2 rounded-full bg-white/20 active"></button>
+    <button class="banner-dot w-1 h-2 rounded-full bg-white/20"></button>
+    <button class="banner-dot w-1 h-2 rounded-full bg-white/20"></button>
+  </div> -->
+</section>
+
+    <div class="flex flex-col lg:flex-row gap-8 mt-8">
+      <!-- Desktop Sidebar -->
+      <aside id="filterSidebar" class="hidden lg:block lg:w-70 bg-[#BCCCDC] rounded-2xl shadow-xl p-6 sticky top-24 h-fit border border-blue-100">
+        <form id="filterForm" class="space-y-8">
+          <!-- Categories -->
+          <div class="border-b pb-6">
+            <div class="flex justify-between cursor-pointer select-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+              <h3 class="font-bold text-lg text-gray-800">Categories</h3>
+              <i class="fas fa-chevron-down transition-transform text-gray-500"></i>
+            </div>
+            <div class="mt-5 space-y-3">
+              <label class="flex items-center text-sm cursor-pointer">
+                <input type="radio" name="category" value="all" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary" checked>
+                <span class="ml-3 text-gray-700">All Lifestyle Products</span>
+              </label>
+
+              <!-- Main Categories -->
+              <label class="flex items-center text-sm cursor-pointer">
+                <input type="radio" name="category" value="diabetes" class="w-4 h-4 text-primary rounded">
+                <span class="ml-3 text-gray-700 font-medium">Diabetes Care</span>
+              </label>
+
+              <label class="flex items-center text-sm cursor-pointer">
+                <input type="radio" name="category" value="heart-bp" class="w-4 h-4 text-primary rounded">
+                <span class="ml-3 text-gray-700 font-medium">Heart & Blood Pressure</span>
+              </label>
+
+              <label class="flex items-center text-sm cursor-pointer">
+                <input type="radio" name="category" value="thyroid" class="w-4 h-4 text-primary rounded">
+                <span class="ml-3 text-gray-700 font-medium">Thyroid Support</span>
+              </label>
+
+              <label class="flex items-center text-sm cursor-pointer">
+                <input type="radio" name="category" value="vitamins" class="w-4 h-4 text-primary rounded">
+                <span class="ml-3 text-gray-700 font-medium">Vitamins & Supplements</span>
+              </label>
+
+              <!--<label class="flex items-center text-sm cursor-pointer">-->
+              <!--  <input type="radio" name="category" value="nutrition" class="w-4 h-4 text-primary rounded">-->
+              <!--  <span class="ml-3 text-gray-700 font-medium">Nutritional Support</span>-->
+              <!--</label>-->
+
+              <!--<label class="flex items-center text-sm cursor-pointer">-->
+              <!--  <input type="radio" name="category" value="wellness" class="w-4 h-4 text-primary rounded">-->
+              <!--  <span class="ml-3 text-gray-700 font-medium">General Wellness</span>-->
+              <!--</label>-->
+              
+            </div>
+          </div>
+
+          <!-- Price Range -->
+          <div class="price-slider-container">
+            <h4 class="font-bold text-lg text-gray-800 mb-4">Price Range</h4>
+            <div class="slider-wrapper">
+              <div class="slider-fill" id="desktopFill"></div>
+              <input type="range" min="0" max="5000" value="0" id="minThumb">
+              <input type="range" min="0" max="5000" value="5000" id="maxThumb">
+            </div>
+            <div class="price-values text-sm">
+              <span id="minValue">₹0</span>
+              <span id="maxValue">₹5,000</span>
+            </div>
+          </div>
+
+          <!-- Brands -->
+          <div class="border-b pb-4">
+            <div class="flex justify-between cursor-pointer select-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+              <h3 class="font-bold text-lg text-gray-800">Brands</h3>
+              <i class="fas fa-chevron-down transition-transform text-gray-500"></i>
+            </div>
+            <div class="mt-2 space-y-2 hidden">
+              <label class="flex items-center"><input type="radio" name="brand" value="all" checked class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">All Brands</span></label>
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Dabur" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Dabur</span></label>-->
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Himalaya" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Himalaya</span></label>-->
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Abbott" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Abbott</span></label>-->
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Dr. Reddy's" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Dr. Reddy's</span></label>-->
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Baidyanath" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Baidyanath</span></label>-->
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Zydus" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Zydus</span></label>-->
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Mankind" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Mankind</span></label>-->
+              <!--<label class="flex items-center"><input type="radio" name="brand" value="Cipla" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Cipla</span></label>-->
+            </div>
+          </div>
+
+          <!-- Discount -->
+          <div>
+            <div class="flex justify-between cursor-pointer select-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+              <h3 class="font-bold text-lg text-gray-800">Discount</h3>
+              <i class="fas fa-chevron-down transition-transform text-gray-500"></i>
+            </div>
+            <div class="mt-4 space-y-2 hidden">
+              <label class="flex items-center"><input type="radio" name="discount" value="0" checked class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">All Products</span></label>
+              <label class="flex items-center"><input type="radio" name="discount" value="10" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">10% or more</span></label>
+              <label class="flex items-center"><input type="radio" name="discount" value="20" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">20% or more</span></label>
+              <label class="flex items-center"><input type="radio" name="discount" value="30" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">30% or more</span></label>
+            </div>
+          </div>
+
+          <button type="button" id="applyDesktopFilters" class="w-full bg-[#36C2CE] hover:bg-[#0a7272] text-white font-bold py-3 rounded-xl transition">
+            Apply Filters
+          </button>
+          <button type="button" id="resetDesktopFilters" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-xl transition">
+        Reset All
+      </button>
+        </form>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800" id="pageTitle">All Lifestyle Products</h2>
+            <p id="resultsCount" class="text-gray-600 mt-2">Loading...</p>
+          </div>
+          <select id="sortSelect" class="mt-4 md:mt-0 mr-6 cursor-pointer border rounded-xl px-6 py-2 bg-[#f0fdfa] text-sm font-medium border-blue-200">
+            <option value="default">Sort: Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Rating</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
+
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <div id="pagination" class="flex justify-center mt-12 gap-3"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Bar -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3 flex gap-4 z-50 lg:hidden shadow-2xl border-t-blue-100">
+    <button id="openSortSheet" class="flex-1 bg-[#36C2CE] text-white font-bold py-2 rounded-xl">Sort</button>
+    <button id="openFilterSheet" class="flex-1 bg-[#36C2CE] text-white font-bold py-2 rounded-xl">Filters</button>
+  </div>
+
+  <!-- Mobile Filter Sheet -->
+  <div id="filterSheet" class="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto z-50 translate-y-full transition-transform duration-300">
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+      <h3 class="text-xl font-bold text-gray-800">Filters</h3>
+      <button id="closeFilterSheet" class="text-2xl text-gray-500">×</button>
+    </div>
+    <div class="p-6 space-y-8">
+      <form id="mobileFilterForm" class="space-y-8">
+        <!-- Categories (Mobile) -->
+        <div class="border-b pb-6">
+          <h4 class="font-bold text-lg text-gray-800 mb-4">Categories</h4>
+          <div class="space-y-3">
+            <label class="flex items-center"><input type="radio" name="mobileCategory" value="all" checked class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">All Lifestyle Products</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileCategory" value="diabetes" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Diabetes Care</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileCategory" value="heart-bp" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Heart & Blood Pressure</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileCategory" value="thyroid" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Thyroid Support</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileCategory" value="vitamins" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Vitamins & Supplements</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileCategory" value="nutrition" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Nutritional Support</span></label>
+          </div>
+        </div>
+
+        <!-- Price Range (Mobile) -->
+        <div class="price-slider-container">
+          <h4 class="font-bold text-lg text-gray-800 mb-4">Price Range</h4>
+          <div class="slider-wrapper">
+            <div class="slider-fill" id="mobileFill"></div>
+            <input type="range" min="0" max="5000" value="0" id="mobileMinThumb">
+            <input type="range" min="0" max="5000" value="5000" id="mobileMaxThumb">
+          </div>
+          <div class="price-values text-sm">
+            <span id="mobileMinValue">₹0</span>
+            <span id="mobileMaxValue">₹5,000</span>
+          </div>
+        </div>
+
+        <!-- Brands (Mobile) -->
+        <div>
+          <h4 class="font-bold text-lg text-gray-800 mb-4">Brands</h4>
+          <div class="space-y-2">
+            <label class="flex items-center"><input type="radio" name="mobileBrand" value="all" checked class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">All Brands</span></label>
+            <!--<label class="flex items-center"><input type="radio" name="mobileBrand" value="Dabur" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Dabur</span></label>-->
+            <!--<label class="flex items-center"><input type="radio" name="mobileBrand" value="Himalaya" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Himalaya</span></label>-->
+            <!--<label class="flex items-center"><input type="radio" name="mobileBrand" value="Abbott" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Abbott</span></label>-->
+            <!--<label class="flex items-center"><input type="radio" name="mobileBrand" value="Dr. Reddy's" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">Dr. Reddy's</span></label>-->
+          </div>
+        </div>
+
+        <!-- Discount (Mobile) -->
+        <div>
+          <h4 class="font-bold text-lg text-gray-800 mb-4">Discount</h4>
+          <div class="space-y-2">
+            <label class="flex items-center"><input type="radio" name="mobileDiscount" value="0" checked class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">All Products</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileDiscount" value="10" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">10% or more</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileDiscount" value="20" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">20% or more</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileDiscount" value="30" class="w-5 h-5 text-primary"> <span class="ml-3 text-gray-700">30% or more</span></label>
+          </div>
+        </div>
+      </form>
+
+      <div class="flex gap-4 pt-6">
+        <button id="clearMobileFilters" class="flex-1 border-2 border-blue-300 text-gray-800 py-2 rounded-xl font-bold">Clear All</button>
+        <button id="applyMobileFilters" class="flex-1 bg-[#36C2CE] text-white py-2 rounded-xl font-bold">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sort Sheet -->
+  <div id="sortSheet" class="fixed inset-x-0 bottom-0 bg-gray-100 rounded-t-3xl shadow-2xl z-50 translate-y-full transition-transform">
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+      <h3 class="text-xl font-bold text-gray-800">Sort By</h3>
+      <button id="closeSortSheet" class="text-2xl text-gray-500">×</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="default" checked class="w-5 h-5 text-primary"> <span class="ml-4 font-medium text-gray-800">Featured</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="price-low" class="w-5 h-5 text-primary"> <span class="ml-4 font-medium text-gray-800">Price: Low to High</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="price-high" class="w-5 h-5 text-primary"> <span class="ml-4 font-medium text-gray-800">Price: High to Low</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="rating" class="w-5 h-5 text-primary"> <span class="ml-4 font-medium text-gray-800">Customer Rating</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="newest" class="w-5 h-5 text-primary"> <span class="ml-4 font-medium text-gray-800">Newest First</span></label>
+    </div>
+    <div class="p-4 bg-white border-t">
+      <button id="applySortBtn" class="w-full bg-[#0a7272] text-white font-bold py-4 rounded-xl">Apply Sort</button>
+    </div>
+  </div>
+
+  <!-- Backdrop -->
+  <div id="mobileSheetBackdrop" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+  <div id="footer-placeholder"></div>
+
+<script>
+  function loadHeader() {
+    fetch('/Header/header.html')
+      .then(r => { 
+        if (r.ok) return r.text();
+        throw new Error('Failed to load header');
+      })
+      .then(html => {
+        document.getElementById('header-placeholder').innerHTML = html;
+        
+        // Load header JS
+        const headerScript = document.createElement('script');
+        // headerScript.src = '/Header/header.js?v=1.0.9';
+        headerScript.src = '/Header/header.js?v=1.1.3';
+        // script.src = '/Header/header.js?v=1.1.3';  // ← Absolute + cache bust
+        headerScript.onload = () => console.log('Header JS loaded');
+        headerScript.onerror = () => console.error('Failed to load header.js');
+        document.body.appendChild(headerScript);
+        
+        // Load header CSS
+        const headerCSS = document.createElement('link');
+        headerCSS.rel = 'stylesheet';
+        headerCSS.href = '/Header/header.css';
+        document.head.appendChild(headerCSS);
+      })
+      .catch(err => {
+        console.error('Header load failed:', err);
+        // Create a simple fallback header
+        document.getElementById('header-placeholder').innerHTML = `
+          <nav class="bg-blue-600 text-white p-4">
+            <div class="container mx-auto flex justify-between items-center">
+              <h1 class="text-xl font-bold">Lifestyle Disorder Management</h1>
+              <div>
+                <a href="/" class="mr-4">Home</a>
+                <a href="/cart" class="mr-4">Cart</a>
+                <a href="/wishlist">Wishlist</a>
+              </div>
+            </div>
+          </nav>
+        `;
+      });
+  }
+
+  function loadFooter() {
+    fetch('/Footer/footer.html')
+      .then(r => { 
+        if (r.ok) return r.text();
+        throw new Error('Failed to load footer');
+      })
+      .then(html => {
+        document.getElementById('footer-placeholder').innerHTML = html;
+      })
+      .catch(err => {
+        console.error('Footer load failed:', err);
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadHeader();
+    loadFooter();
+  });
+</script>
+
+
+<script>
+// ===== SCROLL TO TOP ON PAGE REFRESH =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
+    // Handle browser back/forward navigation
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.scrollTo(0, 0);
+        }
+    };
+    
+    // Also scroll to top on page load (redundancy for safety)
+    window.onload = function() {
+        setTimeout(function() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }, 0);
+    };
+});
+
+// Force scroll to top even before DOM is fully loaded
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+} else {
+    window.onbeforeunload = function() {
+        window.scrollTo(0, 0);
+    };
+}
+</script>
+
+  <!--<script src="../../cart-wishlist-system.js" defer></script>-->
+  <script src="./lifestyle.js?v=1.0.5" defer></script>
+  
+</body>
+</html>

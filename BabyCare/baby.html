@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baby Care - Premium Products</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./baby.css" />
+  <link rel="stylesheet" href="../Header/header.css">
+  <link rel="stylesheet" href="../Footer/footer.css">
+
+  <style>
+    /* Hide footer only on mobile & tablet (≤1024px) */
+    @media (max-width: 1024px) {
+      #footer-placeholder {
+        display: none !important;
+      }
+    }
+  </style>
+  
+  <style>
+    /* ==================== MOBILE FIXES & IMPROVEMENTS ==================== */
+    @media (max-width: 1024px) {
+      .max-w-7xl.mx-auto {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      #productsGrid {
+        grid-template-columns: 1fr !important;
+      }
+
+      @media (min-width: 640px) and (max-width: 1023px) {
+        #productsGrid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+      }
+    }
+
+    /* Fix bottom bar overlapping content */
+    body {
+      padding-bottom: 100px !important;
+    }
+
+    @media (min-width: 1025px) {
+      body {
+        padding-bottom: 0 !important;
+      }
+    }
+
+    /* Mobile sheets improvements */
+    #filterSheet,
+    #sortSheet {
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #mobileSheetBackdrop {
+      transition: opacity 0.3s;
+    }
+
+    #mobileSheetBackdrop:not(.hidden) {
+      opacity: 1;
+    }
+
+    /* Price slider thumb fix for mobile */
+    input[type=range] {
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 4px;
+      outline: none;
+      margin: 0;
+    }
+
+    /* Better touch targets on mobile */
+    #openFilterSheet,
+    #openSortSheet,
+    #applyMobileFilters,
+    #clearMobileFilters,
+    #applySortBtn {
+      min-height: 40px;
+      font-size: 1rem;
+    }
+
+    /* Product card improvements */
+    .product-card {
+      border-radius: 1rem;
+    }
+
+    .product-card .image-zoom {
+      transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .image-zoom {
+      transform: scale(1.08);
+    }
+
+    /* Out of stock styling */
+    .product-card.opacity-60 {
+      opacity: 0.6;
+      filter: grayscale(1);
+    }
+
+    .product-card.opacity-60:hover {
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    .product-card.opacity-60 .image-zoom:hover {
+      transform: none;
+    }
+
+    /* Fix banner height on mobile */
+    .banner-section {
+      height: 280px !important;
+    }
+
+    @media (min-width: 640px) {
+      .banner-section {
+        height: 360px !important;
+      }
+    }
+
+    .product-card:hover { 
+      transform: translateY(-8px); 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+    }
+    
+    .image-zoom:hover { 
+      transform: scale(1.06); 
+    }
+    
+    .banner-slide { 
+      position: absolute; 
+      inset: 0; 
+      opacity: 0; 
+      transition: opacity 1s; 
+      background-size: cover; 
+      background-position: center; 
+    }
+    
+    .banner-slide.active { 
+      opacity: 1; 
+    }
+    
+    .banner-dot.active { 
+      background: white !important; 
+      opacity: 1 !important; 
+    }
+    
+    .product-carousel { 
+      transition: transform 0.5s ease; 
+    }
+    
+    .carousel-dot.active { 
+      background: white !important; 
+    }
+    
+    .line-clamp-2 { 
+      display: -webkit-box; 
+      -webkit-line-clamp: 2; 
+      -webkit-box-orient: vertical; 
+      overflow: hidden; 
+    }
+
+    /* Price Slider */
+    .slider-wrapper { 
+      position: relative; 
+      height: 6px; 
+      background: #fce7f3; 
+      border-radius: 4px; 
+      margin: 35px 10px 25px; 
+    }
+    
+    .slider-fill { 
+      position: absolute; 
+      height: 100%; 
+      background: linear-gradient(90deg, #2067a1, #0c5a79); 
+      border-radius: 4px; 
+    }
+    
+    input[type=range] { 
+      -webkit-appearance: none; 
+      width: 100%; 
+      background: transparent; 
+      position: absolute; 
+      top: 0; 
+      pointer-events: none; 
+    }
+    
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; 
+      height: 24px; 
+      width: 24px; 
+      border: 4px solid white;
+      background: rgb(57, 138, 192); 
+      border-radius: 50%; 
+      cursor: pointer; 
+      pointer-events: all;
+      box-shadow: 0 4px 15px rgba(37, 120, 175, 0.5);
+    }
+    
+    .price-values { 
+      display: flex; 
+      justify-content: space-between; 
+      color: #0f8b8f; 
+      font-weight: 600; 
+      padding: 0 10px; 
+    }
+
+    /* Skeleton Loading */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 0.5rem;
+    }
+    
+    .skeleton-img {
+      width: 100%;
+      height: 200px;
+    }
+    
+    .skeleton-text {
+      height: 20px;
+      margin: 8px 0;
+    }
+    
+    .skeleton-title {
+      height: 24px;
+      width: 80%;
+    }
+    
+    .skeleton-price {
+      height: 28px;
+      width: 60%;
+    }
+    
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body class="bg-[#CFECF3] min-h-screen">
+
+  <div id="header-placeholder"></div>
+
+  <!-- Banner Carousel -->
+  <section class="relative w-full h-[250px] md:h-[420px] mt-16 mx-auto max-w-6xl rounded-2xl overflow-hidden shadow-2xl">
+  <div id="bannerWrapper" class="relative h-full">
+    <!-- Slides will be dynamically inserted here -->
+  </div>
+  <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+    <!-- Dots will be dynamically inserted here -->
+  </div>
+</section>
+
+  <div class="max-w-7xl mx-auto px-4 py-10 ">
+
+    <div class="flex flex-col lg:flex-row gap-8">
+
+      <!-- ==================== DESKTOP SIDEBAR ==================== -->
+      <aside id="filterSidebar" class="hidden lg:block lg:w-60 bg-[#AEDEFC] rounded-2xl shadow-xl p-3 sticky top-24 h-fit">
+        <form id="filterForm" class="space-y-3">
+
+          <!-- Categories -->
+         <div class="border-b pb-6">
+            <h3 class="font-bold text-lg mb-4">Categories</h3>
+            <div class="space-y-3">
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="category" value="all" checked class="w-5 h-5 text-pink-600">
+                <span class="ml-3">All Categories</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="category" value="Bath & Body" class="w-5 h-5 text-pink-600">
+                <span class="ml-3">Bath & Body</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="category" value="Diapers & Hygiene" class="w-5 h-5 text-pink-600">
+                <span class="ml-3">Diapers & Hygiene</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="category" value="Feeding & Nutrition" class="w-5 h-5 text-pink-600">
+                <span class="ml-3">Feeding & Nutrition</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input type="radio" name="category" value="Gift Hampers" class="w-5 h-5 text-pink-600">
+                <span class="ml-3">Gift Hampers</span>
+              </label>
+            </div>
+          </div>
+
+
+          <!-- Price Range -->
+          <div class="price-slider-container">
+            <h4 class="font-bold text-lg mb-3">Price Range</h4>
+            <div class="slider-wrapper">
+              <div class="slider-fill" id="desktopFill"></div>
+              <input type="range" min="0" max="10000" value="0" id="minThumb">
+              <input type="range" min="0" max="10000" value="10000" id="maxThumb">
+            </div>
+            <div class="price-values text-sm">
+              <span id="minValue">₹0</span>
+              <span id="maxValue">₹10,000</span>
+            </div>
+          </div>
+
+          <!-- Brands -->
+          <div class="border-b pb-4">
+            <div class="flex justify-between cursor-pointer select-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+              <h3 class="font-bold text-lg">Brands</h3>
+              <i class="fas fa-chevron-down transition-transform"></i>
+            </div>
+            <div class="mt-4 space-y-3 hidden">
+              <label class="flex items-center"><input type="radio" name="brand" value="all" checked class="w-5 h-5 text-pink-600"> <span class="ml-3">All Brands</span></label>
+              
+            </div>
+          </div>
+
+          <!-- Discount -->
+          <div>
+            <div class="flex justify-between cursor-pointer select-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+              <h3 class="font-bold text-lg">Discount</h3>
+              <i class="fas fa-chevron-down transition-transform"></i>
+            </div>
+            <div class="mt-4 space-y-3 hidden">
+              <label class="flex items-center"><input type="radio" name="discount" value="all" checked class="w-5 h-5 text-pink-600"> <span class="ml-3">All Products</span></label>
+              <label class="flex items-center"><input type="radio" name="discount" value="10" class="w-5 h-5 text-pink-600"> <span class="ml-3">10% or more</span></label>
+              <label class="flex items-center"><input type="radio" name="discount" value="25" class="w-5 h-5 text-pink-600"> <span class="ml-3">25% or more</span></label>
+              <label class="flex items-center"><input type="radio" name="discount" value="50" class="w-5 h-5 text-pink-600"> <span class="ml-3">50% or more</span></label>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-[#1581BF] hover:bg-[#1C6EA4] text-white font-bold py-2 rounded-xl transition">
+            Apply Filters
+          </button>
+           <button type="button" id="resetFiltersBtn" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 rounded-xl border border-gray-200 transition">
+        Reset Filters
+      </button>
+        </form>
+      </aside>
+
+      <!-- ==================== MAIN CONTENT ==================== -->
+      <main class="flex-1">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">All Baby Products</h2>
+            <p id="resultsCount" class="text-gray-600 mt-2">Loading...</p>
+          </div>
+          
+          <select id="sortSelect" class="mt-4 md:mt-0 border rounded-xl px-4 py-3 bg-gray-100 text-sm font-medium">
+            <option value="default">Sort: Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Rating</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
+
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Skeleton loading cards (12 items) -->
+          <div class="skeleton-card bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="skeleton skeleton-img"></div>
+            <div class="p-4">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-price mt-2"></div>
+            </div>
+          </div>
+          <!-- Repeat 11 more skeleton cards -->
+        </div>
+        <div id="pagination" class="flex justify-center mt-12 gap-3"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MOBILE BOTTOM BAR ==================== -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3 flex gap-4 z-50 lg:hidden shadow-2xl">
+    <button id="openSortSheet" class="flex-1 bg-[#6FA4AF] text-white font-bold py-2 rounded-xl">Sort</button>
+    <button id="openFilterSheet" class="flex-1 bg-[#6FA4AF] text-white font-bold py-2 rounded-xl">Filters</button>
+  </div>
+
+  <!-- ==================== MOBILE FILTER SHEET ==================== -->
+  <div id="filterSheet" class="fixed inset-x-0 bottom-0 bg-gray-100 rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto z-50 translate-y-full transition-transform duration-300">
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+      <h3 class="text-xl font-bold">Filters</h3>
+      <button id="closeFilterSheet" class="text-2xl">X</button>
+    </div>
+    <div class="p-6 space-y-8">
+      <!-- Categories -->
+      <div class="border-b pb-6">
+        <h4 class="font-bold text-lg mb-4">Categories</h4>
+        <div class="space-y-3">
+          <label class="flex items-center"><input type="radio" name="mobileCategory" value="all" checked class="w-5 h-5 text-pink-600"> <span class="ml-3">All Categories</span></label>
+          <label class="flex items-center"><input type="radio" name="mobileCategory" value="Bath & Body" class="w-5 h-5 text-pink-600"> <span class="ml-3">Bath & Body</span></label>
+          <label class="flex items-center"><input type="radio" name="mobileCategory" value="Diapers & Hygiene" class="w-5 h-5 text-pink-600"> <span class="ml-3">Diapers & Hygiene</span></label>
+          <label class="flex items-center"><input type="radio" name="mobileCategory" value="Feeding & Nutrition" class="w-5 h-5 text-pink-600"> <span class="ml-3">Feeding & Nutritions</span></label>
+          <label class="flex items-center"><input type="radio" name="mobileCategory" value="Gift Hampers" class="w-5 h-5 text-pink-600"> <span class="ml-3">Gift Hampers</span></label>
+        </div>
+      </div>
+
+      <!-- Price Slider -->
+      <div class="price-slider-container">
+        <h4 class="font-bold text-lg mb-4">Price Range</h4>
+        <div class="slider-wrapper">
+          <div class="slider-fill" id="mobileFill"></div>
+          <input type="range" min="0" max="10000" value="0" id="mobileMinThumb">
+          <input type="range" min="0" max="10000" value="10000" id="mobileMaxThumb">
+        </div>
+        <div class="price-values text-sm">
+          <span id="mobileMinValue">₹0</span>
+          <span id="mobileMaxValue">₹10,000</span>
+        </div>
+      </div>
+
+      <!-- Brands & Discount in Mobile -->
+      <div class="space-y-6">
+        <div>
+          <h4 class="font-bold text-lg mb-4">Brands</h4>
+          <div class="space-y-3">
+            <label class="flex items-center"><input type="radio" name="mobileBrand" value="all" checked class="w-5 h-5 text-pink-600"> <span class="ml-3">All Brands</span></label>
+            <!-- <label class="flex items-center"><input type="radio" name="mobileBrand" value="BabyHug" class="w-5 h-5 text-pink-600"> <span class="ml-3">BabyHug</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileBrand" value="Pampers" class="w-5 h-5 text-pink-600"> <span class="ml-3">Pampers</span></label> -->
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-lg mb-4">Discount</h4>
+          <div class="space-y-3">
+            <label class="flex items-center"><input type="radio" name="mobileDiscount" value="all" checked class="w-5 h-5 text-pink-600"> <span class="ml-3">All</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileDiscount" value="10" class="w-5 h-5 text-pink-600"> <span class="ml-3">10%+</span></label>
+            <label class="flex items-center"><input type="radio" name="mobileDiscount" value="25" class="w-5 h-5 text-pink-600"> <span class="ml-3">25%+</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-4 pt-6">
+        <button id="clearMobileFilters" class="flex-1 border-2 border-pink-600 text-pink-600 py-4 rounded-xl font-bold">Clear All</button>
+        <button id="applyMobileFilters" class="flex-1 bg-pink-600 text-white py-4 rounded-xl font-bold">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MOBILE SORT SHEET ==================== -->
+  <div id="sortSheet" class="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 translate-y-full transition-transform">
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+      <h3 class="text-xl font-bold">Sort By</h3>
+      <button id="closeSortSheet" class="text-2xl">X</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="default" checked class="w-5 h-5 text-pink-600"> <span class="ml-4 font-medium">Featured</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="price-low" class="w-5 h-5 text-pink-600"> <span class="ml-4 font-medium">Price: Low to High</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="price-high" class="w-5 h-5 text-pink-600"> <span class="ml-4 font-medium">Price: High to Low</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="rating" class="w-5 h-5 text-pink-600"> <span class="ml-4 font-medium">Customer Rating</span></label>
+      <label class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer"><input type="radio" name="mobileSort" value="newest" class="w-5 h-5 text-pink-600"> <span class="ml-4 font-medium">Newest First</span></label>
+    </div>
+    <div class="p-4 bg-white border-t">
+      <button id="applySortBtn" class="w-full bg-pink-600 text-white font-bold py-4 rounded-xl">Apply Sort</button>
+    </div>
+  </div>
+
+  <div id="mobileSheetBackdrop" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+  <div id="footer-placeholder"></div>
+
+  <script>
+    function loadHeader() {
+      fetch('/Header/header.html')
+        .then(r => { if (!r.ok) throw r; return r.text(); })
+        .then(html => {
+          document.getElementById('header-placeholder').innerHTML = html;
+          const script = document.createElement('script');
+        //   script.src = '/Header/header.js?v=1.0.9';
+        script.src = '/Header/header.js?v=1.1.3';  // ← Absolute + cache bust
+          script.onload = () => console.log('Header JS loaded');
+          document.body.appendChild(script);
+        })
+        .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+      fetch('/Footer/footer.html')
+        .then(r => { if (!r.ok) throw r; return r.text(); })
+        .then(html => {
+          document.getElementById('footer-placeholder').innerHTML = html;
+        })
+        .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHeader();
+      loadFooter();
+    });
+  </script>
+  
+  <!--**************************** refresh to top **************************-->
+  
+  
+<script>
+// ===== SCROLL TO TOP ON PAGE REFRESH =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
+    // Handle browser back/forward navigation
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.scrollTo(0, 0);
+        }
+    };
+    
+    // Also scroll to top on page load (redundancy for safety)
+    window.onload = function() {
+        setTimeout(function() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }, 0);
+    };
+});
+
+// Force scroll to top even before DOM is fully loaded
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+} else {
+    window.onbeforeunload = function() {
+        window.scrollTo(0, 0);
+    };
+}
+</script>
+
+  <script src="../cart-wishlist-system.js" defer></script>
+  <script src="./baby.js?v=1.1.2" defer></script>
+</body>
+</html>

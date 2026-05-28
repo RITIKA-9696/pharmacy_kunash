@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pharmacy- Contact Us Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Sidebar Styles */
+        #sidebar {
+            transition: transform 0.3s ease;
+            width: 16rem;
+        }
+
+        #sidebar {
+            transform: translateX(-100%);
+        }
+
+        @media (min-width: 768px) {
+            #sidebar {
+                transform: translateX(0);
+            }
+        }
+
+        #sidebar.translate-x-0 {
+            transform: translateX(0);
+        }
+
+        #sidebar.collapsed {
+            width: 4rem;
+        }
+
+        #sidebar.collapsed .nav-text,
+        #sidebar.collapsed .logo-text,
+        #sidebar.collapsed .sidebar-logo-expanded {
+            display: none !important;
+        }
+
+        #sidebar.collapsed .nav-icon {
+            margin-right: 0 !important;
+            justify-content: center !important;
+        }
+
+        #sidebar.collapsed nav a {
+            justify-content: center !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-container {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        /* Info Section */
+        .info-section {
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .info-section h3 {
+            font-weight: 600;
+            font-size: 18px;
+            color: #111827;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .info-item {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            align-items: start;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #6b7280;
+            text-align: right;
+        }
+
+        .info-value {
+            color: #374151;
+            word-break: break-word;
+        }
+
+        /* Message Styles */
+        .message-content {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-buttons button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .action-buttons button:hover {
+            background-color: #f3f4f6;
+        }
+
+        .action-buttons .view-btn {
+            color: #3b82f6;
+        }
+
+        .action-buttons .delete-btn {
+            color: #ef4444;
+        }
+
+        /* Table Styles */
+        .dataTables_wrapper {
+            font-size: 14px;
+        }
+
+        #contactTable {
+            width: 100% !important;
+        }
+
+        #contactTable thead th {
+            font-weight: 600;
+            background-color: #f9fafb;
+            padding: 12px !important;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        #contactTable tbody td {
+            padding: 12px !important;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
+        }
+
+        #contactTable tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .message-preview {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .modal-container {
+                width: 95%;
+                padding: 16px;
+            }
+            
+            .info-item {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            
+            .info-label {
+                text-align: left;
+                font-weight: 600;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .action-buttons button {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        /* Success Popup */
+        .popup-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-container i {
+            font-size: 48px;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+
+        .popup-container p {
+            margin-bottom: 24px;
+            color: #374151;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .popup-container button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
+            transition: background-color 0.2s;
+        }
+
+        .popup-container button:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-blue-600 text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static md:translate-x-0 -translate-x-full transition-transform duration-300">
+        <div class="p-4 border-b border-blue-500 sticky top-0 bg-blue-600 z-10 flex justify-between items-center">
+            <button id="toggle-sidebar-logo" class="flex items-center">
+                <img src="../Images/logo.png" alt="PharmaCare Logo" class="w-full sidebar-logo-expanded">
+                <i id="sidebar-arrow" class="fas fa-chevron-right ml-2 transition-transform duration-300 sidebar-arrow"></i>
+            </button>
+            <button id="close-sidebar" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4">
+            <div class="px-4 py-2 text-sm text-blue-200 uppercase nav-text">Main</div>
+            <a href="../Dashboard/dashboard.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-home mr-3 nav-icon text-blue-200"></i><span class="nav-text">Dashboard</span></a>
+            <a href="../Inventory/inventory.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-pills mr-3 nav-icon text-blue-200"></i><span class="nav-text">Inventory Management</span></a>
+            <a href="../Prescriptions/prescription.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-prescription mr-3 nav-icon text-blue-200"></i><span class="nav-text">Prescriptions</span></a>
+            <a href="../Customer/customer management.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-users mr-3 nav-icon text-blue-200"></i><span class="nav-text">Customers Management</span></a>
+            <a href="../Order/ordermanagment.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-shopping-cart mr-3 nav-icon text-blue-200"></i><span class="nav-text">Order Management</span></a>
+            <a href="../Product Management/product.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Product / Category Management</span></a>
+            <a href="../Mother and Baby Care/motherbabycare.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-box mr-3 nav-icon text-blue-200"></i><span class="nav-text">Mother & Baby Care Product Management</span></a>
+            <a href="../Banner/banner.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-image mr-3 nav-icon text-blue-200"></i><span class="nav-text">Banner Management</span></a>
+            <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Messages</div>
+            <a href="../Contact/contact.html" class="flex items-center py-3 px-4 bg-blue-700"><i class="fas fa-envelope mr-3 nav-icon text-blue-200"></i><span class="nav-text">Contact Us Management</span></a>
+            
+            <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Reports</div>
+            <a href="../Reports/report.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors"><i class="fas fa-file-invoice mr-3 nav-icon text-blue-200"></i><span class="nav-text">Reports</span></a>
+            
+            <div class="px-4 py-2 mt-4 text-sm text-blue-200 uppercase nav-text">Admin</div>
+            <a href="../Admin/admin.html" class="flex items-center py-3 px-4 hover:bg-blue-700 transition-colors">
+                <i class="fas fa-user-shield mr-3 nav-icon"></i><span class="nav-text">Admin Management</span>
+            </a>
+            
+            <button id="logoutBtn" class="flex items-center w-full py-3 px-4 hover:bg-blue-700 text-left">
+                <i class="fas fa-sign-out-alt mr-3 nav-icon"></i><span class="nav-text">Logout</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white shadow sticky top-0 z-10">
+            <div class="flex justify-between items-center p-4">
+                <div class="flex items-center">
+                    <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+                    <button id="toggle-sidebar-desktop" class="text-gray-500 mr-4 hidden md:block"><i class="fas fa-bars"></i></button>
+                    <h1 class="text-xl font-semibold text-gray-800">Contact Us Management</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input id="searchInput" type="text" placeholder="Search messages..." class="border rounded-full py-2 px-4 w-64 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+                        <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+                    </div>
+                    <button id="refreshBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Contact Content -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Total Messages</p>
+                            <h2 id="totalMessages" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-envelope text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Today</p>
+                            <h2 id="todayMessages" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-calendar-day text-yellow-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-md p-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">This Week</p>
+                            <h2 id="weekMessages" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-calendar-week text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-purple-500 shadow-md p-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">This Month</p>
+                            <h2 id="monthMessages" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-calendar-alt text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact List -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Contact Messages</h2>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table id="contactTable" class="w-full display">
+                        <thead>
+                            <tr>
+                                <th class="text-left py-3 px-4">ID</th>
+                                <th class="text-left py-3 px-4">NAME</th>
+                                <th class="text-left py-3 px-4">EMAIL</th>
+                                <th class="text-left py-3 px-4">PHONE</th>
+                                <th class="text-left py-3 px-4">MESSAGE</th>
+                                <th class="text-left py-3 px-4">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Contact Detail Modal -->
+            <div id="contactDetailModal" class="modal">
+                <div class="modal-container" style="max-width: 700px;">
+                    <span class="close-btn" id="closeDetailModal">&times;</span>
+                    <div class="profile-header mb-3">
+                        <h2 class="text-lg font-semibold text-gray-800">Contact Message Details</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="info-section">
+                            <h3>Contact Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">ID:</span>
+                                <span class="info-value" id="detail-id"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Name:</span>
+                                <span class="info-value" id="detail-name"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value" id="detail-email"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Phone:</span>
+                                <span class="info-value" id="detail-phone"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h3>Message</h3>
+                            <div class="message-content" id="detail-message"></div>
+                        </div>
+                        
+                        <div class="flex gap-3 mt-4">
+                            <button id="deleteBtn" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition">
+                                <i class="fas fa-trash mr-2"></i>Delete Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Popup -->
+            <div id="successPopup" class="modal">
+                <div class="popup-container">
+                    <i id="popupIcon" class="fas fa-check-circle"></i>
+                    <p id="successMessage"></p>
+                    <button id="closeSuccessPopup">OK</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- JavaScript Code -->
+    <script>
+    // API Base URL - Updated to match your backend
+    const API_BASE_URL = 'http://localhost:8083/api/contact';
+
+    // Global Variables
+    let currentContactId = null;
+    let contactsData = [];
+    let dataTableInstance = null;
+
+    // Initialize DataTables
+    function initializeDataTable() {
+        if ($.fn.DataTable.isDataTable('#contactTable')) {
+            dataTableInstance.destroy();
+        }
+        
+        dataTableInstance = $('#contactTable').DataTable({
+            paging: true,
+            pageLength: 10,
+            searching: true,
+            info: true,
+            ordering: true,
+            order: [[0, 'desc']], // Sort by ID descending (newest first)
+            language: {
+                emptyTable: "No contact messages available",
+                search: "Search:",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
+                }
+            }
+        });
+    }
+
+    // Load contacts from API
+    async function loadContacts() {
+        try {
+            showSuccessPopup('Loading contact messages...', 'info');
+            
+            const response = await fetch(`${API_BASE_URL}/get-all-contact-us`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            contactsData = await response.json();
+            
+            // Add date for filtering (since your backend doesn't have date field)
+            const today = new Date();
+            contactsData.forEach(contact => {
+                // Add a random date for demo purposes (you should add date field to your entity)
+                if (!contact.date) {
+                    const daysAgo = Math.floor(Math.random() * 30); // Random date within last 30 days
+                    const date = new Date();
+                    date.setDate(today.getDate() - daysAgo);
+                    contact.date = date.toISOString().split('T')[0];
+                }
+            });
+            
+            applyFilters();
+            updateStats();
+            
+        } catch (error) {
+            console.error('Error loading contacts:', error);
+            contactsData = [];
+            applyFilters();
+            updateStats();
+            showSuccessPopup('Failed to load contacts. Please check your backend connection.', 'error');
+        }
+    }
+
+    // Apply filters and render contacts
+    function applyFilters() {
+        const searchText = document.getElementById('searchInput').value.toLowerCase();
+
+        let filteredContacts = [...contactsData];
+
+        // Apply search filter
+        if (searchText) {
+            filteredContacts = filteredContacts.filter(contact =>
+                (contact.name && contact.name.toLowerCase().includes(searchText)) ||
+                (contact.email && contact.email.toLowerCase().includes(searchText)) ||
+                (contact.phone && contact.phone && contact.phone.toString().includes(searchText)) ||
+                (contact.message && contact.message.toLowerCase().includes(searchText)) ||
+                (contact.formId && contact.formId.toString().includes(searchText))
+            );
+        }
+
+        renderContacts(filteredContacts);
+    }
+
+    // Render contacts to table
+    function renderContacts(contacts = contactsData) {
+        const tbody = document.getElementById('contactTableBody');
+        tbody.innerHTML = '';
+
+        if (contacts.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td colspan="6" class="py-8 text-center text-gray-500">
+                    <i class="fas fa-envelope text-4xl mb-3 text-gray-300"></i>
+                    <p class="text-lg">No contact messages found</p>
+                    <p class="text-sm">User messages will appear here when submitted</p>
+                </td>
+            `;
+            tbody.appendChild(row);
+            
+            // Reinitialize DataTable
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#contactTable')) {
+                    dataTableInstance.clear();
+                    dataTableInstance.draw();
+                }
+            }, 100);
+            
+            return;
+        }
+
+        // Sort by ID (newest first)
+        contacts.sort((a, b) => b.formId - a.formId);
+
+        contacts.forEach(contact => {
+            const row = document.createElement('tr');
+            
+            // ID
+            const idCell = document.createElement('td');
+            idCell.className = 'py-3 px-4 font-medium';
+            idCell.textContent = contact.formId || 'N/A';
+            row.appendChild(idCell);
+
+            // Name
+            const nameCell = document.createElement('td');
+            nameCell.className = 'py-3 px-4';
+            nameCell.textContent = contact.name || 'N/A';
+            row.appendChild(nameCell);
+
+            // Email
+            const emailCell = document.createElement('td');
+            emailCell.className = 'py-3 px-4';
+            const emailLink = document.createElement('a');
+            emailLink.href = `mailto:${contact.email}`;
+            emailLink.textContent = contact.email || 'N/A';
+            emailLink.className = 'text-blue-600 hover:text-blue-800';
+            emailCell.appendChild(emailLink);
+            row.appendChild(emailCell);
+
+            // Phone
+            const phoneCell = document.createElement('td');
+            phoneCell.className = 'py-3 px-4';
+            if (contact.phone) {
+                const phoneLink = document.createElement('a');
+                phoneLink.href = `tel:${contact.phone}`;
+                phoneLink.textContent = contact.phone;
+                phoneLink.className = 'text-blue-600 hover:text-blue-800';
+                phoneCell.appendChild(phoneLink);
+            } else {
+                phoneCell.textContent = 'N/A';
+                phoneCell.className = 'py-3 px-4 text-gray-500';
+            }
+            row.appendChild(phoneCell);
+
+            // Message
+            const messageCell = document.createElement('td');
+            messageCell.className = 'py-3 px-4';
+            const messagePreview = document.createElement('div');
+            messagePreview.className = 'message-preview';
+            messagePreview.textContent = contact.message ? 
+                (contact.message.length > 50 ? contact.message.substring(0, 50) + '...' : contact.message) : 
+                'N/A';
+            messageCell.appendChild(messagePreview);
+            row.appendChild(messageCell);
+
+            // Actions
+            const actionsCell = document.createElement('td');
+            actionsCell.className = 'py-3 px-4';
+            actionsCell.innerHTML = `
+                <div class="action-buttons">
+                    <button class="view-btn" data-id="${contact.formId}" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="delete-btn" data-id="${contact.formId}" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            row.appendChild(actionsCell);
+
+            tbody.appendChild(row);
+        });
+
+        // Reinitialize DataTable
+        setTimeout(() => {
+            if ($.fn.DataTable.isDataTable('#contactTable')) {
+                dataTableInstance.clear();
+                dataTableInstance.rows.add($('#contactTableBody tr'));
+                dataTableInstance.draw();
+            }
+        }, 100);
+    }
+
+    // Format date
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        } catch (error) {
+            return dateString;
+        }
+    }
+
+    // Update stats
+    function updateStats() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayDate = new Date();
+        
+        // Get start of week (Monday)
+        const startOfWeek = new Date(todayDate);
+        startOfWeek.setDate(todayDate.getDate() - todayDate.getDay() + 1);
+        const startOfWeekStr = startOfWeek.toISOString().split('T')[0];
+        
+        // Get start of month
+        const startOfMonth = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+        const startOfMonthStr = startOfMonth.toISOString().split('T')[0];
+        
+        const total = contactsData.length;
+        const todayCount = contactsData.filter(c => c.date === today).length;
+        const weekCount = contactsData.filter(c => c.date >= startOfWeekStr).length;
+        const monthCount = contactsData.filter(c => c.date >= startOfMonthStr).length;
+
+        document.getElementById('totalMessages').textContent = total;
+        document.getElementById('todayMessages').textContent = todayCount;
+        document.getElementById('weekMessages').textContent = weekCount;
+        document.getElementById('monthMessages').textContent = monthCount;
+    }
+
+    // Show contact details
+    function showContactDetails(contact) {
+        currentContactId = contact.formId;
+        
+        const modal = document.getElementById('contactDetailModal');
+        
+        document.getElementById('detail-id').textContent = contact.formId || 'N/A';
+        document.getElementById('detail-name').textContent = contact.name || 'N/A';
+        document.getElementById('detail-email').textContent = contact.email || 'N/A';
+        document.getElementById('detail-phone').textContent = contact.phone || 'N/A';
+        document.getElementById('detail-message').textContent = contact.message || 'N/A';
+        
+        modal.style.display = 'flex';
+    }
+
+    // Delete contact
+    async function deleteContact(contactId) {
+        if (!confirm('Are you sure you want to delete this contact message?')) {
+            return;
+        }
+
+        try {
+            showSuccessPopup('Deleting contact...', 'info');
+            
+            const response = await fetch(`${API_BASE_URL}/delete-by-formId/${contactId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete contact: ${response.status}`);
+            }
+
+            // Remove from local data
+            contactsData = contactsData.filter(c => c.formId != contactId);
+            
+            showSuccessPopup('Contact deleted successfully!');
+            await loadContacts();
+            
+            // Close modal if open
+            document.getElementById('contactDetailModal').style.display = 'none';
+            
+        } catch (error) {
+            console.error('Error deleting contact:', error);
+            showSuccessPopup('Failed to delete contact. Please try again.', 'error');
+        }
+    }
+
+    // Show success/error popup
+    function showSuccessPopup(message, type = 'success') {
+        const popup = document.getElementById('successPopup');
+        const messageEl = document.getElementById('successMessage');
+        const icon = document.getElementById('popupIcon');
+        
+        messageEl.textContent = message;
+        icon.style.color = type === 'success' ? '#10b981' : 
+                          type === 'error' ? '#dc2626' : 
+                          type === 'info' ? '#3b82f6' : '#10b981';
+        icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                        type === 'error' ? 'fas fa-exclamation-circle' : 
+                        type === 'info' ? 'fas fa-info-circle' : 'fas fa-check-circle';
+        
+        popup.style.display = 'flex';
+        
+        setTimeout(() => {
+            popup.style.display = 'none';
+        }, type === 'error' ? 5000 : 3000);
+    }
+
+    // Sidebar functions
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        
+        if (window.innerWidth < 768) {
+            sidebar.classList.toggle('translate-x-0');
+        } else {
+            sidebar.classList.toggle('collapsed');
+            const sidebarArrow = document.getElementById('sidebar-arrow');
+            if (sidebar.classList.contains('collapsed')) {
+                sidebarArrow.classList.remove('fa-chevron-left');
+                sidebarArrow.classList.add('fa-chevron-right');
+            } else {
+                sidebarArrow.classList.remove('fa-chevron-right');
+                sidebarArrow.classList.add('fa-chevron-left');
+            }
+        }
+    }
+
+    function initializeSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarArrow = document.getElementById('sidebar-arrow');
+        
+        if (window.innerWidth >= 768) {
+            sidebar.classList.remove('collapsed');
+            sidebarArrow.classList.remove('fa-chevron-right');
+            sidebarArrow.classList.add('fa-chevron-left');
+        } else {
+            sidebar.classList.remove('translate-x-0');
+        }
+    }
+
+    // Initialize everything when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize sidebar
+        initializeSidebar();
+        
+        // Setup sidebar toggle buttons
+        document.getElementById('toggle-sidebar-logo').addEventListener('click', toggleSidebar);
+        document.getElementById('close-sidebar').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('translate-x-0');
+        });
+        document.getElementById('toggle-sidebar-mobile').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('translate-x-0');
+        });
+        document.getElementById('toggle-sidebar-desktop').addEventListener('click', toggleSidebar);
+
+        // Modal close buttons
+        document.getElementById('closeDetailModal').addEventListener('click', () => {
+            document.getElementById('contactDetailModal').style.display = 'none';
+            currentContactId = null;
+        });
+        document.getElementById('closeSuccessPopup').addEventListener('click', () => {
+            document.getElementById('successPopup').style.display = 'none';
+        });
+
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', loadContacts);
+
+        // Delete button in modal
+        document.getElementById('deleteBtn').addEventListener('click', () => {
+            if (currentContactId) {
+                deleteContact(currentContactId);
+            }
+        });
+
+        // Search input event
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            const modals = ['contactDetailModal', 'successPopup'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    if (modalId === 'contactDetailModal') {
+                        currentContactId = null;
+                    }
+                }
+            });
+        });
+
+        // Add event delegation for table action buttons
+        document.getElementById('contactTableBody').addEventListener('click', async (e) => {
+            const target = e.target.closest('button');
+            if (!target) return;
+            
+            const contactId = target.getAttribute('data-id');
+            if (!contactId) return;
+            
+            const contact = contactsData.find(c => c.formId == contactId);
+            if (!contact) return;
+            
+            if (target.classList.contains('view-btn')) {
+                showContactDetails(contact);
+            } 
+            else if (target.classList.contains('delete-btn')) {
+                if (confirm('Are you sure you want to delete this contact message?')) {
+                    await deleteContact(contact.formId);
+                }
+            }
+        });
+
+        // Initialize DataTable and load contacts
+        initializeDataTable();
+        loadContacts();
+    });
+</script>
+<script src="/auth.js?v=1.0.1"></script>
+  <script>
+    // This will redirect to login if session is missing or expired
+    Auth.requireAuth();
+
+    // Optional: start background timer to warn on expiration
+    Auth.startSessionTimer();
+
+    // Example: display admin name
+    document.addEventListener("DOMContentLoaded", () => {
+        const admin = Auth.getCurrentAdmin();
+        if (admin) {
+            console.log("Logged in as:", admin.firstName + " " + admin.lastName);
+            // e.g., document.getElementById('adminName').textContent = admin.firstName;
+        }
+    });
+</script>
+<script src="/orderBadge.js?v=1.0.0"></script>
+</body>
+</html>

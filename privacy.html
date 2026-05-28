@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <link rel="apple-touch-icon" sizes="180x180" href="favicon_io-GN/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io-GN/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io-GN/favicon-16x16.png">
+    <link rel="manifest" href="favicon_io-GN/site.webmanifest">
+  <title>Pharmacy Kunash - Privacy Policy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./Footer/footer.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+<!-- header -->
+ <div id="header-placeholder"></div>
+
+  <main class="max-w-4xl mx-auto px-6 py-12">
+    <h1 class="text-4xl font-bold text-center mb-8 text-pink-700">Privacy Policy</h1>
+    
+    <div class="bg-white rounded-xl shadow-lg p-8 md:p-12 space-y-8 text-gray-700 leading-relaxed">
+      <p>At Pharmacy Kunash, we value your privacy and are committed to protecting your personal and health information.</p>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-pink-600 mb-4">Information We Collect</h2>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>Name, address, phone number, and email</li>
+          <li>Prescription details and medical history (only when uploaded)</li>
+          <li>Payment and transaction information</li>
+          <li>IP address, browser type, and device information</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-pink-600 mb-4">How We Use Your Information</h2>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>To process and deliver your medicine orders</li>
+          <li>To verify prescriptions with registered pharmacists</li>
+          <li>To communicate order status and updates</li>
+          <li>To improve our services and prevent fraud</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-pink-600 mb-4">Data Security</h2>
+        <p>We use SSL encryption and comply with Indian pharmacy laws (Drugs and Cosmetics Act, 1940). Your prescriptions are stored securely and deleted after 2 years.</p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-pink-600 mb-4">Third-Party Disclosure</h2>
+        <p>We do NOT sell your data. We may share information only with:</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>Licensed pharmacists for prescription verification</li>
+          <li>Delivery partners (name, address, phone only)</li>
+          <li>Payment gateways (secure, encrypted)</li>
+        </ul>
+      </section>
+
+      <p class="text-sm text-gray-500 mt-10">Last Updated: December 2025</p>
+    </div>
+  </main>
+
+  <!-- footer -->
+   <div id="footer-placeholder"></div>
+
+    <script>
+    function loadHeader() {
+        fetch('/Header/header.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+                const script = document.createElement('script');
+                 script.src = '/Header/header.js?v=1.1.3'; 
+                script.onload = () => console.log('Header JS loaded');
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+        fetch('/Footer/footer.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHeader();
+        loadFooter();
+        // ... rest of your code
+    });
+</script>
+
+
+<script>
+// ===== SCROLL TO TOP ON PAGE REFRESH =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
+    // Handle browser back/forward navigation
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.scrollTo(0, 0);
+        }
+    };
+    
+    // Also scroll to top on page load (redundancy for safety)
+    window.onload = function() {
+        setTimeout(function() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }, 0);
+    };
+});
+
+// Force scroll to top even before DOM is fully loaded
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+} else {
+    window.onbeforeunload = function() {
+        window.scrollTo(0, 0);
+    };
+}
+</script>
+</body>
+</html>

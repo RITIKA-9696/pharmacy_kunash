@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmacy Kunash</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+
+  <style>
+    /* RESET AND BASE STYLES */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    /* MOVING DISCLAIMER - TOP BAR */
+    .disclaimer-bar {
+      background: white;
+      color: #687FE5;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      height: 28px;
+      display: flex;
+      align-items: center;
+    }
+
+    .disclaimer-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll-left 25s linear infinite;
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .disclaimer-text:hover {
+      animation-play-state: paused;
+    }
+
+    /* FREE DELIVERY RIBBON */
+    .delivery-ribbon {
+      position: fixed;
+      top: 28px;
+      /* Below disclaimer */
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      background: linear-gradient(135deg, #36C2CE 0%, #2aa9b4 100%);
+      color: white;
+      padding: 6px 0;
+      box-shadow: 0 3px 15px rgba(54, 194, 206, 0.3);
+      border-bottom: 2px solid white;
+      overflow: hidden;
+      height: 36px;
+      display: flex;
+      align-items: center;
+    }
+
+    .delivery-track {
+      display: flex;
+      width: max-content;
+      animation: scrollDelivery 40s linear infinite;
+      white-space: nowrap;
+      padding: 0 20px;
+    }
+
+    .delivery-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 25px;
+      flex-shrink: 0;
+    }
+
+    .delivery-icon {
+      font-size: 1rem;
+      animation: bounceTruck 2s ease-in-out infinite;
+    }
+
+    .delivery-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Animation for continuous scrolling */
+    @keyframes scrollDelivery {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Animation for truck icon bounce */
+    @keyframes bounceTruck {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      25% {
+        transform: translateY(-2px) rotate(-5deg);
+      }
+
+      75% {
+        transform: translateY(1px) rotate(5deg);
+      }
+    }
+
+    /* Pause animation on hover */
+    .delivery-ribbon:hover .delivery-track {
+      animation-play-state: paused;
+    }
+
+    .delivery-ribbon:hover .delivery-icon {
+      animation-play-state: paused;
+    }
+
+    /* FIXED HEADER - BASE STYLES */
+    .fixed-header {
+      position: fixed;
+      top: 64px;
+      /* 28px (disclaimer) + 36px (ribbon) */
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+    }
+
+    /* Add padding to body to prevent content from hiding under fixed elements */
+    body {
+      padding-top: 130px !important;
+      /* 28 + 36 + 66 (header approx height) */
+    }
+
+    /* ==============================================
+       COMPREHENSIVE MOBILE HEADER FIXES
+       ============================================== */
+
+    /* Extra Large Mobile & Small Tablets (601px - 767px) */
+    @media (min-width: 601px) and (max-width: 767px) {
+      .disclaimer-bar {
+        height: 26px;
+        font-size: 11px;
+        padding: 7px 0;
+      }
+
+      .delivery-ribbon {
+        top: 26px;
+        height: 34px;
+        padding: 7px 0;
+      }
+
+      .fixed-header {
+        top: 60px;
+        /* 26 + 34 */
+      }
+
+      body {
+        padding-top: 126px !important;
+      }
+
+      /* Header content adjustments */
+      header .max-w-7xl.mx-auto.px-4 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 1.25rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a,
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 button {
+        font-size: 1.1rem !important;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 2.5rem !important;
+      }
+
+      /* Mobile menu positioning */
+      #mobile-menu {
+        top: 60px !important;
+        height: calc(100vh - 60px);
+      }
+    }
+
+    /* Standard Mobile Devices (481px - 600px) */
+    @media (min-width: 481px) and (max-width: 600px) {
+      .disclaimer-bar {
+        height: 24px;
+        font-size: 10px;
+        padding: 6px 0;
+      }
+
+      .delivery-ribbon {
+        top: 24px;
+        height: 32px;
+        padding: 6px 0;
+      }
+
+      .fixed-header {
+        top: 56px;
+        /* 24 + 32 */
+        height: 66px;
+      }
+
+      body {
+        padding-top: 122px !important;
+      }
+
+      /* Header content tight spacing */
+      header .max-w-7xl.mx-auto.px-4 {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 1rem !important;
+        padding-right: 0.5rem;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 2.25rem !important;
+      }
+
+      /* Mobile menu positioning - FIXED */
+      #mobile-menu {
+        top: 56px !important;
+        height: calc(100vh - 56px);
+      }
+    }
+
+    /* Small Mobile Devices (426px - 480px) */
+    @media (min-width: 426px) and (max-width: 480px) {
+      .disclaimer-bar {
+        height: 23px;
+        font-size: 9.5px;
+        padding: 5.5px 0;
+      }
+
+      .delivery-ribbon {
+        top: 23px;
+        height: 30px;
+        padding: 5.5px 0;
+      }
+
+      .fixed-header {
+        top: 53px;
+        /* 23 + 30 */
+        height: 64px;
+      }
+
+      body {
+        padding-top: 117px !important;
+      }
+
+      /* Compact header layout */
+      header .max-w-7xl.mx-auto.px-4 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 0.875rem !important;
+        padding-right: 0.25rem;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 2rem !important;
+      }
+
+      .flex.justify-between.items-center.py-1 {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+      }
+
+      /* Mobile menu positioning - FIXED */
+      #mobile-menu {
+        top: 53px !important;
+        height: calc(100vh - 53px);
+      }
+    }
+
+    /* iPhone 12/13/14 Pro & Similar (391px - 425px) */
+    @media (min-width: 391px) and (max-width: 425px) {
+      .disclaimer-bar {
+        height: 22px;
+        font-size: 9px;
+        padding: 5px 0;
+      }
+
+      .delivery-ribbon {
+        top: 22px;
+        height: 29px;
+        padding: 5px 0;
+      }
+
+      .fixed-header {
+        top: 51px;
+        /* 22 + 29 */
+        height: 62px;
+      }
+
+      body {
+        padding-top: 113px !important;
+      }
+
+      /* Ultra compact header */
+      header .max-w-7xl.mx-auto.px-4 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 0.75rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a,
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 button {
+        font-size: 1rem !important;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 1.875rem !important;
+      }
+
+      .flex.justify-between.items-center.py-1 {
+        padding-top: 0.125rem !important;
+        padding-bottom: 0.125rem !important;
+      }
+
+      /* Mobile menu positioning - FIXED */
+      #mobile-menu {
+        top: 51px !important;
+        height: calc(100vh - 51px);
+      }
+    }
+
+    /* iPhone SE & Small Android (376px - 390px) */
+    @media (min-width: 376px) and (max-width: 390px) {
+      .disclaimer-bar {
+        height: 21px;
+        font-size: 8.5px;
+        padding: 4.5px 0;
+      }
+
+      .delivery-ribbon {
+        top: 21px;
+        height: 28px;
+        padding: 4.5px 0;
+      }
+
+      .fixed-header {
+        top: 49px;
+        /* 21 + 28 */
+        height: 60px;
+      }
+
+      body {
+        padding-top: 109px !important;
+      }
+
+      /* Very tight header spacing */
+      header .max-w-7xl.mx-auto.px-4 {
+        padding-left: 0.375rem !important;
+        padding-right: 0.375rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 0.625rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a,
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 button {
+        font-size: 0.95rem !important;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 1.75rem !important;
+      }
+
+      /* Mobile menu positioning - FIXED */
+      #mobile-menu {
+        top: 49px !important;
+        height: calc(100vh - 49px);
+      }
+    }
+
+    /* iPhone 5/SE & Very Small Devices (361px - 375px) */
+    @media (min-width: 361px) and (max-width: 375px) {
+      .disclaimer-bar {
+        height: 20px;
+        font-size: 8px;
+        padding: 4px 0;
+      }
+
+      .delivery-ribbon {
+        top: 20px;
+        height: 27px;
+        padding: 4px 0;
+      }
+
+      .fixed-header {
+        top: 47px;
+        /* 20 + 27 */
+        height: 58px;
+      }
+
+      body {
+        padding-top: 105px !important;
+      }
+
+      /* Minimal header padding */
+      header .max-w-7xl.mx-auto.px-4 {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 0.5rem !important;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 1.625rem !important;
+      }
+
+      /* Mobile menu positioning - FIXED */
+      #mobile-menu {
+        top: 47px !important;
+        height: calc(100vh - 47px);
+      }
+    }
+
+    /* Extra Small Devices (321px - 360px) */
+    @media (min-width: 321px) and (max-width: 360px) {
+      .disclaimer-bar {
+        height: 19px;
+        font-size: 7.5px;
+        padding: 3.5px 0;
+      }
+
+      .delivery-ribbon {
+        top: 19px;
+        height: 26px;
+        padding: 3.5px 0;
+      }
+
+      .fixed-header {
+        top: 45px;
+        /* 19 + 26 */
+        height: 56px;
+      }
+
+      body {
+        padding-top: 101px !important;
+      }
+
+      /* Extreme compact header */
+      header .max-w-7xl.mx-auto.px-4 {
+        padding-left: 0.125rem !important;
+        padding-right: 0.125rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 0.375rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a,
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 button {
+        font-size: 0.9rem !important;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 1.5rem !important;
+      }
+
+      /* Hide one icon if needed for space */
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a:nth-child(3) {
+        display: none;
+      }
+
+      /* Mobile menu positioning - FIXED */
+      #mobile-menu {
+        top: 45px !important;
+        height: calc(100vh - 45px);
+      }
+    }
+
+    /* Ultra Small Devices (below 320px) */
+    @media (max-width: 320px) {
+      .disclaimer-bar {
+        height: 18px;
+        font-size: 7px;
+        padding: 3px 0;
+      }
+
+      .delivery-ribbon {
+        top: 18px;
+        height: 24px;
+        padding: 3px 0;
+      }
+
+      .fixed-header {
+        top: 42px;
+        /* 18 + 24 */
+        height: 54px;
+      }
+
+      body {
+        padding-top: 96px !important;
+      }
+
+      /* Minimum viable header */
+      header .max-w-7xl.mx-auto.px-4 {
+        position: relative;
+        z-index: 1;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        gap: 0.25rem !important;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a,
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 button {
+        font-size: 0.85rem !important;
+        min-width: 32px;
+        min-height: 32px;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 1.375rem !important;
+      }
+
+      /* Hide less important icons */
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a:nth-child(2),
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 a:nth-child(3) {
+        display: none;
+      }
+
+      #mobile-menu-btn {
+        z-index: 99999 !important;
+        position: relative;
+        pointer-events: auto !important;
+      }
+
+      /* Mobile menu positioning - FIXED */
+      #mobile-menu {
+        top: 42px !important;
+        height: calc(100vh - 42px);
+      }
+    }
+
+    /* ==============================================
+       LANDSCAPE ORIENTATION FIXES
+       ============================================== */
+
+    /* Landscape for all mobile sizes */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .disclaimer-bar {
+        height: 20px;
+        font-size: 9px;
+        padding: 4px 0;
+      }
+
+      .delivery-ribbon {
+        top: 20px;
+        height: 24px;
+        padding: 4px 0;
+      }
+
+      .fixed-header {
+        top: 44px;
+        /* 20 + 24 */
+        height: 50px;
+      }
+
+      body {
+        padding-top: 94px !important;
+      }
+
+      /* Compress header for landscape */
+      .flex.justify-between.items-center.py-1 {
+        padding-top: 0.125rem !important;
+        padding-bottom: 0.125rem !important;
+      }
+
+      .h-10.sm\\:h-12 {
+        height: 1.5rem !important;
+      }
+
+      .flex.lg\\:hidden.items-center.gap-2.text-gray-700 {
+        z-index: 99999 !important;
+        position: relative;
+      }
+
+      /* Mobile menu in landscape */
+      #mobile-menu {
+        top: 44px !important;
+        height: calc(100vh - 44px);
+        max-height: 300px;
+        overflow-y: auto;
+      }
+    }
+
+    /* ==============================================
+       TABLET AND DESKTOP BREAKPOINTS (Existing)
+       ============================================== */
+
+    /* Tablets and small desktops (768px to 1199px) */
+    @media (min-width: 768px) and (max-width: 1199px) {
+      .disclaimer-bar {
+        height: 26px;
+        font-size: 11px;
+      }
+
+      .delivery-ribbon {
+        top: 26px;
+        height: 34px;
+        padding: 7px 0;
+      }
+
+      .delivery-item {
+        gap: 10px;
+        margin: 0 20px;
+      }
+
+      .delivery-icon {
+        font-size: 0.95rem;
+      }
+
+      .delivery-text {
+        font-size: 0.85rem;
+      }
+
+      .delivery-track {
+        animation: scrollDelivery 35s linear infinite;
+      }
+
+      .fixed-header {
+        top: 60px;
+        /* 26 + 34 */
+      }
+
+      body {
+        padding-top: 126px !important;
+      }
+    }
+
+    /* Large desktops (1200px and above) */
+    @media (min-width: 1200px) {
+      .disclaimer-bar {
+        height: 30px;
+        font-size: 13px;
+      }
+
+      .delivery-ribbon {
+        top: 30px;
+        height: 40px;
+        padding: 8px 0;
+      }
+
+      .delivery-item {
+        gap: 15px;
+        margin: 0 30px;
+      }
+
+      .delivery-icon {
+        font-size: 1.1rem;
+      }
+
+      .delivery-text {
+        font-size: 1rem;
+      }
+
+      .delivery-track {
+        animation: scrollDelivery 45s linear infinite;
+      }
+
+      .fixed-header {
+        top: 70px;
+        /* 30 + 40 */
+      }
+
+      body {
+        padding-top: 140px !important;
+      }
+    }
+
+    /* ==============================================
+       ACCESSIBILITY AND OTHER STYLES
+       ============================================== */
+
+    /* For devices with reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .disclaimer-text {
+        animation: none;
+        padding-left: 0;
+        text-align: center;
+        width: 100%;
+      }
+
+      .delivery-track {
+        animation: none;
+        justify-content: center;
+      }
+
+      .delivery-item {
+        margin: 0 10px;
+      }
+
+      .delivery-icon {
+        animation: none;
+      }
+
+      /* Show only 2-3 items instead of scrolling */
+      .delivery-track {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 5px;
+      }
+
+      #mobile-menu {
+        transition: none;
+      }
+    }
+
+    /* High contrast mode */
+    @media (prefers-contrast: high) {
+      .delivery-ribbon {
+        background: #0056b3;
+        border: 2px solid black;
+      }
+
+      .delivery-text {
+        text-shadow: 2px 2px 0 #000;
+      }
+
+      .fixed-header {
+        border-bottom: 2px solid black;
+      }
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      .delivery-ribbon {
+        background: linear-gradient(135deg, #1e6f7a 0%, #155e67 100%);
+        border-color: #0f4c57;
+      }
+
+      .fixed-header {
+        background: #1f2937;
+        border-color: #374151;
+      }
+    }
+
+    /* OTHER STYLES */
+
+    /* Fix for pincode modal button movement */
+    #check-pincode-btn {
+      transform: translateY(-50%);
+      transition: all 0.4s ease;
+      position: absolute;
+    }
+
+    #check-pincode-btn:focus {
+      outline: none;
+      transform: translateY(-50%);
+      box-shadow: none !important;
+    }
+
+    #check-pincode-btn:hover,
+    #check-pincode-btn:focus {
+      transform: translateY(-50%);
+    }
+
+    #modal-pincode-input:focus {
+      padding-right: 100px;
+      /* Reserve space for button */
+    }
+
+    #check-pincode-btn {
+      width: 80px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+    }
+
+    /* ACTIVE STATE STYLES */
+    .nav-link.active,
+    .mobile-nav-link.active {
+      background-color: #ec4899 !important;
+      color: white !important;
+      font-weight: bold !important;
+      border-radius: 0.5rem;
+    }
+
+    .nav-link[href*="mother.html"].active,
+    .nav-link[href*="MotherCare"].active {
+      background-color: #fdb8d9 !important;
+      color: #be185d !important;
+      border: 2px solid #f472b6 !important;
+    }
+
+    .nav-link[href*="baby.html"].active,
+    .nav-link[href*="BabyCare"].active {
+      background-color: #bfdbfe !important;
+      color: #1e40af !important;
+      border: 2px solid #93c5fd !important;
+    }
+
+    /* Mobile Menu Improvements */
+    #mobile-menu {
+      max-height: calc(100vh - 140px);
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    #mobile-menu::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-dropdown {
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .mobile-dropdown-content {
+      background-color: #f8fafc;
+      padding-left: 2rem;
+    }
+
+    /* ACCOUNT DROPDOWN - FIXED */
+    #profile-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 8px;
+      width: 240px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      z-index: 9999;
+    }
+
+    #profile-menu.show {
+      display: block;
+    }
+
+    /* Modal animations */
+    .modal-backdrop {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Touch-friendly buttons */
+    button,
+    .nav-link,
+    .mobile-nav-link,
+    .profile-menu-item {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Modal adjustments for very small screens */
+    @media (max-width: 480px) {
+      .modal-content {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+      }
+
+      #profile-menu {
+        width: 95%;
+        max-height: 70vh;
+      }
+    }
+
+    /* Mobile navigation item styles */
+    .mobile-nav-link {
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-dropdown-btn {
+      width: 100%;
+      text-align: left;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      cursor: pointer;
+    }
+
+    .mobile-dropdown-content a {
+      padding: 0.875rem 2rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #e2e8f0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body class="pt-16">
+
+  <!-- MOVING DISCLAIMER BAR -->
+  <div class="disclaimer-bar">
+    <div class="disclaimer-text">
+      All medicines are sold under doctor's prescription only. Consult your physician before use.
+      &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+      सभी दवाएँ केवल डॉक्टर के प्रिस्क्रिप्शन पर ही बेची जाती हैं। उपयोग से पहले अपने चिकित्सक से परामर्श लें।
+    </div>
+  </div>
+
+  <!-- FREE DELIVERY RIBBON -->
+  <div class="delivery-ribbon">
+    <div class="delivery-track">
+      <!-- Multiple repeated items for seamless scrolling -->
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+      <div class="delivery-item">
+        <span class="delivery-icon">🚚</span>
+        <span class="delivery-text">Free Delivery Above ₹799 Order</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SINGLE FIXED HEADER -->
+  <div class="fixed-header">
+    <header class="border-b bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-4 lg:px-8">
+        <div class="flex justify-between items-center py-1">
+
+          <!-- Logo + Pincode with Divider -->
+          <div class="flex items-center space-x-6">
+            <a href="/home.html" class="flex-shrink-0">
+              <img src="/logo.png" alt="Pharmacy Kunash" class="h-10 sm:h-12">
+            </a>
+
+            <!-- Vertical Gray Divider Line -->
+            <div class="h-12 w-px bg-gray-300 hidden md:block"></div>
+
+            <!-- Desktop Pincode Trigger -->
+            <div class="hidden md:flex flex-col">
+              <button id="pincode-trigger"
+                class="flex items-center space-x-2 text-xs font-medium text-gray-700 hover:text-pink-600 transition">
+                <i class="fas fa-map-marker-alt text-pink-600"></i>
+                <span id="display-location" class="font-semibold">Select Location</span>
+                <span id="display-pincode" class="text-xs text-gray-500 hidden"></span>
+                <i class="fas fa-chevron-down text-xs ml-1"></i>
+              </button>
+              <div id="delivery-info" class="flex items-center mt-1 text-xs text-green-600 hidden"></div>
+            </div>
+          </div>
+
+          <!-- Desktop Right Icons -->
+          <div class="hidden md:flex items-center space-x-6 text-gray-700">
+
+            <!-- Language Trigger Button -->
+            <button id="language-trigger"
+              class="flex items-center space-x-2 text-sm font-medium hover:text-pink-600 transition">
+              <i class="fas fa-globe text-xl"></i>
+              <span id="current-lang">English</span>
+              <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+
+            <a href="/contact.html" class="hover:text-blue-700 flex items-center gap-2" data-i18n="contact">
+              <i class="fas fa-phone"></i> Contact Us
+            </a>
+
+            <a href="/Wishlist/wishlist.html" class="relative hover:text-red-600">
+              <i class="fas fa-heart text-xl"></i>
+              <span id="desktop-wishlist-count"
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+            </a>
+
+            <a href="/cart.html" class="relative">
+              <i class="fas fa-shopping-cart text-xl"></i>
+              <span id="desktop-cart-count"
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold hidden">0</span>
+            </a>
+
+
+            <!-- Account Dropdown - FIXED VERSION -->
+            <div class="relative">
+              <button id="profile-btn"
+                class="flex items-center space-x-2 hover:bg-gray-100 px-4 py-2 rounded-md transition">
+                <i class="fas fa-user-circle text-2xl"></i>
+                <span data-i18n="account">Account</span>
+                <i class="fas fa-chevron-down text-xs ml-1"></i>
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div id="profile-menu" class="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+                <a href="/Signup/auth.html" data-i18n="signupLogin"
+                  class="flex items-center px-5 py-4 hover:bg-gray-50 text-gray-700 transition">
+                  <i class="fas fa-user-plus mr-3 text-gray-500"></i> Sign Up / Login
+                </a>
+                <a href="/Profile/profile.html"
+                  class="flex items-center px-5 py-4 hover:bg-gray-50 text-gray-700 transition" data-i18n="profile">
+                  <i class="fas fa-user-circle mr-3 text-gray-500"></i> Profile
+                </a>
+                <a href="/MY ORDERS/myorders.html" data-i18n="orders"
+                  class="flex items-center px-5 py-4 hover:bg-gray-50 text-gray-700 transition">
+                  <i class="fas fa-box mr-3 text-gray-500"></i> Orders
+                </a>
+                <a href="/home.html" id="logout-btn" data-i18n="logout"
+                  class="flex items-center px-5 py-4 hover:bg-gray-50 text-red-600 font-medium transition">
+                  <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Top Bar -->
+          <div class="flex lg:hidden items-center gap-4 text-gray-700">
+            <button id="mobile-language-trigger" class="text-xl">
+              <i class="fas fa-globe"></i>
+            </button>
+            <a href="/contact.html"><i class="fas fa-phone text-xl"></i></a>
+            <a href="/Wishlist/wishlist.html" class="relative">
+              <i class="fas fa-heart text-xl"></i>
+              <span id="wishlistCount"
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold hidden">0</span>
+            </a>
+            <a href="/cart.html" class="relative">
+              <i class="fas fa-shopping-cart text-xl"></i>
+              <span id="cartCount"
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold hidden">0</span>
+            </a>
+            <button id="mobile-profile-btn"><i class="fas fa-user-circle text-2xl"></i></button>
+            <button id="mobile-menu-btn" class="text-2xl"><i class="fas fa-bars"></i></button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- DESKTOP NAV -->
+    <nav class="bg-white border-t">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="hidden lg:flex justify-center">
+          <ul class="flex space-x-8 text-lg font-bold">
+            <li><a href="/MotherCare/mother.html" data-i18n="motherCare"
+                class="nav-link px-5 mt-2 py-1 rounded-lg border-2 border-pink-100 text-pink-700 hover:bg-pink-50 transition flex items-center">Mother
+                Care</a></li>
+            <li><a href="/BabyCare/baby.html" data-i18n="babyCare"
+                class="nav-link px-5 py-1 mt-2 rounded-lg border-2 border-blue-100 text-blue-700 hover:bg-blue-50 transition flex items-center">Baby
+                Care</a></li>
+
+            <li class="relative group">
+              <a href="javascript:void(0)" data-i18n="medicineHealthcare"
+                class="nav-link px-5 py-1 mt-2 hover:bg-gray-100 rounded flex items-center transition">
+                Medicine & HealthCare <i class="fas fa-chevron-down text-xs ml-2"></i>
+              </a>
+              <div
+                class="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-64 bg-white shadow-xl rounded-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-40">
+                <a href="/Medical and HealthCare/Prescription/prescription.html"
+                  class="block px-4 py-2 hover:bg-gray-50" data-i18n="prescriptionMedicines">Prescription Medicines</a>
+                <a href="/Medical and HealthCare/OTC/otc.html" class="block px-4 py-2 hover:bg-gray-50"
+                  data-i18n="otc">OTC</a>
+
+                <a href="/Medical and HealthCare/LifeStyle/lifestyle.html" data-i18n="lifestyleDisorder"
+                  class="block px-4 py-2 hover:bg-gray-50">LifeStyle Disorder</a>
+                <a href="/Medical and HealthCare/Fertility/firtility.html" data-i18n="fertilityEssentials"
+                  class="block px-4 py-2 hover:bg-gray-50">Fertility Essentials</a>
+              </div>
+            </li>
+
+            <li class="relative group">
+              <a href="javascript:void(0)"
+                class="nav-link px-5 py-1 mt-2 hover:bg-gray-100 rounded flex items-center transition"
+                data-i18n="wellness">
+                Wellness <i class="fas fa-chevron-down text-xs ml-2"></i>
+              </a>
+              <div
+                class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white shadow-xl rounded-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <a href="/Wellness/wellness.html" class="block px-4 py-2 hover:bg-gray-50" data-i18n="vitamins">Vitamins
+                  & Supplements</a>
+                <a href="/Wellness/wellness.html?sub=hair-skin-care" class="block px-4 py-2 hover:bg-gray-50"
+                  data-i18n="skin">Skin & Hair Care</a>
+                <a href="/Wellness/wellness.html" class="block px-4 py-2 hover:bg-gray-50" data-i18n="oral">Oral
+                  Care</a>
+                <a href="/Wellness/wellness.html" class="block px-4 py-2 hover:bg-gray-50"
+                  data-i18n="menstrual">Menstrual Care</a>
+                <a href="/Wellness/wellness.html" class="block px-4 py-2 hover:bg-gray-50" data-i18n="fitness">Fitness &
+                  Weight</a>
+                <a href="/Wellness/wellness.html" class="block px-4 py-2 hover:bg-gray-50" data-i18n="senior">Senior
+                  Care</a>
+                <a href="/Wellness/wellness.html" class="block px-4 py-3 hover:bg-gray-50" data-i18n="immunity">Immunity
+                  Booster</a>
+              </div>
+            </li>
+
+            <li class="relative group">
+              <a href="javascript:void(0)"
+                class="nav-link py-1 mt-2 px-5  hover:bg-gray-100 rounded flex items-center transition"
+                data-i18n="devices">
+                Devices <i class="fas fa-chevron-down text-xs ml-2"></i>
+              </a>
+              <div
+                class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white shadow-xl rounded-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <a href="/DEVICES/MONITORING DEVICES/monitor.html" class="block px-4 py-2 hover:bg-gray-50"
+                  data-i18n="bp">Monitoring Devices</a>
+                <a href="/DEVICES/MOBILITY AIDS/mobility.html" class="block px-4 py-2 hover:bg-gray-50"
+                  data-i18n="mobility">Mobility Aids</a>
+                <a href="/DEVICES/RESPIRATORY CARE/respiratory.html" class="block px-4 py-2 hover:bg-gray-50"
+                  data-i18n="respiratory">Respiratory Care</a>
+              </div>
+            </li>
+
+            <li class="relative group">
+              <a href="javascript:void(0)" data-i18n="surgical"
+                class="nav-link px-5 py-1 mt-2 hover:bg-gray-100 rounded flex items-center transition">
+                Surgical <i class="fas fa-chevron-down text-xs ml-2"></i>
+              </a>
+              <div
+                class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white shadow-xl rounded-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <a href="/Surgical/Surgical.html" data-i18n="dressing"
+                  class="block px-4 py-2 hover:bg-gray-50">Dressings & Bandages</a>
+                <a href="/Surgical/Surgical.html" data-i18n="consumable"
+                  class="block px-4 py-2 hover:bg-gray-50">Surgical Consumables</a>
+                <a href="/Surgical/Surgical.html" data-i18n="IV" class="block px-4 py-2 hover:bg-gray-50">IV & Infusion
+                  Items</a>
+                <a href="/Surgical/Surgical.html" data-i18n="catheters"
+                  class="block px-4 py-2 hover:bg-gray-50">Catheters & Tubes</a>
+                <a href="/Surgical/Surgical.html" data-i18n="wound" class="block px-4 py-2 hover:bg-gray-50">Wound
+                  Care</a>
+                <a href="/Surgical/Surgical.html" data-i18n="orthopedic"
+                  class="block px-4 py-2 hover:bg-gray-50">Orthopedic Support</a>
+                <a href="/Surgical/Surgical.html" data-i18n="injectables" class="block px-4 py-2 hover:bg-gray-50">IV
+                  Fluids & Injectables</a>
+                <a href="/Surgical/Surgical.html" data-i18n="kits" class="block px-4 py-2 hover:bg-gray-50">Surgical
+                  Kits</a>
+              </div>
+            </li>
+
+            <li><a href="/about.html" data-i18n="about"
+                class="nav-link px-5 py-1 mt-2 hover:bg-gray-100 rounded transition flex items-center">About Us <i
+                  class="fas fa-chevron-down text-xs ml-2"></i></a></li>
+          </ul>
+        </div>
+
+        <!-- MOBILE FULL MENU -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white shadow-lg">
+          <div class="py-2">
+            <a href="/MotherCare/mother.html"
+              class="mobile-nav-link block px-6 py-4 font-semibold text-pink-700 hover:bg-pink-50 flex items-center justify-between">Mother
+              Care </a>
+            <a href="/BabyCare/baby.html"
+              class="mobile-nav-link block px-6 py-4 font-semibold text-blue-700 hover:bg-blue-50 flex items-center justify-between">Baby
+              Care </a>
+
+            <div class="mobile-dropdown">
+              <button
+                class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center hover:bg-gray-100">
+                Medicine & HealthCare <i class="fas fa-chevron-down text-sm"></i>
+              </button>
+              <div class="mobile-dropdown-content hidden">
+                <a href="/Medical and HealthCare/Prescription/prescription.html"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Prescription Medicines</a>
+                <a href="/Medical and HealthCare/OTC/otc.html"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">OTC Medicines</a>
+                <a href="/Medical and HealthCare/LifeStyle/lifestyle.html"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Lifestyle disorder</a>
+                <a href="/Medical and HealthCare/Fertility/firtility.html"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Fertility Essentials</a>
+              </div>
+            </div>
+
+            <div class="mobile-dropdown">
+              <button
+                class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center hover:bg-gray-100">
+                Wellness <i class="fas fa-chevron-down text-sm"></i>
+              </button>
+              <div class="mobile-dropdown-content hidden">
+                <a href="/Wellness/wellness.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Vitamins &
+                  Supplements</a>
+                <a href="/Wellness/wellness.html?sub=hair-skin-care"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Skin & Hair Care</a>
+                <a href="/Wellness/wellness.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Oral Care</a>
+                <a href="/Wellness/wellness.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Menstrual
+                  Care</a>
+                <a href="/Wellness/wellness.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Fitness &
+                  Weight</a>
+                <a href="/Wellness/wellness.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Senior
+                  Care</a>
+                <a href="/Wellness/wellness.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Immunity
+                  Booster</a>
+              </div>
+            </div>
+
+            <div class="mobile-dropdown">
+              <button
+                class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center hover:bg-gray-100">
+                Devices <i class="fas fa-chevron-down text-sm"></i>
+              </button>
+              <div class="mobile-dropdown-content hidden">
+                <a href="/DEVICES/MONITORING DEVICES/monitor.html"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Monitoring Devices</a>
+                <a href="/DEVICES/MOBILITY AIDS/mobility.html"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Mobility Aids</a>
+                <a href="/DEVICES/RESPIRATORY CARE/respiratory.html"
+                  class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Respiratory Care</a>
+              </div>
+            </div>
+
+            <div class="mobile-dropdown">
+              <button
+                class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center hover:bg-gray-100">
+                Surgical <i class="fas fa-chevron-down text-sm"></i>
+              </button>
+              <div class="mobile-dropdown-content hidden">
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Dressings &
+                  Bandages</a>
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Surgical
+                  Consumables</a>
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">IV & Infusion
+                  Items</a>
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Catheters &
+                  Tubes</a>
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Wound
+                  Care</a>
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Orthopedic
+                  Support</a>
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">IV Fluids &
+                  Injectables</a>
+                <a href="/Surgical/Surgical.html" class="block px-10 py-3 text-gray-700 hover:bg-gray-200">Surgical
+                  Kits</a>
+              </div>
+            </div>
+
+            <a href="/about.html"
+              class="block px-6 py-4 font-semibold hover:bg-gray-100 flex items-center justify-between">About Us </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- PINCODE MODAL -->
+  <div id="pincode-modal" class="fixed inset-0 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen px-4 modal-backdrop">
+      <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closePincodeModal()"></div>
+      <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full modal-content relative">
+        <button onclick="closePincodeModal()"
+          class="absolute top-4 right-6 text-gray-400 hover:text-gray-800 text-3xl leading-none">&times;</button>
+
+        <div class="text-center mb-8">
+          <div class="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-map-marker-alt text-4xl text-pink-600"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800">Enter Delivery Pincode</h3>
+          <p class="text-gray-600 mt-2">Check availability & delivery time in your area</p>
+        </div>
+
+        <div class="relative">
+          <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input type="text" id="modal-pincode-input" maxlength="6" placeholder="Enter 6-digit pincode"
+            class="w-full pl-12 pr-16 py-4 border-2 border-gray-300 rounded-xl text-lg focus:outline-none focus:ring-4 focus:ring-pink-200 focus:border-pink-500 transition">
+          <button id="check-pincode-btn"
+            class="absolute right-2 top-1/2 -translate-y-1/2 bg-pink-600 hover:bg-pink-700 text-white px-6 py-2.5 rounded-lg font-medium transition">
+            Check
+          </button>
+        </div>
+
+        <p id="pincode-error" class="text-red-600 text-sm mt-3 text-center hidden"></p>
+        <p id="pincode-success" class="text-green-600 text-sm mt-3 text-center hidden flex items-center justify-center">
+          <i class="fas fa-check-circle mr-2"></i>
+          Delivery available in <strong id="success-pin"></strong>
+        </p>
+
+        <div class="mt-6 text-center text-xs text-gray-500">
+          <p>We will deliver across India soon!!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANGUAGE MODAL -->
+  <div id="language-modal" class="fixed inset-0 z-50 hidden modal">
+    <div class="flex items-center justify-center min-h-screen px-4 modal-backdrop">
+      <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closeLanguageModal()"></div>
+      <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full modal-content relative">
+        <button onclick="closeLanguageModal()"
+          class="absolute top-4 right-6 text-gray-400 hover:text-gray-800 text-3xl leading-none">×</button>
+
+        <div class="text-center mb-8">
+          <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-globe text-4xl text-blue-600"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800">Choose Your Language</h3>
+          <p class="text-gray-600 mt-2">Select preferred language</p>
+        </div>
+
+        <div class="space-y-4">
+          <button onclick="changeLanguage('english')"
+            class="lang-btn w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+            <span class="text-3xl">EN</span>
+            <div class="text-left">
+              <div class="font-semibold text-gray-800">English</div>
+              <div class="text-sm text-gray-500">English</div>
+            </div>
+            <i class="ml-auto fas fa-check text-green-600 hidden"></i>
+          </button>
+          <button onclick="changeLanguage('hindi')"
+            class="lang-btn w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+            <span class="text-3xl">HI</span>
+            <div class="text-left">
+              <div class="font-semibold text-gray-800">हिन्दी</div>
+              <div class="text-sm text-gray-500">Hindi</div>
+            </div>
+            <i class="ml-auto fas fa-check text-green-600 hidden"></i>
+          </button>
+          <button onclick="changeLanguage('marathi')"
+            class="lang-btn w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+            <span class="text-3xl">MR</span>
+            <div class="text-left">
+              <div class="font-semibold text-gray-800">मराठी</div>
+              <div class="text-sm text-gray-500">Marathi</div>
+            </div>
+            <i class="ml-auto fas fa-check text-green-600 hidden"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Profile Menu -->
+  <div id="mobile-profile-menu" class="fixed inset-0 bg-black/50 z-50 hidden" onclick="this.classList.add('hidden')"
+    style="z-index:1000;">
+    <div class="absolute right-4 top-20 w-56 bg-white shadow-lg rounded-lg border" onclick="event.stopPropagation()">
+      <a href="/Signup/auth.html" data-i18n="signupLogin" class="flex items-center px-4 py-3 hover:bg-gray-50"><i
+          class="fas fa-user-plus mr-3"></i>Sign Up / Login</a>
+      <a href="/Profile/profile.html" class="flex items-center px-4 py-3 hover:bg-gray-50"><i
+          class="fas fa-user-circle mr-3"></i>Profile</a>
+      <a href="/MY ORDERS/myorders.html" data-i18n="orders" class="flex items-center px-4 py-3 hover:bg-gray-50"><i
+          class="fas fa-box mr-3"></i>Orders</a>
+      <a href="/home.html" data-i18n="logout" class="flex items-center px-4 py-3 hover:bg-gray-50 text-red-600"><i
+          class="fas fa-sign-out-alt mr-3"></i>Logout</a>
+    </div>
+  </div>
+
+
+
+  <script src="/Header/header.js?v=1.1.3"></script>
+</body>
+
+</html>

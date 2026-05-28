@@ -1,0 +1,3924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management - Mother & Baby Care</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Add SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        /* Sidebar Styles - Fixed */
+        #sidebar {
+            transition: transform 0.3s ease;
+            width: 256px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 40;
+            transform: translateX(-100%);
+        }
+
+        /* Desktop: Show by default */
+        @media (min-width: 768px) {
+            #sidebar {
+                transform: translateX(0);
+                position: static;
+            }
+        }
+
+        /* When sidebar is open */
+        #sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* Sticky Action Button */
+        .sticky-action-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .sticky-action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .sticky-action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .sticky-action-menu {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            z-index: 99;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 200px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .sticky-action-menu.show {
+            display: flex;
+        }
+
+        .sticky-action-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #374151;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sticky-action-item:hover {
+            background-color: #f3f4f6;
+            transform: translateX(-3px);
+        }
+
+        .sticky-action-item i {
+            width: 20px;
+            text-align: center;
+            color: #3b82f6;
+        }
+
+        .sticky-action-item.export i {
+            color: #10b981;
+        }
+
+        .sticky-action-item.import i {
+            color: #f59e0b;
+        }
+
+        .sticky-action-item.refresh i {
+            color: #6366f1;
+        }
+
+        .sticky-action-item.category i {
+            color: #8b5cf6;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+/* Modal Styles - UPDATED FOR WIDER FORM */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Reduced padding */
+}
+
+.modal-container {
+    background-color: white;
+    border-radius: 12px;
+    width: 95%; /* Increased from 90% */
+    max-width: none !important; /* Remove max-width limit */
+    max-height: 95vh; /* Increased from 80vh */
+    overflow-y: auto;
+    padding: 30px; /* Increased padding */
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: modalSlideIn 0.3s ease-out;
+    margin: 10px;
+}
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+.info-section {
+    background-color: #f9fafb;
+    border-radius: 8px;
+    padding: 25px; /* Increased from 20px */
+    border: 1px solid #e5e7eb;
+    margin-bottom: 20px; /* Added margin between sections */
+}
+
+        .info-section h3 {
+            font-weight: 600;
+            font-size: 16px;
+            color: #111827;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .space-y-6 > * + * {
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            align-items: start;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #6b7280;
+            text-align: right;
+        }
+
+        .info-value {
+            color: #374151;
+            word-break: break-word;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Form Styles */
+        .edit-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .edit-form input,
+        .edit-form select,
+        .edit-form textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background-color: white;
+        }
+
+        .edit-form input:focus,
+        .edit-form select:focus,
+        .edit-form textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .edit-form textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .edit-form .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* Popup Styles */
+        .popup-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-container i {
+            font-size: 48px;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+
+        .popup-container p {
+            margin-bottom: 24px;
+            color: #374151;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .popup-container button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
+            transition: background-color 0.2s;
+        }
+
+        .popup-container button:hover {
+            background-color: #2563eb;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-in-stock {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-out-of-stock {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-low-stock {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        /* Verification Status Badges */
+        .status-approved {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .action-buttons button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+        }
+
+        .action-buttons button:hover {
+            background-color: #f3f4f6;
+        }
+
+        .action-buttons .view-btn {
+            color: #3b82f6;
+        }
+
+        .action-buttons .edit-btn {
+            color: #f59e0b;
+        }
+
+        .action-buttons .delete-btn {
+            color: #ef4444;
+        }
+
+        .action-buttons .verify-btn {
+            color: #10b981;
+        }
+
+        .action-buttons .reject-btn {
+            color: #ef4444;
+        }
+
+        /* Table Styling */
+        #productTable {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1400px;
+        }
+
+        #productTable thead th {
+            font-size: 12px;
+            font-weight: 600;
+            background-color: #f9fafb;
+            padding: 10px 12px;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        #productTable tbody td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        #productTable tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Row Highlighting */
+        .verification-pending-row {
+            background-color: #fff7ed !important;
+        }
+
+        .verification-rejected-row {
+            background-color: #fef2f2 !important;
+        }
+
+        .status-low-stock-row {
+            background-color: #fef3c7 !important;
+        }
+
+        .status-expiring-row {
+            background-color: #fee2e2 !important;
+        }
+
+        .status-in-stock-row {
+            background-color: #dcfce7 !important;
+        }
+
+        /* Product Images */
+        .product-thumbnail {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Rating Stars */
+        .rating-stars {
+            color: #fbbf24;
+        }
+
+        /* Stats cards */
+        .stats-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Backdrop for mobile sidebar */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 30;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+        }
+
+/* UPDATED: Multiple Prices Section - FULL WIDTH */
+.multiple-price-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    position: relative;
+    display: block !important;
+}
+
+.multiple-price-section .border {
+    padding: 15px !important;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    margin-top: 15px;
+    border: 1px solid #d1d5db !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    box-sizing: border-box;
+}
+
+/* COMPACT Price headers - FULL WIDTH */
+.price-headers {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(90px, 1fr) minmax(90px, 1fr) minmax(80px, 1fr) minmax(110px, 1fr) minmax(110px, 1fr) 60px;
+    gap: 10px;
+    width: 100%; /* Changed from fit-content to 100% */
+    min-width: 100%;
+    padding: 10px 12px;
+    background-color: #f1f5f9;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #334155;
+    align-items: center;
+    white-space: nowrap;
+}
+
+        /* COMPACT Price item rows */
+        .price-item-row {
+            display: grid;
+            grid-template-columns: 120px 90px 90px 80px 110px 110px 60px;
+            gap: 10px;
+            width: fit-content;
+            min-width: 100%;
+            align-items: center;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        /* COMPACT Price items container */
+        .price-items-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            min-height: 120px;
+            max-height: 280px;
+            padding: 8px 3px;
+            position: relative;
+            border-radius: 4px;
+        }
+
+        /* ULTRA COMPACT TABLE - Fits in form */
+        .ultra-compact-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 12px;
+            table-layout: fixed;
+        }
+
+        .ultra-compact-table th {
+            text-align: left;
+            padding: 8px 5px;
+            background: #e9ecef;
+            font-weight: 600;
+            border: 1px solid #dee2e6;
+            font-size: 11px;
+        }
+
+        .ultra-compact-table td {
+            padding: 5px;
+            border: 1px solid #dee2e6;
+            vertical-align: top;
+        }
+
+        /* ULTRA COMPACT TABLE INPUTS - Very small */
+        .table-input-micro {
+            width: 100%;
+            min-width: 0;
+            padding: 4px 6px;
+            font-size: 11px;
+            border: 1px solid #ced4da;
+            border-radius: 2px;
+            height: 28px;
+            line-height: 1.2;
+        }
+
+        .table-input-micro:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 1px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Column width distribution - Ensures no overflow */
+        .ultra-compact-table th:nth-child(1),
+        .ultra-compact-table td:nth-child(1) {
+            width: 22%;
+        }
+
+        .ultra-compact-table th:nth-child(2),
+        .ultra-compact-table td:nth-child(2) {
+            width: 13%;
+        }
+
+        .ultra-compact-table th:nth-child(3),
+        .ultra-compact-table td:nth-child(3) {
+            width: 13%;
+        }
+
+        .ultra-compact-table th:nth-child(4),
+        .ultra-compact-table td:nth-child(4) {
+            width: 15%;
+        }
+
+        .ultra-compact-table th:nth-child(5),
+        .ultra-compact-table td:nth-child(5) {
+            width: 17%;
+        }
+
+        .ultra-compact-table th:nth-child(6),
+        .ultra-compact-table td:nth-child(6) {
+            width: 20%;
+        }
+
+        /* SIMPLIFIED PRICE LIST FOR MB PRODUCTS */
+        .price-list-container {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 10px;
+        }
+
+        .price-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .price-item input {
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .price-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .price-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 8px;
+            padding: 0 8px;
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 13px;
+        }
+
+        .remove-price-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .remove-price-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .add-price-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .add-price-btn:hover {
+            background-color: #059669;
+        }
+
+        .price-display {
+            background-color: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .price-display:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Smooth transition classes */
+        #sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* For smoother hover effects */
+        li {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Collapsed sidebar specific styles */
+        .nav-text {
+            transition: all 0.3s ease-in-out;
+            white-space: nowrap;
+            overflow: hidden;
+            max-height: 20px;
+        }
+
+        .collapsed .nav-text {
+            opacity: 0;
+            width: 0;
+            margin-left: 0;
+        }
+
+        .nav-icon {
+            transition: all 0.3s ease-in-out;
+            min-width: 20px;
+        }
+
+        select:disabled {
+            background-color: #f9fafb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        select option:first-child {
+            color: #9ca3af;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .category-mother-care {
+            background-color: #fce7f3;
+            color: #db2777;
+        }
+
+        .category-baby-care {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .subcategory-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            background-color: #f3f4f6;
+            color: #6b7280;
+            margin: 2px;
+        }
+
+        .collapsed .nav-icon {
+            margin-right: 0 !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        .collapsed a {
+            justify-content: center;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+        }
+
+        /* Logo styles for collapsed state */
+        .sidebar-logo {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;   
+        }
+
+        .collapsed .sidebar-logo {
+            width: 40px !important;
+            margin: 0 auto;
+        }
+
+        .collapsed .sidebar-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        /* Arrow rotation */
+        #sidebar-arrow {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Smooth transition classes */
+        #sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #sidebar.collapsed {
+            width: 64px !important;
+        }
+        
+        #sidebar:not(.collapsed) {
+            width: 256px !important;
+        }
+        
+        .nav-text {
+            transition: all 0.3s ease-in-out;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .nav-icon {
+            transition: all 0.3s ease-in-out;
+            min-width: 20px;
+        }
+        
+        /* For smoother hover effects */
+        li {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Staggered animation for nav items */
+        li:nth-child(1) { transition-delay: 0ms; }
+        li:nth-child(2) { transition-delay: 20ms; }
+        li:nth-child(3) { transition-delay: 40ms; }
+        li:nth-child(4) { transition-delay: 60ms; }
+        li:nth-child(5) { transition-delay: 80ms; }
+        li:nth-child(6) { transition-delay: 100ms; }
+        li:nth-child(7) { transition-delay: 120ms; }
+        li:nth-child(8) { transition-delay: 140ms; }
+        li:nth-child(9) { transition-delay: 160ms; }
+        li:nth-child(10) { transition-delay: 180ms; }
+        li:nth-child(11) { transition-delay: 200ms; }
+
+        /* Verification Modal */
+        .verification-modal {
+            max-width: 500px !important;
+        }
+
+        .verification-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .verification-option:hover {
+            background-color: #f9fafb;
+        }
+
+        .verification-option input[type="radio"] {
+            margin-right: 12px;
+        }
+
+        .verification-option.approve {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        .verification-option.reject {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .verification-option.approve label {
+            color: #065f46;
+        }
+
+        .verification-option.reject label {
+            color: #991b1b;
+        }
+
+        /* Add verification column styling */
+        .verification-column {
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .edit-form .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Mobile responsive table */
+        @media (max-width: 768px) {
+            #productTable {
+                font-size: 11px;
+                min-width: 1200px;
+            }
+            
+            #productTable thead th,
+            #productTable tbody td {
+                padding: 6px 8px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .action-buttons button {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        /* Table container for scrolling */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        /* Wider grid layout for edit form */
+#editProductModal .edit-form.grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Changed from 2 columns to 1 for mobile */
+    gap: 25px; /* Increased gap */
+    width: 100%;
+    overflow: visible !important;
+}
+
+@media (min-width: 1024px) {
+    #editProductModal .edit-form.grid {
+        grid-template-columns: 45% 55%; /* Wider columns on desktop */
+    }
+}
+
+ .menu-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+    <!-- Sidebar Backdrop (Mobile only) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="border w-64 bg-white text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static transition-all duration-300 ease-in-out">
+        <div class="border-b  h-[75px] p-4 sticky top-0 z-10 flex justify-between items-center">
+        <div class="ml-6 transition-all duration-300 ease-in-out overflow-hidden">
+                <img src="../Images/kunash-logo.png" alt="pharmacy Logo"
+                    class="w-full h-[44px] sidebar-logo-expanded transition-all duration-300 ease-in-out">
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="toggle-sidebar-logo" class="flex items-center transition-all duration-300 ease-in-out">
+                    <i id="sidebar-arrow"
+                        class="fas fa-chevron-left ml-2 text-black transition-transform duration-300 ease-in-out"></i>
+                </button>
+                <button id="close-sidebar" class="md:hidden text-black transition-all duration-300 ease-in-out">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 transition-all duration-300 ease-in-out">
+            <ul class="space-y-1">
+                <!-- Each list item -->
+                <li data-menu-type="dashboard" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Dashboard/dashboard.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-home nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Inventory/inventory.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-pills nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Inventory Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Prescriptions/prescription.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-file-prescription nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Prescriptions</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="customers" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Customer/customer management.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-users nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Customers Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Order/ordermanagment.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-shopping-cart nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Order Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Product Management/product.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-box nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Medicine Product Management</span>
+                    </a>
+                </li>
+
+                <li class="bg-blue-700 rounded-md transition-all duration-200 ease-in-out">
+                    <a href="../Mother and Baby Care/motherbabycare.html"
+                        class="flex items-center py-3 px-4 text-white transition-colors duration-200">
+                        <i class="fa-solid fa-baby nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Mother & Baby Care Product Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Banner/banner.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-image nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Banner Management</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="reports" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Reports/report.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-file-invoice nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Reports</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="admin-management" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md mb-4">
+                    <a href="../Admin/admin.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-user-shield nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Admin Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <button id="logoutBtn"
+                        class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-white font-semibold text-left transition-colors duration-200">
+                        <i class="fas fa-sign-out-alt nav-icon transition-all duration-200"></i>
+                        <span class="nav-text ml-3 transition-all duration-200">Logout</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden" id="mainContent">
+        <!-- Header -->
+        <header class="bg-white shadow sticky top-0 z-10">
+            <div class="flex justify-between items-center p-4">
+                <div class="flex items-center">
+                    <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+                    <h1 class="text-xl font-semibold text-gray-800">Mother & Baby Care Products</h1>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <input id="searchInput" type="text" placeholder="Search products..." class="border rounded-full py-2 px-4 w-64 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition" />
+                        <i class="fas fa-search absolute right-3 top-3 text-blue-500"></i>
+                    </div>
+                    <div class="flex items-center">
+                        <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold"></div>
+                        <div class="ml-2">
+                            <span id="user-name" class="text-gray-800"></span>
+                            <span id="user-role" class="text-gray-500 text-sm block"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Product Content -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <!-- Stats Cards - UPDATED with verification stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                <div class="bg-white rounded-xl border-l-4 border-blue-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Total Products</p>
+                            <h2 id="totalProducts" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-box text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-yellow-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Low Stock Items</p>
+                            <h2 id="lowStockItems" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">In Stock Products</p>
+                            <h2 id="inStockProducts" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border-l-4 border-red-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Expiring Soon</p>
+                            <h2 id="expiringSoon" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <i class="fas fa-hourglass-end text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- New Verification Stats Card -->
+                <div class="bg-white rounded-xl border-l-4 border-purple-500 shadow-md p-5 stats-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Pending Verification</p>
+                            <h2 id="pendingVerification" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-clock text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product List -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Product List</h2>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <!-- Category Filter -->
+                        <div class="relative">
+                            <select id="categoryFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Subcategory Filter -->
+                        <div class="relative">
+                            <select id="subcategoryFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48" disabled>
+                                <option value="">All Subcategories</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Stock Filter -->
+                        <div class="relative">
+                            <select id="stockFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                                <option value="">Stock Status</option>
+                                <option value="in-stock">In Stock</option>
+                                <option value="low-stock">Low Stock</option>
+                                <option value="out-of-stock">Out of Stock</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Verification Filter -->
+                        <div class="relative">
+                            <select id="verificationFilter" class="border rounded-lg py-2 px-4 pr-10 bg-white border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition w-full md:w-48">
+                                <option value="">Verification Status</option>
+                                <option value="APPROVED">Approved</option>
+                                <option value="REJECTED">Rejected</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Add Product Button -->
+                        <button id="addProductBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-md whitespace-nowrap">
+                            <i class="fas fa-plus mr-2"></i>Add Product
+                        </button>
+
+                        <!-- Reset Filter Button -->
+                        <button id="resetFilterBtn" class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition shadow-sm hover:shadow-md whitespace-nowrap">
+                            <i class="fas fa-redo-alt mr-2"></i>Reset Filter
+                        </button>
+                        
+                        <!-- Export Button -->
+                        <button id="exportBtn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition shadow-sm hover:shadow-md whitespace-nowrap">
+                            <i class="fas fa-file-excel mr-2"></i>Export
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="productTable" class="w-full">
+                        <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">Image</th>
+                                <th>SKU</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Subcategory</th>
+                                <th>Brand</th>
+                                <th>Stock</th>
+                                <th>Price (₹)</th>
+                                <th>Rating</th>
+                                <th class="text-center">Verification</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody" class="text-gray-700">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Product Detail Modal -->
+            <div id="productDetailModal" class="modal">
+                <div class="modal-container" style="max-width: 800px;">
+                    <span class="close-btn" id="closeDetailModal">&times;</span>
+                    <div class="profile-header mb-3">
+                        <h2 class="text-lg font-semibold text-gray-800">Product Details</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="info-section">
+                            <h3>Basic Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">ID:</span>
+                                <span class="info-value" id="detail-id"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">SKU:</span>
+                                <span class="info-value" id="detail-sku"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Name:</span>
+                                <span class="info-value" id="detail-name"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Category:</span>
+                                <span class="info-value" id="detail-category"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Subcategory:</span>
+                                <span class="info-value" id="detail-type"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Brand:</span>
+                                <span class="info-value" id="detail-brand"></span>
+                            </div>
+                        </div>
+                        <div class="info-section">
+                            <h3>Stock & Pricing</h3>
+                            <div class="info-item">
+                                <span class="info-label">Quantity:</span>
+                                <span class="info-value" id="detail-quantity"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Prices:</span>
+                                <div id="detail-prices" class="info-value"></div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Original Prices:</span>
+                                <div id="detail-original-prices" class="info-value"></div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Discount:</span>
+                                <span class="info-value" id="detail-discount"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Rating:</span>
+                                <span class="info-value" id="detail-rating"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Stock Status:</span>
+                                <span class="info-value" id="detail-stock-status"></span>
+                            </div>
+                        </div>
+                        <div class="info-section md:col-span-2">
+                            <h3>Additional Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Description:</span>
+                                <span class="info-value" id="detail-description"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Features:</span>
+                                <ul id="detail-features" class="info-value"></ul>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Sizes/Variants:</span>
+                                <div id="detail-sizes" class="info-value"></div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Specifications:</span>
+                                <pre id="detail-specifications" class="info-value text-xs bg-gray-100 p-2 rounded"></pre>
+                            </div>
+                            <!-- Verification Details -->
+                            <div class="info-item">
+                                <span class="info-label">Verification Status:</span>
+                                <span class="info-value" id="detail-verification-status"></span>
+                            </div>
+                            <div class="info-item" id="detail-verified-by-container" style="display: none;">
+                                <span class="info-label">Verified By:</span>
+                                <span class="info-value" id="detail-verified-by"></span>
+                            </div>
+                            <div class="info-item" id="detail-verified-at-container" style="display: none;">
+                                <span class="info-label">Verified At:</span>
+                                <span class="info-value" id="detail-verified-at"></span>
+                            </div>
+                            <div class="info-item" id="detail-rejection-reason-container" style="display: none;">
+                                <span class="info-label">Rejection Reason:</span>
+                                <span class="info-value" id="detail-rejection-reason"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Created:</span>
+                                <span class="info-value" id="detail-created"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Main Image:</span>
+                                <div id="detail-main-image" class="info-value"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button id="editProductBtn" class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Product Modal - UPDATED WITH MULTIPLE PRICES -->
+            <div id="editProductModal" class="modal">
+                <div class="modal-container" style="max-width: none; width: 98%; max-height:  95vh;">
+                    <span class="close-btn" id="closeEditModal">&times;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6" id="editModalTitle">Add New Product</h2>
+                    <form id="editProductForm" class="edit-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Left Column -->
+                            <div>
+                                <div class="info-section">
+                                    <h3>Basic Information</h3>
+                                    <div class="mb-4">
+                                        <label for="edit-sku">SKU *</label>
+                                        <input type="text" id="edit-sku" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="edit-title">Product Title *</label>
+                                        <input type="text" id="edit-title" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="edit-category">Category *</label>
+                                        <select id="edit-category" required>
+                                            <option value="">Select Category</option>
+                                            <option value="Mother Care">Mother Care</option>
+                                            <option value="Baby Care">Baby Care</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="edit-subcategory">Subcategory *</label>
+                                        <select id="edit-subcategory" required disabled>
+                                            <option value="">Select category first</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="edit-brand">Brand *</label>
+                                        <input type="text" id="edit-brand" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="edit-instock">In Stock *</label>
+                                        <select id="edit-instock" required>
+                                            <option value="true">Yes</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div>
+                                <div class="info-section">
+                                    <h3>Pricing & Stock</h3>
+                                    <div class="mb-4">
+                                        <label for="edit-review-count">Review Count</label>
+                                        <input type="number" id="edit-review-count" min="0" placeholder="0">
+                                    </div>
+                                    
+                                    <!-- UPDATED: Multiple Prices Section -->
+                                    <div class="mb-4">
+                                        <label>Prices (₹) *</label>
+                                        <div class="multiple-price-section">
+                                            <div class="border">
+                                                <div class="price-headers">
+                                                    <span>Variant/Size</span>
+                                                    <span>Current Price</span>
+                                                    <span>Original Price</span>
+                                                    <span>Stock</span>
+                                                    <span>MFG Date</span>
+                                                    <span>Expiry Date</span>
+                                                    <span>Action</span>
+                                                </div>
+                                                <div class="price-items-container" id="price-items-container">
+                                                    <!-- Price rows will be added here dynamically -->
+                                                </div>
+                                                <button type="button" class="add-price-btn" id="add-price-row-btn">
+                                                    <i class="fas fa-plus"></i> Add Price Row
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="edit-discount">Discount (%)</label>
+                                        <input type="number" id="edit-discount" min="0" max="100" placeholder="0">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="edit-rating">Rating (0-5)</label>
+                                        <input type="number" id="edit-rating" min="0" max="5" step="0.1" placeholder="0.0">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="edit-stock-quantity">Total Stock Quantity *</label>
+                                        <input type="number" id="edit-stock-quantity" min="0" required placeholder="0" readonly style="background-color: #f9fafb;">
+                                        <p class="text-xs text-gray-500 mt-1">Auto-calculated from price rows</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information Section (Full Width) -->
+                        <div class="info-section mt-6">
+                            <h3>Additional Information</h3>
+                            <div class="mb-4">
+                                <label for="edit-description">Description (One per line)</label>
+                                <textarea id="edit-description" rows="3" placeholder="Enter each description point on a new line"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-features">Features (One per line)</label>
+                                <textarea id="edit-features" rows="3" placeholder="Enter each feature on a new line"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Product Details Section (Full Width) -->
+                        <div class="info-section mt-6">
+                            <h3>Product Details</h3>
+                            <div class="mb-4">
+                                <label for="edit-sizes">Sizes/Variants (Comma separated for multiple)</label>
+                                <input type="text" id="edit-sizes" placeholder="e.g., Standard (45cm), Travel (35cm)">
+                            </div>
+                            <div class="mb-4">
+                                <label for="edit-specifications">Specifications (Plain text or key-value pairs)</label>
+                                <textarea id="edit-specifications" rows="3" placeholder="Material: Organic Cotton Cover, Memory Foam Core | Dimensions: 45x35x15cm"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload Section (Full Width) -->
+                        <div class="info-section mt-6">
+                            <h3>Product Images</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="mb-4">
+                                    <label for="edit-main-image">Main Product Image *</label>
+                                    <input type="file" id="edit-main-image" accept="image/*">
+                                    <div id="main-image-preview" class="mt-2 hidden">
+                                        <img id="main-image-preview-img" class="w-32 h-32 object-cover rounded-lg border" 
+                                             alt="Main image preview">
+                                        <p class="text-xs text-gray-500 mt-1">Current main image</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">Required for new products</p>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="edit-sub-images">Additional Images (Optional)</label>
+                                    <input type="file" id="edit-sub-images" accept="image/*" multiple>
+                                    <div id="sub-images-preview" class="mt-2 hidden">
+                                        <div class="flex flex-wrap gap-2" id="sub-images-container"></div>
+                                        <p class="text-xs text-gray-500 mt-1">Current additional images</p>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">Select multiple images</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+                            <button type="button" id="cancelEdit" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition">Cancel</button>
+                            <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition">Save Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Verification Modal -->
+            <div id="verificationModal" class="modal">
+                <div class="modal-container verification-modal">
+                    <span class="close-btn" id="closeVerificationModal">&times;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6">Verify Product</h2>
+                    <form id="verificationForm">
+                        <input type="hidden" id="verify-product-id">
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-700 mb-2" id="verify-product-name"></h3>
+                            <div class="text-sm text-gray-600">
+                                <p>SKU: <span id="verify-product-sku"></span></p>
+                                <p>Category: <span id="verify-product-category"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Verification Action</label>
+                            <div class="space-y-3">
+                                <div class="verification-option approve">
+                                    <label class="flex items-center cursor-pointer w-full">
+                                        <input type="radio" name="verificationAction" value="APPROVE" class="mr-2" checked>
+                                        <span class="font-medium">Approve Product</span>
+                                    </label>
+                                </div>
+                                <div class="verification-option reject">
+                                    <label class="flex items-center cursor-pointer w-full">
+                                        <input type="radio" name="verificationAction" value="REJECT" class="mr-2">
+                                        <span class="font-medium">Reject Product</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6" id="rejection-reason-container" style="display: none;">
+                            <textarea 
+                                id="rejectionReason" 
+                                rows="3" 
+                                class="w-full border rounded-lg p-3"
+                                placeholder="Please provide reason for rejection..."
+                            ></textarea>
+                        </div>
+                        
+                        <div class="flex justify-end gap-3">
+                            <button type="button" id="cancelVerification" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">
+                                Cancel
+                            </button>
+                            <button type="button" id="submitVerificationBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                                Submit Verification
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+<div id="successPopup" class="modal">
+    <div class="modal-container" style="max-width: 500px; width: auto;">
+        <div class="text-center">
+            <i id="popupIcon" class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+            <p id="successMessage" class="text-gray-700 mb-6 text-sm"></p>
+            <button id="closeSuccessPopup" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition text-sm">OK</button>
+        </div>
+    </div>
+</div>
+
+            <!-- Logout Confirmation Modal -->
+            <div id="logoutModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Confirm Logout</h3>
+                        <button id="closeLogoutModal" class="text-gray-400 hover:text-gray-600 transition">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <p class="text-gray-600 mb-6 text-center">Are you sure you want to logout?</p>
+                    <div class="flex justify-center gap-3">
+                        <button id="confirmLogout" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition">
+                            Yes
+                        </button>
+                        <button id="cancelLogout" class="bg-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-400 transition">
+                            No
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sticky Action Menu -->
+    <div class="sticky-action-menu" id="stickyActionMenu">
+        <a href="#" class="sticky-action-item add" id="quickAddProduct">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add Product</span>
+        </a>
+        <a href="#" class="sticky-action-item export" id="quickExport">
+            <i class="fas fa-file-export"></i>
+            <span>Export Data</span>
+        </a>
+        <a href="#" class="sticky-action-item import" id="quickImport">
+            <i class="fas fa-file-import"></i>
+            <span>Import Data</span>
+        </a>
+        <a href="#" class="sticky-action-item refresh" id="quickRefresh">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh Data</span>
+        </a>
+        <a href="#" class="sticky-action-item category" id="quickAddCategory">
+            <i class="fas fa-layer-group"></i>
+            <span>Add Category</span>
+        </a>
+    </div>
+    
+    <script src="../auth.js"></script>    
+    
+     <script>
+        function hideMenuItemsByRole() {
+            const admin = Auth.getCurrentAdmin();
+            if (!admin?.role) return;
+
+            const role = admin.role.trim().toUpperCase();
+            const menuItems = document.querySelectorAll('aside li[data-menu-type]');
+
+            menuItems.forEach(item => {
+                const type = item.getAttribute('data-menu-type');
+                if (role === 'ROLE_ADMIN') {
+                    if (['dashboard','customers','reports','admin-management'].includes(type)) {
+                        item.classList.add('menu-hidden');
+                    }
+                }
+            });
+        }
+        
+        function displayUserProfile() {
+        const admin = Auth.getCurrentAdmin(); // This returns the admin object like { id: 4, firstName: "Sumer", lastName: "Khan", ... }
+
+        const userInitials = document.getElementById('user-initials');
+        const userName = document.getElementById('user-name');
+        const userRole = document.getElementById('user-role');
+
+        if (!admin || !admin.firstName) {
+            // Fallback if no admin is logged in (shouldn't happen due to Auth.requireAuth())
+            userName.textContent = "Guest";
+            userRole.textContent = "Unknown";
+            userInitials.textContent = "??";
+            return;
+        }
+
+        // Full name
+        const fullName = `${admin.firstName} ${admin.lastName || ''}`.trim();
+        const role = `${admin.role}`
+
+        // Generate initials (e.g., "SK" for Sumer Khan)
+        const nameParts = fullName.trim().split(' ');
+        const initials = nameParts.length > 1
+            ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+            : (nameParts[0]?.[0] || '?');
+
+        // Update DOM
+        userInitials.textContent = initials.toUpperCase();
+        userName.textContent = fullName;
+        userRole.textContent = role; // You can make this dynamic later if needed
+        }
+
+        Auth.requireAuth();
+        Auth.startSessionTimer();
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            const admin = Auth.getCurrentAdmin();
+            if (admin) {
+                console.log("Logged in as:", admin.firstName + " " + admin.lastName);
+            }
+            displayUserProfile();
+            hideMenuItemsByRole();
+        });
+    </script>
+
+<script>
+console.log('Mother & Baby Care Product Management script loaded');
+
+// REPLACE the CATEGORIES constant in your admin panel:
+const CATEGORIES = {
+    'Mother Care': [
+        'Test Kits',
+        'Skin Care',
+        'Vitamins & Supplements',
+        'Personal Care & Hygiene',
+        'Trimester Kits',
+        'Garbhsanskar Essentials & Ayurvedic Medicines',
+        'Accessories & Maternity Wear',
+        'Delivery Kits',
+        'Post delivery recovery',
+        'Breastfeeding Essentials',
+        'Postpartum Hygiene',
+        'Postpartum Nutrition',
+        'Pain & Healing Support',
+        'Uterine Health',
+        'Menstruation Essentials and Hygiene',
+        'PCOS and Preconception',
+        'MenoPausal Medicines'
+    ],
+    'Baby Care': [
+        'Bath & Body',
+        'Diapers & Hygiene', 
+        'Feeding & Nutrition',
+        'Gift Hampers'
+    ]
+};
+
+// ============================================
+// CONFIGURATION
+// ============================================
+const API_BASE_URL = 'http://localhost:8083/api/mb/products';
+let currentEditingProductId = null;
+let allProducts = [];
+let filteredProducts = [];
+let priceRowsCount = 0;
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+function showSuccessPopup(message, type = 'success') {
+    const successPopup = document.getElementById('successPopup');
+    const successMessage = document.getElementById('successMessage');
+    successMessage.textContent = message;
+    const icon = document.getElementById('popupIcon');
+    icon.className = type === 'success' ? 'fas fa-check-circle text-4xl text-green-500 mb-4' : 
+                   type === 'error' ? 'fas fa-exclamation-circle text-4xl text-red-500 mb-4' : 
+                   'fas fa-info-circle text-4xl text-blue-500 mb-4';
+    successPopup.style.display = 'flex';
+}
+
+function getStockStatus(quantity) {
+    if (quantity === 0 || quantity === null || quantity === undefined) return 'Out of Stock';
+    if (quantity < 10) return 'Low Stock';
+    return 'In Stock';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        return date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+    } catch (error) {
+        return dateString;
+    }
+}
+
+function getStarRating(rating) {
+    let stars = '';
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star text-yellow-400"></i>';
+    }
+    if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt text-yellow-400"></i>';
+    }
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star text-yellow-400"></i>';
+    }
+    return stars;
+}
+
+function getRowClass(product) {
+    const stockStatus = getStockStatus(product.stockQuantity);
+    const verificationStatus = product.approved === true ? 'APPROVED' : 
+                             product.approved === false ? 'REJECTED' : 'PENDING';
+    
+    if (verificationStatus === 'PENDING') return 'verification-pending-row';
+    if (verificationStatus === 'REJECTED') return 'verification-rejected-row';
+    if (stockStatus === 'Low Stock') return 'status-low-stock-row';
+    if (stockStatus === 'In Stock') return 'status-in-stock-row';
+    return '';
+};
+
+// ============================================
+// RESET FILTER FUNCTION
+// ============================================
+
+function resetAllFilters() {
+    console.log('Resetting all filters...');
+    
+    // Reset select dropdowns
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('subcategoryFilter').value = '';
+    document.getElementById('stockFilter').value = '';
+    document.getElementById('verificationFilter').value = '';
+    document.getElementById('searchInput').value = '';
+    
+    // Reset subcategory filter state
+    const subcategoryFilter = document.getElementById('subcategoryFilter');
+    subcategoryFilter.disabled = true;
+    subcategoryFilter.innerHTML = '<option value="">Select category first</option>';
+    
+    // Clear search input
+    document.getElementById('searchInput').value = '';
+    
+    // Show success message
+    showSuccessPopup('All filters have been reset!');
+    
+    // Apply filters (which will show all products)
+    applyFilters();
+}
+
+// ============================================
+// MULTIPLE PRICE MANAGEMENT FUNCTIONS
+// ============================================
+
+function setupPriceManagement() {
+    const addPriceBtn = document.getElementById('add-price-row-btn');
+    
+    // Add new price row
+    addPriceBtn.addEventListener('click', function() {
+        addPriceRow();
+    });
+
+    // Initialize with one price row
+    addPriceRow();
+}
+
+function addPriceRow(variant = '', currentPrice = '', originalPrice = '', stock = '', mfgDate = '', expiryDate = '') {
+    const priceContainer = document.getElementById('price-items-container');
+    const priceRowId = `price-row-${priceRowsCount++}`;
+    
+    // Convert dates from "YYYY-MM" to "YYYY-MM-DD" for date input
+    let formattedMfgDate = mfgDate;
+    let formattedExpiryDate = expiryDate;
+    
+    if (mfgDate && mfgDate.length === 7) { // "YYYY-MM"
+        formattedMfgDate = mfgDate + '-01';
+    }
+    
+    if (expiryDate && expiryDate.length === 7) { // "YYYY-MM"
+        formattedExpiryDate = expiryDate + '-01';
+    }
+    
+    const priceRow = document.createElement('div');
+    priceRow.className = 'price-item-row';
+    priceRow.id = priceRowId;
+    
+    priceRow.innerHTML = `
+        <input type="text" class="table-input-micro price-variant" placeholder="e.g., S, M, L" value="${variant}" 
+               oninput="updateTotalStock()">
+        <input type="number" class="table-input-micro price-current" min="0" step="0.01" placeholder="0.00" 
+               value="${currentPrice}" oninput="updateTotalStock()">
+        <input type="number" class="table-input-micro price-original" min="0" step="0.01" placeholder="0.00" 
+               value="${originalPrice}" oninput="updateTotalStock()">
+        <input type="number" class="table-input-micro price-stock" min="0" placeholder="0" 
+               value="${stock}" oninput="updateTotalStock()">
+        <input type="date" class="table-input-micro price-mfg" value="${formattedMfgDate}" oninput="updateTotalStock()">
+        <input type="date" class="table-input-micro price-expiry" value="${formattedExpiryDate}" oninput="updateTotalStock()">
+        <button type="button" class="remove-price-btn" onclick="removePriceRow('${priceRowId}')">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    priceContainer.appendChild(priceRow);
+    updateTotalStock();
+}
+
+function removePriceRow(rowId) {
+    const row = document.getElementById(rowId);
+    const priceRows = document.querySelectorAll('.price-item-row');
+    
+    if (row && priceRows.length > 1) {
+        row.remove();
+        updateTotalStock();
+    } else if (priceRows.length === 1) {
+        // Don't remove the last row, just clear it
+        const inputs = row.querySelectorAll('input');
+        inputs.forEach(input => input.value = '');
+        updateTotalStock();
+    }
+}
+
+function updateTotalStock() {
+    const stockInputs = document.querySelectorAll('.price-stock');
+    let totalStock = 0;
+    
+    stockInputs.forEach(input => {
+        const value = parseInt(input.value) || 0;
+        totalStock += value;
+    });
+    
+    document.getElementById('edit-stock-quantity').value = totalStock;
+}
+
+function getPriceData() {
+    const priceRows = document.querySelectorAll('.price-item-row');
+    const prices = [];
+    const originalPrices = [];
+    const sizeQuantities = {};
+    const sizeMfgDates = {};
+    const sizeExpDates = {};
+    const productSizes = [];
+    
+    console.log('Processing price rows:', priceRows.length);
+    
+    priceRows.forEach((row, index) => {
+        const variant = row.querySelector('.price-variant').value.trim();
+        const price = row.querySelector('.price-current').value.trim();
+        const originalPrice = row.querySelector('.price-original').value.trim();
+        const stock = row.querySelector('.price-stock').value.trim();
+        const mfgDate = row.querySelector('.price-mfg').value;
+        const expiryDate = row.querySelector('.price-expiry').value;
+        
+        console.log(`Row ${index + 1}:`, { variant, price, originalPrice, stock, mfgDate, expiryDate });
+        
+        if (variant && price) {
+            const priceNum = parseFloat(price);
+            if (!isNaN(priceNum)) {
+                // Add to arrays
+                prices.push(priceNum);
+                originalPrices.push(originalPrice && !isNaN(parseFloat(originalPrice)) ? parseFloat(originalPrice) : null);
+                productSizes.push(variant);
+                
+                // Add to size-specific objects
+                sizeQuantities[variant] = stock ? parseInt(stock) : 0;
+                
+                // Store dates as YYYY-MM-DD (FIXED - remove month-only conversion)
+                if (mfgDate) {
+                    // Keep as YYYY-MM-DD
+                    sizeMfgDates[variant] = mfgDate;
+                } else {
+                    sizeMfgDates[variant] = null;
+                }
+                
+                if (expiryDate) {
+                    // Keep as YYYY-MM-DD
+                    sizeExpDates[variant] = expiryDate;
+                } else {
+                    sizeExpDates[variant] = null;
+                }
+            }
+        }
+    });
+    
+    console.log('Final price data:', { 
+        prices, 
+        originalPrices, 
+        productSizes,
+        sizeQuantities,
+        sizeMfgDates,
+        sizeExpDates
+    });
+    
+    return {
+        prices: prices,
+        originalPrices: originalPrices,
+        productSizes: productSizes,
+        sizeQuantities: sizeQuantities,
+        sizeMfgDates: sizeMfgDates,
+        sizeExpDates: sizeExpDates
+    };
+}
+
+function populatePriceData(product) {
+    const priceContainer = document.getElementById('price-items-container');
+    priceContainer.innerHTML = '';
+    priceRowsCount = 0;
+    
+    // Check if we have the new format data
+    if (product.productSizes && Array.isArray(product.productSizes) && product.productSizes.length > 0) {
+        product.productSizes.forEach((size, index) => {
+            const price = product.price && product.price[index] ? product.price[index] : '';
+            const originalPrice = product.originalPrice && product.originalPrice[index] ? product.originalPrice[index] : '';
+            
+            // Get per-size data from the new format objects
+            const stock = product.sizeQuantities && product.sizeQuantities[size] ? product.sizeQuantities[size] : '';
+            
+// Handle dates - no conversion needed for date input
+let mfgDate = '';
+if (product.sizeMfgDates && product.sizeMfgDates[size]) {
+    const mfgDateStr = product.sizeMfgDates[size];
+    if (mfgDateStr) {
+        // Check if date is in YYYY-MM format (without day)
+        if (mfgDateStr.length === 7) {
+            // Add day for date input
+            mfgDate = mfgDateStr + '-01';
+        } else {
+            // Already in YYYY-MM-DD format
+            mfgDate = mfgDateStr;
+        }
+    }
+}
+
+let expiryDate = '';
+if (product.sizeExpDates && product.sizeExpDates[size]) {
+    const expiryDateStr = product.sizeExpDates[size];
+    if (expiryDateStr) {
+        // Check if date is in YYYY-MM format (without day)
+        if (expiryDateStr.length === 7) {
+            // Add day for date input
+            expiryDate = expiryDateStr + '-01';
+        } else {
+            // Already in YYYY-MM-DD format
+            expiryDate = expiryDateStr;
+        }
+    }
+}
+            
+            addPriceRow(size, price, originalPrice, stock, mfgDate, expiryDate);
+        });
+    } else {
+        // Fallback: Default empty price row
+        addPriceRow();
+    }
+}
+
+// ============================================
+// API SERVICE - FOR MB PRODUCTS (UPDATED TO MATCH BACKEND)
+// ============================================
+
+class ProductService {
+    async getAllProducts() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/get-all`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const pageResponse = await response.json();
+            
+            // Extract the products array from the page object
+            let productsArray;
+            
+            if (pageResponse.content && Array.isArray(pageResponse.content)) {
+                productsArray = pageResponse.content;
+            } else if (Array.isArray(pageResponse)) {
+                productsArray = pageResponse;
+            } else {
+                productsArray = pageResponse.products || 
+                               pageResponse.data || 
+                               pageResponse.result || 
+                               [];
+                
+                if (!Array.isArray(productsArray)) {
+                    console.error('Could not find products array in response:', pageResponse);
+                    return [];
+                }
+            }
+            
+            return productsArray.map(product => ({
+                ...product,
+                verificationStatus: product.approved === true ? 'APPROVED' : 
+                                   product.approved === false ? 'REJECTED' : 'PENDING',
+                isDeleted: product.isDeleted || product.deleted || false
+            }));
+            
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            showSuccessPopup('Error loading products. Please check if server is running.', 'error');
+            return [];
+        }
+    }
+
+    async getProductById(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/${id}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const product = await response.json();
+            
+            // Ensure price arrays are properly handled
+            if (product.price && !Array.isArray(product.price)) {
+                product.price = [product.price];
+            }
+            
+            if (product.originalPrice && !Array.isArray(product.originalPrice)) {
+                product.originalPrice = [product.originalPrice];
+            }
+            
+            product.verificationStatus = product.approved === true ? 'APPROVED' : 
+                                       product.approved === false ? 'REJECTED' : 'PENDING';
+            return product;
+        } catch (error) {
+            console.error('Error fetching product:', error);
+            throw error;
+        }
+    }
+
+   async createProduct(formData) {
+    try {
+        console.log('Sending request to:', `${API_BASE_URL}/create-product`);
+        console.log('=== REQUEST DEBUG ===');
+        
+        // Log ALL FormData entries
+        for (let pair of formData.entries()) {
+            if (pair[0] === 'productData') {
+                try {
+                    const parsed = JSON.parse(pair[1]);
+                    console.log('🔍 productData JSON:', JSON.stringify(parsed, null, 2));
+                    
+                    // Validate critical fields
+                    console.log('✅ Validation check:');
+                    console.log('  - SKU:', parsed.sku || 'MISSING');
+                    console.log('  - Title:', parsed.title || 'MISSING');
+                    console.log('  - Category:', parsed.category || 'MISSING');
+                    console.log('  - SubCategory:', parsed.subCategory || 'MISSING');
+                    console.log('  - Brand:', parsed.brand || 'MISSING');
+                    console.log('  - Price array:', parsed.price ? `${parsed.price.length} items` : 'MISSING');
+                    console.log('  - Price values:', parsed.price || []);
+                    console.log('  - Main image in FormData:', formData.get('mainImage') ? 'PRESENT' : 'MISSING');
+                    
+                    // Check if arrays match
+                    if (parsed.productSizes && parsed.price) {
+                        console.log('  - Sizes vs Prices match:', 
+                            parsed.productSizes.length === parsed.price.length ? 'YES' : `NO (${parsed.productSizes.length} sizes vs ${parsed.price.length} prices)`);
+                    }
+                    
+                } catch (e) {
+                    console.log('❌ Could not parse productData JSON');
+                    console.log('Raw (first 500 chars):', pair[1].substring(0, 500));
+                }
+            } else {
+                console.log('📁', pair[0], pair[1].name || 'File', 'Size:', pair[1].size, 'Type:', pair[1].type);
+            }
+        }
+        console.log('=== END REQUEST DEBUG ===');
+        
+        const response = await fetch(`${API_BASE_URL}/create-product`, {
+            method: 'POST',
+            body: formData
+        });
+
+        console.log('📥 Response status:', response.status);
+        console.log('📥 Response status text:', response.statusText);
+
+        if (!response.ok) {
+            let errorText = '';
+            try {
+                errorText = await response.text();
+                console.error('❌ Server error response:', errorText);
+                
+                // Try to parse JSON error
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    console.error('❌ Server error JSON:', errorJson);
+                    
+                    if (errorJson.message) {
+                        throw new Error(`Server error: ${errorJson.message}`);
+                    }
+                    
+                    if (errorJson.errors && Array.isArray(errorJson.errors)) {
+                        const errorMessages = errorJson.errors.map(err => 
+                            `${err.field || 'field'}: ${err.defaultMessage || err.message}`
+                        ).join(', ');
+                        throw new Error(`Validation errors: ${errorMessages}`);
+                    }
+                    
+                    throw new Error(`Server error: ${JSON.stringify(errorJson)}`);
+                    
+                } catch (jsonError) {
+                    // Not JSON, use text
+                    console.log('Response is not JSON, using raw text');
+                    
+                    if (errorText.includes("SKU is required") || errorText.includes("Title is required") || 
+                        errorText.includes("Price is required") || errorText.includes("Main image is required")) {
+                        throw new Error(`Validation: ${errorText.substring(0, 200)}`);
+                    }
+                    
+                    throw new Error(`Failed to create product: ${response.status} ${response.statusText}. Details: ${errorText.substring(0, 200)}`);
+                }
+                
+            } catch (e) {
+                console.error('❌ Could not read error response:', e);
+                throw new Error(`Failed to create product: ${response.status} ${response.statusText}. Please check server logs.`);
+            }
+        }
+
+        const result = await response.json();
+        console.log('✅ Product created successfully:', result);
+        return result;
+    } catch (error) {
+        console.error('❌ Error creating product:', error);
+        throw error;
+    }
+}
+
+    async updateProduct(id, productData) {
+        try {
+            const formData = new FormData();
+            
+            // Use the productJson directly from the parameter
+            const productJson = productData.productJson;
+            
+            console.log('Updating product with FULL data:', JSON.stringify(productJson, null, 2));
+
+            formData.append('productData', JSON.stringify(productJson));
+            
+            // Add main image if provided
+            if (productData.mainImage) {
+                formData.append('mainImage', productData.mainImage);
+            }
+            
+            // Add sub images if provided
+            if (productData.subImages && productData.subImages.length > 0) {
+                productData.subImages.forEach((image) => {
+                    formData.append('subImages', image);
+                });
+            }
+
+            const response = await fetch(`${API_BASE_URL}/${id}`, {
+                method: 'PUT',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to update product: ${errorText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error updating product:', error);
+            throw error;
+        }
+    }
+
+    async patchMbProduct(id, formData) {
+        try {
+            console.log('Sending PATCH request to:', `${API_BASE_URL}/update-mb-product/${id}`);
+            console.log('FormData contents for PATCH:');
+            
+            for (let pair of formData.entries()) {
+                if (pair[0] === 'productData') {
+                    console.log(pair[0], JSON.parse(pair[1]));
+                } else {
+                    console.log(pair[0], pair[1].name || pair[1].type || 'File', 'Size:', pair[1].size || 'N/A');
+                }
+            }
+
+            const response = await fetch(`${API_BASE_URL}/update-mb-product/${id}`, {
+                method: 'PATCH',
+                body: formData
+            });
+
+            console.log('PATCH Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server error:', errorText);
+                throw new Error(`Failed to patch product: ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('Product patched successfully:', result);
+            return result;
+        } catch (error) {
+            console.error('Error patching product:', error);
+            throw error;
+        }
+    }
+
+    async deleteProduct(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/delete-by-id/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to delete product: ${errorText}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            throw error;
+        }
+    }
+
+    async verifyProduct(id, action, reason = null) {
+        try {
+            const productData = {
+                approved: action === 'APPROVE'
+            };
+            
+            const formData = new FormData();
+            formData.append('productData', JSON.stringify(productData));
+
+            console.log('Sending verification data:', productData);
+            console.log('Product ID:', id);
+
+            const response = await fetch(`${API_BASE_URL}/update-mb-product/${id}`, {
+                method: 'PATCH',
+                body: formData
+            });
+
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server error:', errorText);
+                throw new Error(`Failed to verify product: ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('Verification response:', result);
+            return result;
+
+        } catch (error) {
+            console.error('Error verifying product:', error);
+            throw error;
+        }
+    }
+
+    async getStats() {
+        try {
+            const products = await this.getAllProducts();
+            const total = products.length;
+            const lowStock = products.filter(p => getStockStatus(p.stockQuantity) === 'Low Stock').length;
+            const inStock = products.filter(p => getStockStatus(p.stockQuantity) === 'In Stock').length;
+            const expiring = products.filter(p => {
+                try {
+                    const specs = JSON.parse(p.specifications || '{}');
+                    if (!specs.expiryDate) return false;
+                    const expiry = new Date(specs.expiryDate);
+                    const today = new Date();
+                    const diffTime = expiry - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffTime > 0 && diffDays <= 30;
+                } catch {
+                    return false;
+                }
+            }).length;
+            
+            const pendingVerification = products.filter(p => p.approved === false || p.approved === null).length;
+            return { total, lowStock, inStock, expiring, pendingVerification };
+        } catch (error) {
+            console.error('Error getting stats:', error);
+            return { total: 0, lowStock: 0, inStock: 0, expiring: 0, pendingVerification: 0 };
+        }
+    }
+}
+
+// ============================================
+// UI MANAGEMENT
+// ============================================
+
+const productService = new ProductService();
+
+async function loadProducts() {
+    try {
+        allProducts = await productService.getAllProducts();
+        filteredProducts = [...allProducts];
+        
+        renderProductsTable(filteredProducts);
+        updateStats();
+        populateCategoryFilters();
+        
+        // Initialize category-subcategory dependency
+        setupCategorySubcategoryDependency();
+        
+    } catch (error) {
+        console.error('Error loading products:', error);
+    }
+}
+
+function renderProductsTable(products) {
+    const tableBody = document.getElementById('productTableBody');
+    tableBody.innerHTML = '';
+
+    if (products.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td colspan="12" class="text-center py-8 text-gray-500">
+                <i class="fas fa-box-open text-3xl mb-2 text-gray-300"></i>
+                <p class="text-sm">No products found</p>
+            </td>
+        `;
+        tableBody.appendChild(row);
+        return;
+    }
+
+    products.forEach(product => {
+        const stockStatus = getStockStatus(product.stockQuantity);
+        const rowClass = getRowClass(product);
+        const imageUrl = product.mainImageUrl ? 
+            `http://localhost:8083${product.mainImageUrl}` : 
+            'http://localhost:8083/Images/product_details_fallback_img.jpg';
+        
+        // Handle prices - show based on priceList or single price
+        let priceDisplay = '₹0.00';
+        let originalPriceDisplay = '';
+        
+        if (product.priceList && Array.isArray(product.priceList) && product.priceList.length > 0) {
+            if (product.priceList.length === 1) {
+                const priceItem = product.priceList[0];
+                priceDisplay = `₹${Number(priceItem.price || 0).toFixed(2)}`;
+                if (priceItem.originalPrice) {
+                    originalPriceDisplay = `<div class="text-xs text-gray-500 line-through">₹${Number(priceItem.originalPrice).toFixed(2)}</div>`;
+                }
+            } else {
+                const prices = product.priceList.map(p => p.price || 0);
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                priceDisplay = `₹${Number(minPrice).toFixed(2)} - ₹${Number(maxPrice).toFixed(2)}`;
+            }
+        } else if (product.price && Array.isArray(product.price) && product.price.length > 0) {
+            if (product.price.length === 1) {
+                priceDisplay = `₹${Number(product.price[0] || 0).toFixed(2)}`;
+                if (product.originalPrice && product.originalPrice[0]) {
+                    originalPriceDisplay = `<div class="text-xs text-gray-500 line-through">₹${Number(product.originalPrice[0]).toFixed(2)}</div>`;
+                }
+            } else {
+                const prices = product.price.map(p => p || 0);
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                priceDisplay = `₹${Number(minPrice).toFixed(2)} - ₹${Number(maxPrice).toFixed(2)}`;
+            }
+        } else if (typeof product.price === 'number') {
+            priceDisplay = `₹${Number(product.price || 0).toFixed(2)}`;
+            if (product.originalPrice) {
+                originalPriceDisplay = `<div class="text-xs text-gray-500 line-through">₹${Number(product.originalPrice).toFixed(2)}</div>`;
+            }
+        } else {
+            priceDisplay = '₹0.00';
+        }
+
+        const row = document.createElement('tr');
+        row.className = rowClass;
+        row.innerHTML = `
+            <td class="py-3 px-4 text-center">${product.id}</td>
+            <td class="py-3 px-4 text-center">
+                <img src="${imageUrl}" alt="${product.title}" class="product-thumbnail mx-auto" 
+                     onerror="this.src='http://localhost:8083/Images/product_details_fallback_img.jpg'">
+            </td>
+            <td class="py-3 px-4">${product.sku || 'N/A'}</td>
+            <td class="py-3 px-4">${product.title}</td>
+            <td class="py-3 px-4">${product.category || 'N/A'}</td>
+            <td class="py-3 px-4">${product.subCategory || 'N/A'}</td>
+            <td class="py-3 px-4">${product.brand || 'N/A'}</td>
+            <td class="py-3 px-4">
+                <span class="px-2 py-1 rounded-full text-xs font-semibold ${
+                    stockStatus === 'In Stock' ? 'bg-green-100 text-green-800' :
+                    stockStatus === 'Low Stock' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                }">
+                    ${stockStatus} (${product.stockQuantity || 0})
+                </span>
+            </td>
+            <td class="py-3 px-4">
+                <div class="font-semibold">${priceDisplay}</div>
+                ${originalPriceDisplay}
+            </td>
+            <td class="py-3 px-4">
+                <div class="flex items-center">
+                    <span class="rating-stars mr-1">${getStarRating(product.rating || 0)}</span>
+                    <span class="text-xs">${(product.rating || 0).toFixed(1)}</span>
+                </div>
+            </td>
+            <td class="py-3 px-4 text-center verification-column">
+                <span class="status-badge ${
+                    product.verificationStatus === 'APPROVED' ? 'status-approved' :
+                    product.verificationStatus === 'REJECTED' ? 'status-rejected' : 'status-pending'
+                }">
+                    ${product.verificationStatus}
+                </span>
+            </td>
+           <td class="py-3 px-4">
+                <div class="action-buttons">
+                    <button class="view-btn" data-id="${product.id}" title="View">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="edit-btn" data-id="${product.id}" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-btn" data-id="${product.id}" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    ${product.verificationStatus === 'PENDING' ? 
+                        `<button class="verify-btn" data-id="${product.id}" title="Approve">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </button>
+                        <button class="reject-btn" data-id="${product.id}" title="Reject">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                        </button>` : 
+                    product.verificationStatus === 'APPROVED' ? 
+                        `<button class="unapprove-btn" data-id="${product.id}" title="Reject (Unapprove)">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                        </button>` : 
+                    product.verificationStatus === 'REJECTED' ? 
+                        `<button class="reapprove-btn" data-id="${product.id}" title="Re-approve">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </button>` : ''}
+                </div>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    // Attach event listeners to buttons
+    attachTableEventListeners();
+}
+
+function attachTableEventListeners() {
+    // View buttons
+    document.querySelectorAll('.view-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-id');
+            await showProductDetails(productId);
+        });
+    });
+    
+    // Edit buttons
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-id');
+            const product = filteredProducts.find(p => p.id == productId);
+            if (product) {
+                openEditModal(product.id);
+            }
+        });
+    });
+    
+    // Delete buttons
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-id');
+            const product = filteredProducts.find(p => p.id == productId);
+            if (product) {
+                await deleteProduct(product.id);
+            }
+        });
+    });
+    
+    // Verify/Approve buttons
+    document.querySelectorAll('.verify-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-id');
+            const product = filteredProducts.find(p => p.id == productId);
+            if (product) {
+                showVerificationModal(product, 'APPROVE');
+            }
+        });
+    });
+    
+    // Reject buttons
+    document.querySelectorAll('.reject-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-id');
+            const product = filteredProducts.find(p => p.id == productId);
+            if (product) {
+                showVerificationModal(product, 'REJECT');
+            }
+        });
+    });
+
+    // Unapprove buttons
+    document.querySelectorAll('.unapprove-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-id');
+            const product = filteredProducts.find(p => p.id == productId);
+            if (product) {
+                showVerificationModal(product, 'REJECT');
+            }
+        });
+    });
+
+    // Re-approve buttons
+    document.querySelectorAll('.reapprove-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-id');
+            const product = filteredProducts.find(p => p.id == productId);
+            if (product) {
+                showVerificationModal(product, 'APPROVE');
+            }
+        });
+    });
+}
+
+async function updateStats() {
+    const stats = await productService.getStats();
+    document.getElementById('totalProducts').textContent = stats.total;
+    document.getElementById('lowStockItems').textContent = stats.lowStock;
+    document.getElementById('inStockProducts').textContent = stats.inStock;
+    document.getElementById('expiringSoon').textContent = stats.expiring;
+    document.getElementById('pendingVerification').textContent = stats.pendingVerification;
+}
+
+function populateCategoryFilters() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const subcategoryFilter = document.getElementById('subcategoryFilter');
+    const editCategory = document.getElementById('edit-category');
+    
+    // Clear existing options except first
+    while (categoryFilter.options.length > 1) categoryFilter.remove(1);
+    while (subcategoryFilter.options.length > 1) subcategoryFilter.remove(1);
+    while (editCategory.options.length > 1) editCategory.remove(1);
+    
+    // Populate categories from CATEGORIES constant
+    Object.keys(CATEGORIES).forEach(category => {
+        // Add to filter dropdown
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option.cloneNode(true));
+        
+        // Add to edit form dropdown
+        const editOption = option.cloneNode(true);
+        editCategory.appendChild(editOption);
+    });
+}
+
+// ============================================
+// FILTER FUNCTIONS
+// ============================================
+
+function applyFilters() {
+    const category = document.getElementById('categoryFilter').value;
+    const subcategory = document.getElementById('subcategoryFilter').value;
+    const stock = document.getElementById('stockFilter').value;
+    const verification = document.getElementById('verificationFilter').value;
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+    
+    let filtered = [...allProducts];
+    
+    // Search filter
+    if (search) {
+        filtered = filtered.filter(p => 
+            (p.sku && p.sku.toLowerCase().includes(search)) ||
+            (p.title && p.title.toLowerCase().includes(search)) ||
+            (p.brand && p.brand.toLowerCase().includes(search)) ||
+            (p.category && p.category.toLowerCase().includes(search)) ||
+            (p.subCategory && p.subCategory.toLowerCase().includes(search))
+        );
+    }
+    
+    // Category filter - only filter if category is selected
+    if (category) {
+        filtered = filtered.filter(p => p.category === category);
+    }
+    
+    // Subcategory filter - only filter if subcategory is selected
+    if (subcategory) {
+        filtered = filtered.filter(p => p.subCategory === subcategory);
+    }
+    
+    // Stock filter
+    if (stock) {
+        filtered = filtered.filter(p => {
+            const status = getStockStatus(p.stockQuantity);
+            if (stock === 'in-stock') return status === 'In Stock';
+            if (stock === 'low-stock') return status === 'Low Stock';
+            if (stock === 'out-of-stock') return status === 'Out of Stock';
+            return true;
+        });
+    }
+    
+    // Verification filter
+    if (verification) {
+        filtered = filtered.filter(p => {
+            const status = p.approved === true ? 'APPROVED' : 
+                          p.approved === false ? 'REJECTED' : 'PENDING';
+            return status === verification;
+        });
+    }
+    
+    filteredProducts = filtered;
+    renderProductsTable(filteredProducts);
+}
+
+// ============================================
+// CATEGORY-SUBCATEGORY DEPENDENCY MANAGEMENT
+// ============================================
+
+function setupCategorySubcategoryDependency() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const subcategoryFilter = document.getElementById('subcategoryFilter');
+    const editCategory = document.getElementById('edit-category');
+    const editSubcategory = document.getElementById('edit-subcategory');
+    
+    function populateSubcategories(category, targetElement) {
+        while (targetElement.options.length > 1) {
+            targetElement.remove(1);
+        }
+        
+        if (category && CATEGORIES[category]) {
+            CATEGORIES[category].forEach(subcategory => {
+                const option = document.createElement('option');
+                option.value = subcategory;
+                option.textContent = subcategory;
+                targetElement.appendChild(option);
+            });
+            
+            targetElement.disabled = false;
+        } else {
+            targetElement.disabled = true;
+            targetElement.value = '';
+            
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = 'Select category first';
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            targetElement.appendChild(placeholderOption);
+        }
+    }
+    
+    function initializeFilters() {
+        while (subcategoryFilter.options.length > 0) {
+            subcategoryFilter.remove(0);
+        }
+        
+        const placeholderOption = document.createElement('option');
+        placeholderOption.value = '';
+        placeholderOption.textContent = 'Select category first';
+        placeholderOption.disabled = true;
+        placeholderOption.selected = true;
+        subcategoryFilter.appendChild(placeholderOption);
+        subcategoryFilter.disabled = true;
+        
+        editSubcategory.disabled = true;
+        editSubcategory.innerHTML = '<option value="">Select category first</option>';
+    }
+    
+    categoryFilter.addEventListener('change', function() {
+        const selectedCategory = this.value;
+        
+        if (selectedCategory) {
+            populateSubcategories(selectedCategory, subcategoryFilter);
+            applyFilters();
+        } else {
+            while (subcategoryFilter.options.length > 0) {
+                subcategoryFilter.remove(0);
+            }
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = 'Select category first';
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            subcategoryFilter.appendChild(placeholderOption);
+            subcategoryFilter.disabled = true;
+            applyFilters();
+        }
+    });
+    
+    editCategory.addEventListener('change', function() {
+        const selectedCategory = this.value;
+        
+        if (selectedCategory) {
+            editSubcategory.innerHTML = '';
+            
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select Subcategory';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            editSubcategory.appendChild(defaultOption);
+            
+            CATEGORIES[selectedCategory].forEach(subcategory => {
+                const option = document.createElement('option');
+                option.value = subcategory;
+                option.textContent = subcategory;
+                editSubcategory.appendChild(option);
+            });
+            
+            editSubcategory.disabled = false;
+        } else {
+            editSubcategory.disabled = true;
+            editSubcategory.value = '';
+            editSubcategory.innerHTML = '';
+            
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = 'Select category first';
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            editSubcategory.appendChild(placeholderOption);
+        }
+    });
+    
+    initializeFilters();
+}
+
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
+
+async function showProductDetails(productId) {
+    try {
+        const product = await productService.getProductById(productId);
+        
+        // Populate modal fields
+        document.getElementById('detail-id').textContent = product.id;
+        document.getElementById('detail-sku').textContent = product.sku || 'N/A';
+        document.getElementById('detail-name').textContent = product.title;
+        document.getElementById('detail-category').textContent = product.category || 'N/A';
+        document.getElementById('detail-type').textContent = product.subCategory || 'N/A';
+        document.getElementById('detail-brand').textContent = product.brand || 'N/A';
+        document.getElementById('detail-quantity').textContent = product.stockQuantity || 0;
+        
+        // Display prices based on priceList
+        const pricesContainer = document.getElementById('detail-prices');
+        pricesContainer.innerHTML = '';
+        
+        if (product.priceList && Array.isArray(product.priceList) && product.priceList.length > 0) {
+            product.priceList.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'price-display';
+                div.innerHTML = `
+                    <strong>${item.variant || item.size || 'Default'}:</strong> ₹${Number(item.price).toFixed(2)}
+                `;
+                pricesContainer.appendChild(div);
+            });
+        } else if (typeof product.price === 'number') {
+            pricesContainer.textContent = `₹${Number(product.price).toFixed(2)}`;
+        } else {
+            pricesContainer.textContent = 'N/A';
+        }
+        
+        // Display original prices
+        const originalPricesContainer = document.getElementById('detail-original-prices');
+        originalPricesContainer.innerHTML = '';
+        
+        if (product.priceList && Array.isArray(product.priceList) && product.priceList.length > 0) {
+            product.priceList.forEach(item => {
+                if (item.originalPrice) {
+                    const div = document.createElement('div');
+                    div.className = 'price-display';
+                    div.innerHTML = `
+                        <strong>${item.variant || item.size || 'Default'}:</strong> 
+                        <span class="line-through">₹${Number(item.originalPrice).toFixed(2)}</span>
+                    `;
+                    originalPricesContainer.appendChild(div);
+                }
+            });
+        } else if (typeof product.originalPrice === 'number') {
+            originalPricesContainer.innerHTML = `
+                <span class="line-through">₹${Number(product.originalPrice).toFixed(2)}</span>
+            `;
+        } else {
+            originalPricesContainer.textContent = 'N/A';
+        }
+        
+        document.getElementById('detail-discount').textContent = product.discount ? `${product.discount}%` : 'N/A';
+        document.getElementById('detail-rating').innerHTML = `${getStarRating(product.rating || 0)} ${(product.rating || 0).toFixed(1)}`;
+        
+        const stockStatus = getStockStatus(product.stockQuantity);
+        const statusElement = document.getElementById('detail-stock-status');
+        statusElement.textContent = stockStatus;
+        statusElement.className = `status-badge ${
+            stockStatus === 'In Stock' ? 'status-in-stock' :
+            stockStatus === 'Low Stock' ? 'status-low-stock' : 'status-out-of-stock'
+        }`;
+        
+        document.getElementById('detail-description').textContent = product.description?.join(', ') || 'N/A';
+        
+        const featuresList = document.getElementById('detail-features');
+        featuresList.innerHTML = '';
+        if (product.features && product.features.length > 0) {
+            product.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = `• ${feature}`;
+                featuresList.appendChild(li);
+            });
+        } else {
+            featuresList.textContent = 'N/A';
+        }
+        
+        const sizesContainer = document.getElementById('detail-sizes');
+        sizesContainer.innerHTML = '';
+        if (product.sizes && product.sizes.length > 0) {
+            const sizesDiv = document.createElement('div');
+            sizesDiv.className = 'flex flex-wrap gap-2';
+            product.sizes.forEach(size => {
+                const span = document.createElement('span');
+                span.className = 'bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded';
+                span.textContent = size;
+                sizesDiv.appendChild(span);
+            });
+            sizesContainer.appendChild(sizesDiv);
+        } else {
+            sizesContainer.textContent = 'N/A';
+        }
+        
+        try {
+            const specs = JSON.parse(product.specifications || '{}');
+            document.getElementById('detail-specifications').textContent = JSON.stringify(specs, null, 2);
+        } catch {
+            document.getElementById('detail-specifications').textContent = product.specifications || 'N/A';
+        }
+        
+        // Verification details
+        const verificationStatus = product.verificationStatus;
+        document.getElementById('detail-verification-status').innerHTML = `
+            <span class="status-badge ${
+                verificationStatus === 'APPROVED' ? 'status-approved' :
+                verificationStatus === 'REJECTED' ? 'status-rejected' : 'status-pending'
+            }">
+                ${verificationStatus}
+            </span>
+        `;
+        
+        // Show verification details if available
+        if (product.verifiedBy) {
+            document.getElementById('detail-verified-by-container').style.display = 'grid';
+            document.getElementById('detail-verified-by').textContent = product.verifiedBy;
+        }
+        if (product.verifiedAt) {
+            document.getElementById('detail-verified-at-container').style.display = 'grid';
+            document.getElementById('detail-verified-at').textContent = formatDate(product.verifiedAt);
+        }
+        
+        document.getElementById('detail-created').textContent = formatDate(product.createdAt);
+        
+        const mainImageContainer = document.getElementById('detail-main-image');
+        mainImageContainer.innerHTML = '';
+        if (product.mainImageUrl) {
+            const img = document.createElement('img');
+            img.src = `http://localhost:8083${product.mainImageUrl}`;
+            img.alt = 'Main Product Image';
+            img.className = 'w-32 h-32 object-cover rounded-lg shadow-sm';
+            img.onerror = function() {
+                this.src = 'http://localhost:8083/Images/product_details_fallback_img.jpg';
+            };
+            mainImageContainer.appendChild(img);
+        } else {
+            mainImageContainer.textContent = 'No image available';
+        }
+        
+        // Set edit button
+        document.getElementById('editProductBtn').onclick = () => openEditModal(product.id);
+        
+        // Show modal
+        document.getElementById('productDetailModal').style.display = 'flex';
+    } catch (error) {
+        console.error('Error showing product details:', error);
+        showSuccessPopup('Error loading product details', 'error');
+    }
+}
+
+async function openEditModal(productId = null) {
+    const modal = document.getElementById('editProductModal');
+    const title = document.getElementById('editModalTitle');
+    
+    // Reset form and previews
+    document.getElementById('editProductForm').reset();
+    document.getElementById('price-items-container').innerHTML = '';
+    document.getElementById('main-image-preview').classList.add('hidden');
+    document.getElementById('sub-images-preview').classList.add('hidden');
+    priceRowsCount = 0;
+    
+    // Reset category and subcategory
+    document.getElementById('edit-category').value = '';
+    document.getElementById('edit-subcategory').innerHTML = '<option value="">Select category first</option>';
+    document.getElementById('edit-subcategory').disabled = true;
+    
+    if (productId) {
+        // Edit mode
+        currentEditingProductId = productId;
+        title.textContent = 'Edit Product';
+        
+        try {
+            const product = await productService.getProductById(productId);
+            
+            console.log('Product data loaded for editing:', product);
+            console.log('Size quantities:', product.sizeQuantities);
+            console.log('Size MFG dates:', product.sizeMfgDates);
+            console.log('Size EXP dates:', product.sizeExpDates);
+            
+            // Fill form with product data
+            document.getElementById('edit-sku').value = product.sku || '';
+            document.getElementById('edit-title').value = product.title || '';
+            document.getElementById('edit-brand').value = product.brand || '';
+            document.getElementById('edit-instock').value = product.inStock ? 'true' : 'false';
+            document.getElementById('edit-discount').value = product.discount || '';
+            document.getElementById('edit-rating').value = product.rating || 0;
+            document.getElementById('edit-review-count').value = product.reviewCount || '';
+            document.getElementById('edit-stock-quantity').value = product.stockQuantity || 0;
+            document.getElementById('edit-description').value = product.description?.join('\n') || '';
+            document.getElementById('edit-features').value = product.features?.join('\n') || '';
+            
+            // Handle sizes - if productSizes exists, use it, otherwise use sizesInput
+            if (product.productSizes && Array.isArray(product.productSizes) && product.productSizes.length > 0) {
+                document.getElementById('edit-sizes').value = product.productSizes.join(', ') || '';
+            }
+            
+            document.getElementById('edit-specifications').value = product.specifications || '';
+            
+            // Handle category and subcategory
+            const category = product.category || '';
+            const subcategory = product.subCategory || '';
+            
+            if (category) {
+                document.getElementById('edit-category').value = category;
+                
+                // Trigger category change to populate subcategories
+                const categoryEvent = new Event('change');
+                document.getElementById('edit-category').dispatchEvent(categoryEvent);
+                
+                // Set subcategory after a small delay to ensure options are populated
+                setTimeout(() => {
+                    document.getElementById('edit-subcategory').value = subcategory;
+                }, 100);
+            }
+            
+            // ============================================
+            // HANDLE PRICES - UPDATED FOR NEW BACKEND FORMAT
+            // ============================================
+            
+            // Check for new backend format (sizeQuantities, sizeMfgDates, sizeExpDates)
+            if (product.productSizes && Array.isArray(product.productSizes) && product.productSizes.length > 0) {
+                console.log('Loading product with sizes:', product.productSizes);
+                console.log('Price array:', product.price);
+                console.log('Original price array:', product.originalPrice);
+                
+                // Clear any existing price rows
+                document.getElementById('price-items-container').innerHTML = '';
+                priceRowsCount = 0;
+                
+                // Create price rows for each size
+                product.productSizes.forEach((size, index) => {
+                    // Get price for this size
+                    const price = product.price && product.price[index] !== undefined ? product.price[index] : '';
+                    const originalPrice = product.originalPrice && product.originalPrice[index] !== undefined ? product.originalPrice[index] : '';
+                    
+                    // Get per-size quantities and dates
+                    const stock = product.sizeQuantities && product.sizeQuantities[size] !== undefined ? product.sizeQuantities[size] : '';
+                    
+                    // Handle dates - convert "YYYY-MM" to "YYYY-MM-DD" for date input
+                    let mfgDate = '';
+                    if (product.sizeMfgDates && product.sizeMfgDates[size]) {
+                        const mfgDateStr = product.sizeMfgDates[size];
+                        if (mfgDateStr && mfgDateStr.length >= 7) {
+                            mfgDate = mfgDateStr + '-01'; // Add day for date input
+                        }
+                    }
+                    
+                    let expiryDate = '';
+                    if (product.sizeExpDates && product.sizeExpDates[size]) {
+                        const expiryDateStr = product.sizeExpDates[size];
+                        if (expiryDateStr && expiryDateStr.length >= 7) {
+                            expiryDate = expiryDateStr + '-01'; // Add day for date input
+                        }
+                    }
+                    
+                    console.log(`Size ${size}: price=${price}, original=${originalPrice}, stock=${stock}, mfg=${mfgDate}, expiry=${expiryDate}`);
+                    
+                    addPriceRow(size, price, originalPrice, stock, mfgDate, expiryDate);
+                });
+                
+                // Update total stock
+                updateTotalStock();
+                
+            } 
+            // Fallback to old format (priceList)
+            else if (product.priceList && Array.isArray(product.priceList) && product.priceList.length > 0) {
+                console.log('Processing old format priceList:', product.priceList);
+                
+                // Clear any existing price rows
+                document.getElementById('price-items-container').innerHTML = '';
+                priceRowsCount = 0;
+                
+                // Create price rows from priceList
+                product.priceList.forEach(item => {
+                    addPriceRow(
+                        item.variant || '',
+                        item.price || '',
+                        item.originalPrice || '',
+                        item.stockQuantity || '',
+                        item.mfgDate || '',
+                        item.expiryDate || ''
+                    );
+                });
+                
+                updateTotalStock();
+            }
+            // Fallback to simple price arrays
+            else if (product.price && Array.isArray(product.price) && product.price.length > 0) {
+                console.log('Processing simple price array:', product.price);
+                
+                document.getElementById('price-items-container').innerHTML = '';
+                priceRowsCount = 0;
+                
+                product.price.forEach((price, index) => {
+                    const originalPrice = (product.originalPrice && product.originalPrice[index]) || '';
+                    addPriceRow(`Variant ${index + 1}`, price, originalPrice, '', '', '');
+                });
+                
+                updateTotalStock();
+            }
+            // Single price
+            else if (typeof product.price === 'number') {
+                console.log('Processing single price:', product.price);
+                
+                document.getElementById('price-items-container').innerHTML = '';
+                priceRowsCount = 0;
+                
+                const originalPrice = product.originalPrice || '';
+                addPriceRow('Default', product.price, originalPrice, product.stockQuantity || '', '', '');
+                
+                updateTotalStock();
+            }
+            // No price data
+            else {
+                console.log('No price data found, adding default row');
+                document.getElementById('price-items-container').innerHTML = '';
+                priceRowsCount = 0;
+                addPriceRow();
+                updateTotalStock();
+            }
+            
+            // Handle image previews if available
+            if (product.mainImageUrl) {
+                const mainImagePreview = document.getElementById('main-image-preview');
+                const mainImageImg = document.getElementById('main-image-preview-img');
+                mainImageImg.src = `http://localhost:8083${product.mainImageUrl}`;
+                mainImageImg.onerror = function() {
+                    this.src = 'http://localhost:8083/Images/mb-product-fallback.png';
+                };
+                mainImagePreview.classList.remove('hidden');
+            }
+            
+            // Handle sub images if available
+            if (product.subImageUrls && product.subImageUrls.length > 0) {
+                const subImagesContainer = document.getElementById('sub-images-container');
+                subImagesContainer.innerHTML = '';
+                product.subImageUrls.forEach((url, index) => {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.className = 'relative';
+                    imgDiv.innerHTML = `
+                        <img src="http://localhost:8083${url}" 
+                             class="w-20 h-20 object-cover rounded-lg border"
+                             alt="Sub image ${index + 1}"
+                             onerror="this.src='http://localhost:8083/Images/mb-product-fallback.png'">
+                        <span class="absolute -top-1 -right-1 bg-gray-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">${index + 1}</span>
+                    `;
+                    subImagesContainer.appendChild(imgDiv);
+                });
+                document.getElementById('sub-images-preview').classList.remove('hidden');
+            }
+            
+        } catch (error) {
+            console.error('Error loading product for edit:', error);
+            showSuccessPopup('Error loading product data', 'error');
+            return;
+        }
+    } else {
+        // Add mode
+        currentEditingProductId = null;
+        title.textContent = 'Add New Product';
+        addPriceRow(); // Add one default price row
+        updateTotalStock();
+    }
+    
+    modal.style.display = 'flex';
+}
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    try {
+        console.log('=== FORM SUBMISSION STARTED ===');
+        
+        // 1. Collect basic form data
+        const formData = {
+            sku: document.getElementById('edit-sku').value.trim(),
+            title: document.getElementById('edit-title').value.trim(),
+            category: document.getElementById('edit-category').value,
+            subCategory: document.getElementById('edit-subcategory').value,
+            brand: document.getElementById('edit-brand').value.trim(),
+            inStock: document.getElementById('edit-instock').value === 'true',
+            discount: document.getElementById('edit-discount').value ? 
+                     parseInt(document.getElementById('edit-discount').value) : null,
+            rating: document.getElementById('edit-rating').value ? 
+                   parseFloat(document.getElementById('edit-rating').value) : 0,
+            reviewCount: document.getElementById('edit-review-count').value ? 
+                       parseInt(document.getElementById('edit-review-count').value) : null,
+            description: document.getElementById('edit-description').value ? 
+                        document.getElementById('edit-description').value.split('\n')
+                           .filter(d => d.trim())
+                           .map(d => d.trim()) : [],
+            features: document.getElementById('edit-features').value ? 
+                     document.getElementById('edit-features').value.split('\n')
+                        .filter(f => f.trim())
+                        .map(f => f.trim()) : [],
+            specifications: document.getElementById('edit-specifications').value.trim() || null
+        };
+        
+        // 2. Validate basic fields
+        if (!formData.sku) {
+            showSuccessPopup('SKU is required', 'error');
+            return;
+        }
+        if (!formData.title) {
+            showSuccessPopup('Product Title is required', 'error');
+            return;
+        }
+        if (!formData.category) {
+            showSuccessPopup('Category is required', 'error');
+            return;
+        }
+        if (!formData.subCategory) {
+            showSuccessPopup('Subcategory is required', 'error');
+            return;
+        }
+        if (!formData.brand) {
+            showSuccessPopup('Brand is required', 'error');
+            return;
+        }
+        
+        // 3. Collect price table data - CRITICAL: Handle dates properly
+        const priceRows = document.querySelectorAll('.price-item-row');
+        const prices = [];
+        const originalPrices = [];
+        const sizeQuantities = {};
+        const sizeMfgDates = {};
+        const sizeExpDates = {};
+        const productSizes = [];
+        
+        console.log(`Processing ${priceRows.length} price rows`);
+        
+        priceRows.forEach((row, index) => {
+            const variant = row.querySelector('.price-variant').value.trim();
+            const price = row.querySelector('.price-current').value.trim();
+            const originalPrice = row.querySelector('.price-original').value.trim();
+            const stock = row.querySelector('.price-stock').value.trim();
+            const mfgDate = row.querySelector('.price-mfg').value; // YYYY-MM-DD from input
+            const expiryDate = row.querySelector('.price-expiry').value; // YYYY-MM-DD from input
+            
+            console.log(`Row ${index + 1}:`, { 
+                variant, 
+                price, 
+                originalPrice, 
+                stock, 
+                mfgDate, 
+                expiryDate 
+            });
+            
+            // Validate price row
+            if (variant && price) {
+                const priceNum = parseFloat(price);
+                if (!isNaN(priceNum) && priceNum > 0) {
+                    // Add to arrays
+                    prices.push(priceNum);
+                    
+                    // Handle original price
+                    let origPrice = null;
+                    if (originalPrice && !isNaN(parseFloat(originalPrice)) && parseFloat(originalPrice) > 0) {
+                        origPrice = parseFloat(originalPrice);
+                    }
+                    originalPrices.push(origPrice);
+                    
+                    // Add to size arrays
+                    productSizes.push(variant);
+                    
+                    // Add to size-specific objects
+                    const stockQty = stock ? parseInt(stock) : 0;
+                    sizeQuantities[variant] = stockQty >= 0 ? stockQty : 0;
+                    
+                    // ========== CRITICAL FIX: Handle dates for backend ==========
+                    // Backend expects YYYY-MM format (month-year only)
+                    
+// ========== CRITICAL FIX: Handle dates for backend ==========
+// Store dates in YYYY-MM-DD format
+
+// Handle MFG Date
+if (mfgDate) {
+    const date = new Date(mfgDate);
+    if (!isNaN(date.getTime())) {
+        // Format as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        sizeMfgDates[variant] = `${year}-${month}-${day}`;
+        console.log(`MFG Date for ${variant}: ${mfgDate} -> ${sizeMfgDates[variant]}`);
+    } else {
+        sizeMfgDates[variant] = null;
+    }
+} else {
+    sizeMfgDates[variant] = null;
+}
+
+// Handle Expiry Date
+if (expiryDate) {
+    const date = new Date(expiryDate);
+    if (!isNaN(date.getTime())) {
+        // Format as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        sizeExpDates[variant] = `${year}-${month}-${day}`;
+        console.log(`EXP Date for ${variant}: ${expiryDate} -> ${sizeExpDates[variant]}`);
+    } else {
+        sizeExpDates[variant] = null;
+    }
+} else {
+    sizeExpDates[variant] = null;
+}
+                }
+            }
+        });
+        
+        // 4. Validate price data
+        if (prices.length === 0) {
+            showSuccessPopup('Please add at least one valid price variant', 'error');
+            return;
+        }
+        
+        // 5. Calculate total stock
+        let totalStock = 0;
+        Object.values(sizeQuantities).forEach(qty => {
+            totalStock += parseInt(qty) || 0;
+        });
+        formData.stockQuantity = totalStock;
+        
+        // 6. Add price-related data
+        formData.productSizes = productSizes.length > 0 ? productSizes : ['Default'];
+        formData.price = prices;
+        formData.originalPrice = originalPrices;
+        
+        // Add size-specific objects (even if empty)
+        formData.sizeQuantities = sizeQuantities;
+        formData.sizeMfgDates = sizeMfgDates;
+        formData.sizeExpDates = sizeExpDates;
+        
+        // 7. For new products, add approved: false
+        if (!currentEditingProductId) {
+            formData.approved = false;
+        }
+        
+        // 8. Clean up - remove null/undefined/empty string values
+        Object.keys(formData).forEach(key => {
+            if (formData[key] === null || formData[key] === undefined || 
+                (typeof formData[key] === 'string' && formData[key].trim() === '')) {
+                delete formData[key];
+            }
+        });
+        
+        // Ensure arrays are never empty
+        if (!formData.price || formData.price.length === 0) {
+            formData.price = [0];
+        }
+        if (!formData.productSizes || formData.productSizes.length === 0) {
+            formData.productSizes = ['Default'];
+        }
+        
+        console.log('✅ Final product data for backend:', JSON.stringify(formData, null, 2));
+        
+        // 9. Get image files
+        const mainImageInput = document.getElementById('edit-main-image');
+        const mainImage = mainImageInput.files[0];
+        
+        const subImagesInput = document.getElementById('edit-sub-images');
+        const subImages = subImagesInput.files ? Array.from(subImagesInput.files) : [];
+        
+        // 10. Validate main image for new products
+        if (!currentEditingProductId && !mainImage) {
+            showSuccessPopup('Main product image is required', 'error');
+            return;
+        }
+        
+        // 11. Create FormData for API
+        const apiFormData = new FormData();
+        apiFormData.append('productData', JSON.stringify(formData));
+        
+        if (mainImage) {
+            apiFormData.append('mainImage', mainImage);
+            console.log('✅ Main image added:', mainImage.name);
+        }
+        
+        if (subImages.length > 0) {
+            subImages.forEach((image, index) => {
+                apiFormData.append('subImages', image);
+                console.log(`✅ Sub image ${index + 1}:`, image.name);
+            });
+        }
+        
+        // 12. DEBUG: Log what's being sent
+        console.log('=== Sending to API ===');
+        for (let pair of apiFormData.entries()) {
+            if (pair[0] === 'productData') {
+                try {
+                    console.log('productData:', JSON.parse(pair[1]));
+                } catch (e) {
+                    console.log('productData (raw):', pair[1].substring(0, 500));
+                }
+            } else {
+                console.log(pair[0], pair[1].name || 'File');
+            }
+        }
+        
+        // 13. Call API
+        let result;
+        if (currentEditingProductId) {
+            console.log('🔄 Updating product ID:', currentEditingProductId);
+            result = await productService.patchMbProduct(currentEditingProductId, apiFormData);
+            showSuccessPopup('Product updated successfully!');
+        } else {
+            console.log('➕ Creating new product');
+            result = await productService.createProduct(apiFormData);
+            showSuccessPopup('Product created successfully!');
+        }
+        
+        console.log('✅ API Response:', result);
+        
+        // 14. Close modal and reload
+        document.getElementById('editProductModal').style.display = 'none';
+        await loadProducts();
+        
+    } catch (error) {
+        console.error('❌ Error saving product:', error);
+        showSuccessPopup(error.message || 'Error saving product', 'error');
+    }
+}
+
+async function deleteProduct(productId) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
+        await productService.deleteProduct(productId);
+        showSuccessPopup('Product deleted successfully!');
+        await loadProducts();
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        showSuccessPopup('Error deleting product', 'error');
+    }
+}
+
+// ============================================
+// VERIFICATION MODAL FUNCTIONS
+// ============================================
+
+function showVerificationModal(product, action) {
+    document.getElementById('verify-product-id').value = product.id;
+    document.getElementById('verify-product-name').textContent = product.title;
+    document.getElementById('verify-product-sku').textContent = product.sku || 'N/A';
+    document.getElementById('verify-product-category').textContent = product.category || 'N/A';
+    
+    // Set radio button
+    if (action === 'REJECT') {
+        document.querySelector('input[name="verificationAction"][value="REJECT"]').checked = true;
+    } else {
+        document.querySelector('input[name="verificationAction"][value="APPROVE"]').checked = true;
+    }
+    
+    // Don't show rejection reason container at all
+    document.getElementById('rejection-reason-container').style.display = 'none';
+    
+    document.getElementById('verificationModal').style.display = 'flex';
+}
+
+async function handleVerificationSubmit() {
+    const productId = document.getElementById('verify-product-id').value;
+    const action = document.querySelector('input[name="verificationAction"]:checked').value;
+    const reason = action === 'REJECT' ? document.getElementById('rejectionReason').value.trim() : null;
+    
+    try {
+        showSuccessPopup(`Processing ${action.toLowerCase()}...`, 'info');
+        
+        const result = await productService.verifyProduct(productId, action, reason);
+        
+        console.log('Verification API Response:', result);
+        console.log('Approved field value:', result.approved);
+        
+        const actionText = action === 'APPROVE' ? 'approved' : 'rejected';
+        showSuccessPopup(`Product ${actionText} successfully!`);
+        
+        document.getElementById('verificationModal').style.display = 'none';
+        document.getElementById('verificationForm').reset();
+        
+        // Force reload products from server
+        await loadProducts();
+        
+    } catch (error) {
+        console.error('Error verifying product:', error);
+        showSuccessPopup(error.message || 'Error verifying product', 'error');
+    }
+}
+
+// ============================================
+// STICKY ACTION BUTTON FUNCTIONS
+// ============================================
+
+function setupStickyActionButton() {
+    const actionMenu = document.getElementById('stickyActionMenu');
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!actionMenu.contains(e.target)) {
+            actionMenu.classList.remove('show');
+        }
+    });
+    
+    // Quick actions
+    document.getElementById('quickAddProduct').addEventListener('click', (e) => {
+        e.preventDefault();
+        actionMenu.classList.remove('show');
+        openEditModal();
+    });
+    
+    document.getElementById('quickExport').addEventListener('click', (e) => {
+        e.preventDefault();
+        actionMenu.classList.remove('show');
+        exportToExcel();
+    });
+    
+    document.getElementById('quickImport').addEventListener('click', (e) => {
+        e.preventDefault();
+        actionMenu.classList.remove('show');
+        showSuccessPopup('Import functionality coming soon!', 'info');
+    });
+    
+    document.getElementById('quickRefresh').addEventListener('click', (e) => {
+        e.preventDefault();
+        actionMenu.classList.remove('show');
+        loadProducts();
+        showSuccessPopup('Data refreshed successfully!');
+    });
+    
+    document.getElementById('quickAddCategory').addEventListener('click', (e) => {
+        e.preventDefault();
+        actionMenu.classList.remove('show');
+        showSuccessPopup('Category management feature coming soon!', 'info');
+    });
+}
+
+// ============================================
+// EXPORT FUNCTION
+// ============================================
+
+async function exportToExcel() {
+    try {
+        showSuccessPopup('Preparing export...', 'info');
+        
+        // Fetch all products
+        const products = await productService.getAllProducts();
+        
+        if (!products || products.length === 0) {
+            showSuccessPopup('No data to export', 'error');
+            return;
+        }
+        
+        // Prepare data for export
+        const exportData = [
+            ['ID', 'SKU', 'Title', 'Category', 'Subcategory', 'Brand', 'Prices', 'Original Prices', 'Discount', 'Rating', 'Stock', 'Status', 'Verification', 'Created']
+        ];
+        
+        products.forEach(product => {
+            // Format prices for export
+            let priceExport = 'N/A';
+            let originalPriceExport = 'N/A';
+            
+            if (product.priceList && Array.isArray(product.priceList)) {
+                priceExport = product.priceList.map(p => 
+                    `${p.variant || p.size || 'Default'}: ₹${Number(p.price).toFixed(2)}`
+                ).join('; ');
+                
+                originalPriceExport = product.priceList
+                    .filter(p => p.originalPrice)
+                    .map(p => 
+                        `${p.variant || p.size || 'Default'}: ₹${Number(p.originalPrice).toFixed(2)}`
+                    ).join('; ');
+            } else if (typeof product.price === 'number') {
+                priceExport = `₹${Number(product.price).toFixed(2)}`;
+                if (product.originalPrice) {
+                    originalPriceExport = `₹${Number(product.originalPrice).toFixed(2)}`;
+                }
+            }
+            
+            // Get verification status
+            const verificationStatus = product.approved === true ? 'APPROVED' : 
+                                     product.approved === false ? 'REJECTED' : 'PENDING';
+            
+            exportData.push([
+                product.id,
+                product.sku || '',
+                product.title,
+                product.category || '',
+                product.subCategory || '',
+                product.brand || '',
+                priceExport,
+                originalPriceExport,
+                product.discount || '',
+                product.rating || 0,
+                product.stockQuantity || 0,
+                getStockStatus(product.stockQuantity),
+                verificationStatus,
+                formatDate(product.createdAt)
+            ]);
+        });
+        
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(exportData);
+        XLSX.utils.book_append_sheet(wb, ws, 'MB Products');
+        
+        // Generate and download
+        const filename = `mother_baby_products_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(wb, filename);
+        
+        showSuccessPopup(`Exported ${products.length} products successfully!`);
+        
+    } catch (error) {
+        console.error('Export error:', error);
+        showSuccessPopup('Error exporting data: ' + error.message, 'error');
+    }
+}
+
+// ============================================
+// SIDEBAR FUNCTIONS
+// ============================================
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarArrow = document.getElementById('sidebar-arrow');
+    const logoDiv = document.querySelector('div > div');               // Logo container
+    const navTexts = document.querySelectorAll('.nav-text');
+    const navIcons = document.querySelectorAll('.nav-icon');
+    
+    if (window.innerWidth < 768) {
+        // Mobile: Just toggle visibility with smooth transition
+        sidebar.classList.toggle('-translate-x-full');
+        sidebar.classList.toggle('translate-x-0');
+    } else {
+        // Desktop: Toggle between collapsed and expanded
+        sidebar.classList.toggle('collapsed');
+        
+        if (sidebar.classList.contains('collapsed')) {
+            // Collapsed state
+            sidebar.style.width = '64px'; // Smaller width when collapsed
+            sidebarArrow.classList.remove('fa-chevron-left');
+            sidebarArrow.classList.add('fa-chevron-right');
+            
+            // Hide logo smoothly
+            logoDiv.style.opacity = '0';
+            logoDiv.style.width = '0';
+            
+            // Hide nav texts with delay
+            navTexts.forEach((text, index) => {
+                text.style.opacity = '0';
+                text.style.width = '0';
+                text.style.overflow = 'hidden';
+                text.style.transitionDelay = `${index * 20}ms`;
+            });
+            
+            // Center icons
+            navIcons.forEach(icon => {
+                icon.style.marginLeft = '0';
+                icon.style.marginRight = '0';
+            });
+            
+        } else {
+            // Expanded state
+            sidebar.style.width = '256px'; // Original width
+            sidebarArrow.classList.remove('fa-chevron-right');
+            sidebarArrow.classList.add('fa-chevron-left');
+            
+            // Show logo smoothly
+            logoDiv.style.opacity = '1';
+            logoDiv.style.width = 'auto';
+            
+            // Show nav texts with staggered animation
+            navTexts.forEach((text, index) => {
+                text.style.opacity = '1';
+                text.style.width = 'auto';
+                text.style.overflow = 'visible';
+                text.style.transitionDelay = `${index * 20}ms`;
+            });
+            
+            // Restore icon margins
+            navIcons.forEach(icon => {
+                icon.style.marginLeft = '0';
+                icon.style.marginRight = '0.75rem'; // mr-3
+            });
+        }
+    }
+}
+
+// ============================================
+// EVENT LISTENERS SETUP
+// ============================================
+
+function setupEventListeners() {
+    console.log('Setting up event listeners...');
+    
+    // Setup price management
+    setupPriceManagement();
+    
+    // Sidebar toggle
+    document.getElementById('toggle-sidebar-logo').addEventListener('click', toggleSidebar);
+    document.getElementById('close-sidebar').addEventListener('click', () => {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.add('-translate-x-full');
+        sidebar.classList.remove('translate-x-0');
+    });
+    
+    // Mobile sidebar toggle
+    const mobileToggle = document.getElementById('toggle-sidebar-mobile');
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('translate-x-0');
+        });
+    }
+    
+    // ADD PRODUCT BUTTON - FIXED
+    const addProductBtn = document.getElementById('addProductBtn');
+    if (addProductBtn) {
+        console.log('Add Product button found, adding click listener');
+        addProductBtn.addEventListener('click', function(e) {
+            console.log('Add Product button clicked!');
+            e.preventDefault();
+            e.stopPropagation();
+            openEditModal();
+        });
+    } else {
+        console.error('Add Product button NOT FOUND! Check your HTML ID');
+    }
+    
+    // Reset filter button
+    const resetBtn = document.getElementById('resetFilterBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetAllFilters);
+    }
+    
+    // Modal close buttons
+    const closeButtons = [
+        { id: 'closeDetailModal', modal: 'productDetailModal' },
+        { id: 'closeEditModal', modal: 'editProductModal' },
+        { id: 'closeVerificationModal', modal: 'verificationModal' },
+        { id: 'closeSuccessPopup', modal: 'successPopup' },
+        { id: 'cancelEdit', modal: 'editProductModal' },
+        { id: 'cancelVerification', modal: 'verificationModal' }
+    ];
+    
+    closeButtons.forEach(btn => {
+        const element = document.getElementById(btn.id);
+        if (element) {
+            element.addEventListener('click', () => {
+                document.getElementById(btn.modal).style.display = 'none';
+            });
+        }
+    });
+    
+    // Form submissions
+    const editForm = document.getElementById('editProductForm');
+    if (editForm) {
+        editForm.addEventListener('submit', handleFormSubmit);
+    }
+    
+    // Use button click instead of form submit for verification to avoid validation errors
+    const submitVerificationBtn = document.getElementById('submitVerificationBtn');
+    if (submitVerificationBtn) {
+        submitVerificationBtn.addEventListener('click', handleVerificationSubmit);
+    }
+
+    // Export button
+    const exportBtn = document.getElementById('exportBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportToExcel);
+    }
+    
+    // Filters
+    const filters = ['categoryFilter', 'subcategoryFilter', 'stockFilter', 'verificationFilter'];
+    filters.forEach(filterId => {
+        const filter = document.getElementById(filterId);
+        if (filter) {
+            filter.addEventListener('change', applyFilters);
+        }
+    });
+    
+    // Search with debounce
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 500);
+        });
+    }
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', (e) => {
+        const modals = ['productDetailModal', 'editProductModal', 'verificationModal', 'successPopup'];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // Handle rejection reason field visibility
+    document.querySelectorAll('input[name="verificationAction"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'REJECT') {
+                document.getElementById('rejection-reason-container').style.display = 'block';
+            } else {
+                document.getElementById('rejection-reason-container').style.display = 'none';
+                document.getElementById('rejectionReason').value = '';
+            }
+        });
+    });
+
+    // Logout Modal
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutModal = document.getElementById('logoutModal');
+    
+    if (logoutBtn && logoutModal) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoutModal.classList.remove('hidden');
+        });
+        
+        const confirmLogout = document.getElementById('confirmLogout');
+        const cancelLogout = document.getElementById('cancelLogout');
+        const closeLogoutModal = document.getElementById('closeLogoutModal');
+        
+        function closeLogout() {
+            logoutModal.classList.add('hidden');
+        }
+        
+        if (cancelLogout) cancelLogout.addEventListener('click', closeLogout);
+        if (closeLogoutModal) closeLogoutModal.addEventListener('click', closeLogout);
+        
+        logoutModal.addEventListener('click', (e) => {
+            if (e.target === logoutModal) closeLogout();
+        });
+        
+        if (confirmLogout) {
+            confirmLogout.addEventListener('click', () => {
+                window.location.href = '../Login/login.html';
+            });
+        }
+    }
+    
+    // Setup sticky action button
+    setupStickyActionButton();
+    
+    console.log('Event listeners setup complete');
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        console.log('DOM fully loaded and parsed');
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Load initial data
+        await loadProducts();
+        
+    } catch (error) {
+        console.error('Error initializing application:', error);
+        showSuccessPopup('Error initializing application. Please refresh the page.', 'error');
+    }
+});
+
+// Make functions available globally
+window.showProductDetails = showProductDetails;
+window.openEditModal = openEditModal;
+window.deleteProduct = deleteProduct;
+window.exportToExcel = exportToExcel;
+window.removePriceRow = removePriceRow;
+window.updateTotalStock = updateTotalStock;
+
+</script>
+<script src="/orderBadge.js?v=1.0.1"></script>
+</body>
+</html>

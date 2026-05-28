@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Kunash - Cart</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pharmacy-blue': '#2563eb',
+                        'pharmacy-light-blue': '#dbeafe',
+                        'pharmacy-green': '#16a34a',
+                        'myntra-pink': '#ff3f6c',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./Footer/footer.css" onerror="this.remove()">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .cart-item:hover { background-color: #fafafa; transition: all 0.2s ease; }
+        .line-through { text-decoration: line-through; }
+        .coupon-input:focus { outline: none; border-color: #ff3f6c; }
+        
+        /* Custom Scrollbar for Cart Items */
+        #cart-items-container {
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        #cart-items-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #cart-items-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        #cart-items-container::-webkit-scrollbar-thumb {
+            background: #c0c0c0;
+            border-radius: 10px;
+        }
+        
+        #cart-items-container::-webkit-scrollbar-thumb:hover {
+            background: #a0a0a0;
+        }
+    </style>
+</head>
+<body class="bg-white">
+
+    <!-- HEADER PLACEHOLDER -->
+    <div id="header-placeholder"></div>
+
+    <!-- MAIN CART CONTENT -->
+    <main class="container mx-auto px-4 py-6 max-w-7xl">
+        <!-- EMPTY CART -->
+        <div id="empty-cart-fullscreen" class="hidden mt-8">
+            <div class="text-center py-20">
+                <div class="bg-pharmacy-light-blue w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-shopping-cart text-5xl text-pharmacy-blue"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
+                <p class="text-gray-600 mb-8">Add some medicines and come back!</p>
+                <a href="./index.html" class="bg-pharmacy-blue hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg">
+                    Browse Products
+                </a>
+            </div>
+        </div>
+
+        <!-- CART WITH ITEMS -->
+        <div id="cart-with-items" class="mt-20">
+        
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Cart Items (Left Side - 2/3) -->
+                <div class="lg:col-span-2">
+                    <!-- Item Count Header -->
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                            <i class="fas fa-shopping-bag text-gray-700"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800" id="item-count-header">0 Items</h2>
+                    </div>
+
+                    <!-- Prescription Notice -->
+                    <div id="prescription-notice" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 text-lg"></i>
+                            <div>
+                                <p class="font-semibold text-yellow-900 text-sm">Prescription Required</p>
+                                <p class="text-xs text-yellow-800">Upload valid prescription during checkout</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items Container -->
+                    <div id="cart-items-container" class="space-y-0 border rounded-lg overflow-hidden"></div>
+
+                    <!-- Wishlist Section -->
+                    <!-- <div class="mt-8">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">
+                            <i class="far fa-heart text-gray-500"></i> Items in your Wishlist
+                        </h3>
+                        <p class="text-gray-500 text-sm">No items in wishlist</p>
+                    </div> -->
+                </div>
+
+                <!-- Price Details (Right Side - 1/3) -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white border rounded-lg p-5 sticky top-24">
+                        <!-- Coupon Section -->
+                        <!-- <div class="mb-6 pb-5 border-b">
+                            <p class="text-gray-600 text-sm font-semibold mb-3">COUPONS</p>
+                            <div class="flex gap-2">
+                                <div class="flex-1 border rounded-lg px-3 py-2 flex items-center">
+                                    <i class="fas fa-tag text-gray-400 mr-2"></i>
+                                    <input type="text" placeholder="Enter coupon code" 
+                                           class="coupon-input flex-1 text-sm border-none outline-none">
+                                </div>
+                                <button class="bg-white border border-myntra-pink text-myntra-pink font-bold px-6 py-2 rounded-lg text-sm hover:bg-pink-50">
+                                    APPLY
+                                </button>
+                            </div>
+                        </div> -->
+
+                        <!-- Price Details -->
+                        <div class="mb-6">
+                            <p class="text-gray-800 font-bold mb-4 text-sm">PRICE DETAILS <span id="item-count-price" class="font-normal text-gray-600">(0 Items)</span></p>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between text-gray-700">
+                                    <span>Total MRP</span>
+                                    <span id="mrp-total">₹0</span>
+                                </div>
+                                <!--<div class="flex justify-between text-green-600">-->
+                                <!--    <span>Discount on MRP</span>-->
+                                <!--    <span id="discount-amount">-₹0</span>-->
+                                <!--</div>-->
+                                <!--<div class="flex justify-between text-gray-700">-->
+                                <!--    <span>Coupon Discount</span>-->
+                                <!--    <button class="text-myntra-pink font-semibold text-xs">Apply Coupon</button>-->
+                                <!--</div>-->
+                                <div class="flex justify-between text-gray-700">
+                                    <span class="flex items-center gap-1">
+                                        Convenience Fee 
+                                        <i class="fas fa-info-circle text-xs text-gray-400"></i>
+                                    </span>
+                                    <div class="text-right">
+                                        <span id="shipping-striked" class="line-through text-gray-500 mr-2">₹49</span>
+                                        <span id="shipping-text" class="text-green-600 font-semibold">FREE</span>
+                                    </div>
+                                </div>
+                                <div class="border-t pt-4 mt-4">
+                                    <div class="flex justify-between font-bold text-base">
+                                        <span>Total Amount</span>
+                                        <span id="total" class="text-gray-900">₹0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="proceedToCheckout()" 
+                                class="w-full bg-[#3B9797] hover:bg-[#16476A] text-white font-bold py-3 rounded-lg transition shadow-md">
+                            PROCEED TO BUY
+                        </button>
+
+                        <div class="mt-4 bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-600 flex items-center gap-2">
+                                <i class="fas fa-shield-alt text-green-600"></i>
+                                Safe and Secure Payments. Easy returns. 100% Authentic products.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <script>
+    function loadHeader() {
+        fetch('/Header/header.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+                const script = document.createElement('script');
+                 script.src = '/Header/header.js?v=1.1.3';
+                script.onload = () => console.log('Header JS loaded');
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+        fetch('/Footer/footer.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHeader();
+        loadFooter();
+    });
+</script>
+
+
+<script>
+// ===== SCROLL TO TOP ON PAGE REFRESH =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
+    // Handle browser back/forward navigation
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.scrollTo(0, 0);
+        }
+    };
+    
+    // Also scroll to top on page load (redundancy for safety)
+    window.onload = function() {
+        setTimeout(function() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }, 0);
+    };
+});
+
+
+
+// Force scroll to top even before DOM is fully loaded
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+} else {
+    window.onbeforeunload = function() {
+        window.scrollTo(0, 0);
+    };
+}
+</script>
+<!--<script src="../cart-wishlist-system.js" defer></script>-->
+    <!-- Main Cart Logic – FINAL FIXED VERSION -->
+    <script src="./cart.js?v=1.1.4"></script>
+</body>
+</html>

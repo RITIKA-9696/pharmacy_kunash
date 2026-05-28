@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../Header/header.css">
+  <link rel="stylesheet" href="../Footer/footer.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#36C2CE',
+            secondary: '#0ea5e9',
+            accent: '#10b981',
+            dark: '#1e293b',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    @media (max-width: 1024px) {
+      #footer-placeholder {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-cover bg-center bg-no-repeat min-h-screen flex flex-col"
+      style="background-image: url('https://i.pinimg.com/736x/1e/e5/07/1ee5072a72ffa83aace4863dd6bd23cd.jpg');">
+
+  <div id="header-placeholder"></div>
+
+  <div class="flex-grow flex items-center justify-center py-10 mt-32">
+    <div class="w-full max-w-6xl bg-white shadow-md rounded-lg flex flex-col md:flex-row overflow-hidden">
+
+      <div class="w-full md:w-1/3 bg-primary/10 border-r border-primary p-6 flex flex-col items-center">
+        <div class="w-24 h-24 bg-primary text-white rounded-full flex items-center justify-center text-5xl mb-4">
+          <i class="fa-regular fa-user"></i>
+        </div>
+        <h2 class="text-xl font-bold text-dark mb-1" id="profileName">Loading...</h2>
+        <p class="text-sm text-gray-600 mb-6">Member</p>
+
+        <nav class="w-full">
+          <button id="profileTab" class="w-full text-left flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white mb-2">
+            <i class="fa-solid fa-user"></i> Profile Information
+          </button>
+          <button id="addressTab" class="w-full text-left flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/20">
+            <i class="fa-solid fa-location-dot"></i> Addresses
+          </button>
+          <button id="ordersTab" class="w-full text-left flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-primary/20">
+            <i class="fa-solid fa-prescription-bottle-alt"></i> Prescription Orders
+          </button>
+        </nav>
+      </div>
+
+      <div class="w-full md:w-3/3 p-6">
+        <div id="profileInfo">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-dark">Personal Information</h2>
+            <button id="editBtn" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition">
+              Edit Profile
+            </button>
+          </div>
+
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-16 h-16 bg-primary/20 text-primary rounded-full flex items-center justify-center text-3xl font-bold">
+              <i class="fa-regular fa-user"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-dark" id="displayName">Loading...</h3>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="block text-sm font-medium text-gray-700">First Name *</label>
+              <input id="firstName" type="text" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:border-primary focus:ring-primary outline-none" disabled />
+            </div>
+            <div><label class="block text-sm font-medium text-gray-700">Last Name *</label>
+              <input id="lastName" type="text" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:border-primary focus:ring-primary outline-none" disabled />
+            </div>
+            <div><label class="block text-sm font-medium text-gray-700">Phone Number *</label>
+              <input id="phoneNumber" type="text" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:border-primary focus:ring-primary outline-none" disabled />
+            </div>
+            <div><label class="block text-sm font-medium text-gray-700">Email Address *</label>
+              <input id="emailAddress" type="email" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:border-primary focus:ring-primary outline-none" disabled />
+            </div>
+            <div><label class="block text-sm font-medium text-gray-700">Account Status</label>
+              <input id="accountStatus" type="text" value="Active" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:border-primary focus:ring-primary outline-none" disabled />
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <button id="changePasswordBtn" class="bg-dark text-white px-4 py-2 rounded-md hover:bg-primary transition">
+              Change Password
+            </button>
+            <button id="deleteAccountBtn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition ml-4">
+              Delete Account
+            </button>
+
+
+          </div>
+        </div>
+
+        <div id="addressInfo" class="hidden">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-dark">Saved Addresses</h2>
+            <button id="addAddressBtn" class="bg-primary text-white px-4 py-2 m-1  rounded-md hover:bg-secondary transition">
+               Add New Address
+            </button>
+          </div>
+          <div id="addressList" class="space-y-4">
+            <p class="text-gray-600" id="noAddressMsg">Loading addresses...</p>
+          </div>
+        </div>
+
+        <!-- Prescription Orders Section -->
+        <div id="ordersInfo" class="hidden">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-dark">Prescription Orders</h2>
+          </div>
+          <div id="ordersList" class="space-y-4 h-[400px] overflow-auto">
+            <p class="text-gray-600" id="noOrdersMsg">Loading prescription orders...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="passwordModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6">
+      <h3 class="text-xl font-semibold text-dark mb-4">Change Password</h3>
+      <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+      <input type="password" id="newPass" class="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 focus:border-primary outline-none">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+      <input type="password" id="confirmPass" class="w-full border border-gray-300 rounded-md px-3 py-2 mb-5 focus:border-primary outline-none">
+      <div class="flex justify-end gap-3">
+        <button id="cancelPassBtn" class="bg-gray-300 text-dark px-4 py-2 rounded-md hover:bg-gray-400">Cancel</button>
+        <button id="savePassBtn" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Address Modal -->
+  <div id="addressModal" class="hidden overflow-auto fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="h-[500px] overflow-auto bg-white rounded-lg shadow-lg w-11/12 max-w-lg p-6">
+      <h3 class="text-xl font-semibold text-dark  mb-4" id="addressModalTitle">Add New Address</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+        <div><label>First Name *</label><input id="addressFirstName" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>Last Name *</label><input id="addressLastName" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>Phone Number *</label><input id="addressPhone" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>Email Address *</label><input id="addressEmail" type="email" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div class="col-span-2"><label>Address Landmark *</label><input id="addressLandmark" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>Address Area *</label><input id="addressArea" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>City *</label><input id="addressCity" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>Pincode *</label><input id="addressPincode" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>State *</label><input id="addressState" type="text" class="mt-1 w-full border rounded-md px-3 py-2" /></div>
+        <div><label>Country *</label><input id="addressCountry" type="text" class="mt-1 w-full border rounded-md px-3 py-2" value="India" /></div>
+        <div class="col-span-2">
+          <label>Address Type *</label>
+          <select id="addressType" class="mt-1 w-full border rounded-md px-3 py-2">
+            <option value="HOME">HOME</option>
+            <option value="WORK">WORK</option>
+            <option value="OTHER">OTHER</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-5">
+        <button id="cancelAddressBtn" class="bg-gray-300 text-dark px-4 py-2 rounded-md hover:bg-gray-400">Cancel</button>
+        <button id="saveAddressBtn" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prescription Details Modal -->
+  <div id="prescriptionModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="mt-8 bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-dark">Prescription Details</h3>
+        <button id="closePrescriptionModal" class="text-gray-500 hover:text-gray-700">
+          <i class="fa-solid fa-times text-xl"></i>
+        </button>
+      </div>
+      <div id="prescriptionDetailsContent">
+        <p class="text-gray-600">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    function loadHeader() {
+      fetch('/Header/header.html')
+        .then(r => r.ok ? r.text() : Promise.reject())
+        .then(html => {
+          document.getElementById('header-placeholder').innerHTML = html;
+          const script = document.createElement('script');
+          script.src = '/Header/header.js?v=1.1.3';
+          document.body.appendChild(script);
+        })
+        .catch(() => {});
+    }
+    function loadFooter() {
+      fetch('/Footer/footer.html')
+        .then(r => r.ok ? r.text() : Promise.reject())
+        .then(html => document.getElementById('footer-placeholder').innerHTML = html)
+        .catch(() => {});
+    }
+    document.addEventListener('DOMContentLoaded', () => { loadHeader(); loadFooter(); });
+  </script>
+
+  <!-- FIXED JS - FULLY MATCHED WITH YOUR BACKEND (phone, not mobile) -->
+  <script>
+    const API_BASE_URL = 'http://localhost:8083/api/users';  // Change port if needed
+    const PRESCRIPTION_API_BASE_URL = 'http://localhost:8083/api/prescriptions';  // Prescription API base URL
+    const PRESCRIPTION_IMG_BASE_URL =  'http://localhost:8083';
+
+    let currentUserId = null;
+    let currentUserData = null;
+    let isEditingProfile = false;
+    let prescriptionOrders = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const storedUserId = sessionStorage.getItem('userId');
+      if (!storedUserId) {
+        alert('Please login first');
+        window.location.href = '../index.html';
+        return;
+      }
+      currentUserId = parseInt(storedUserId);
+      loadUserData();
+      loadPrescriptionOrders();
+      setupEventListeners();
+    });
+
+    async function loadUserData() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/get-by-user-id/${currentUserId}`);
+        if (!res.ok) throw new Error('User not found');
+        const user = await res.json();
+        currentUserData = user;
+
+        document.getElementById("profileName").textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+        document.getElementById("displayName").textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+        document.getElementById("firstName").value = user.firstName || '';
+        document.getElementById("lastName").value = user.lastName || '';
+        document.getElementById("phoneNumber").value = user.phone || '';
+        document.getElementById("emailAddress").value = user.email || '';
+
+        loadAddresses(user);
+      } catch (err) {
+        console.error(err);
+        alert('Failed to load profile');
+      }
+    }
+
+    // Load Prescription Orders
+    async function loadPrescriptionOrders() {
+      try {
+        const res = await fetch(`${PRESCRIPTION_API_BASE_URL}/get-all-orders-by-userId/${currentUserId}`);
+        if (!res.ok) throw new Error('Failed to fetch prescription orders');
+        const data = await res.json();
+        prescriptionOrders = data.content || [];
+        displayPrescriptionOrders();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("noOrdersMsg").textContent = "Failed to load prescription orders";
+      }
+    }
+
+    // Display Prescription Orders
+    function displayPrescriptionOrders() {
+      const list = document.getElementById("ordersList");
+      const noOrdersMsg = document.getElementById("noOrdersMsg");
+      
+      if (prescriptionOrders.length === 0) {
+        list.innerHTML = '<p class="text-gray-600">You currently have no prescription orders.</p>';
+        return;
+      }
+
+      noOrdersMsg.classList.add("hidden");
+      list.innerHTML = prescriptionOrders.map(order => {
+        const statusColor = getStatusColor(order.orderStatus);
+        const statusText = getStatusText(order.orderStatus);
+        const statusNote = getStatusNote(order.orderStatus);
+        const createdDate = new Date(order.createdAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColor}">${statusText}</span>
+                  ${order.approved && order.doctorName ? `<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Doctor Approved</span>` : ''}
+                </div>
+                <h3 class="text-lg font-bold text-dark mb-1">${order.prescriptionId}</h3>
+                <p class="text-sm text-gray-600 mb-1">${order.firstName} ${order.lastName}</p>
+                <p class="text-sm text-gray-600 mb-3">${createdDate}</p>
+                ${order.doctorName ? `<p class="text-sm  text-gray-600"><i class="fa-solid fa-user-md text-primary mr-1"></i>Provided Doctor's Name : <strong>${order.doctorName}</strong></p>` : ''}
+              </div>
+              <button onclick="viewPrescriptionDetails('${order.prescriptionId}')" 
+                      class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition text-sm">
+                View Details
+              </button>
+            </div>
+            <div class="border-t pt-3">
+              <p class="text-sm text-gray-600 mb-2"><span class="text-red-600 font-semibold">Note :</span> ${statusNote}</p>
+              <div class="flex justify-end">
+                <span class="text-xs text-gray-500">Order ID: ${order.prescriptionId}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Get status color class
+    function getStatusColor(status) {
+      switch (status) {
+        case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+        case 'APPROVED': return 'bg-green-100 text-green-800';
+        case 'REJECTED': return 'bg-red-100 text-red-800';
+        default: return 'bg-gray-100 text-gray-800';
+      }
+    }
+
+    // Get status text
+    function getStatusText(status) {
+      switch (status) {
+        case 'PENDING': return 'Pending Review';
+        case 'APPROVED': return 'Approved';
+        case 'REJECTED': return 'Rejected';
+        default: return status;
+      }
+    }
+
+    // Get status note
+    function getStatusNote(status) {
+      switch (status) {
+        case 'PENDING':
+          return 'After doctor review, we will get back to you 😊';
+        case 'APPROVED':
+          return 'Please contact us to get your medicine.';
+        case 'REJECTED':
+          return 'Contact for rejection reason: 080804 73916 | kunashmedia@gmail.com';
+        default:
+          return 'Your order is being processed.';
+      }
+    }
+
+    // View Prescription Details
+    window.viewPrescriptionDetails = async function(prescriptionId) {
+      const order = prescriptionOrders.find(o => o.prescriptionId === prescriptionId);
+      if (!order) return;
+
+      const modal = document.getElementById("prescriptionModal");
+      const content = document.getElementById("prescriptionDetailsContent");
+
+      try {
+        // Show loading
+        content.innerHTML = '<p class="text-gray-600">Loading prescription details...</p>';
+
+        // Fetch image
+        const imageUrl = `${PRESCRIPTION_IMG_BASE_URL}${order.imageUrl}?userId=${currentUserId}`;
+        const imageRes = await fetch(imageUrl);
+        let imageHtml = '<p class="text-gray-600">Image not available</p>';
+        
+        if (imageRes.ok) {
+          const imageBlob = await imageRes.blob();
+          const imageUrl = URL.createObjectURL(imageBlob);
+          imageHtml = `<div class="mb-4"><img src="${imageUrl}" alt="Prescription Image" class="max-w-full h-auto rounded-lg border shadow-sm" /></div>`;
+        }
+
+        // Create details HTML
+        content.innerHTML = `
+          <div class="space-y-4">
+            ${imageHtml}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 class="font-semibold text-dark mb-2">Patient Information</h4>
+                <p><strong>Name:</strong> ${order.firstName} ${order.lastName}</p>
+                <p><strong>Phone:</strong> ${order.mobileNumber}</p>
+                <p><strong>Email:</strong> ${order.email}</p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-dark mb-2">Order Information</h4>
+                <p><strong>Prescription ID:</strong> ${order.prescriptionId}</p>
+                <p><strong>Status:</strong> <span class="px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.orderStatus)}">${getStatusText(order.orderStatus)}</span></p>
+                ${order.doctorName ? `<p><strong>Doctor:</strong> ${order.doctorName}</p>` : ''}
+                <p><strong>Created:</strong> ${new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+            </div>
+            <div class="pt-4 border-t">
+              <h4 class="font-semibold text-dark mb-2">Status Note</h4>
+              <p class="text-sm text-gray-600">${getStatusNote(order.orderStatus)}</p>
+            </div>
+          </div>
+        `;
+
+        modal.classList.remove("hidden");
+      } catch (err) {
+        console.error(err);
+        content.innerHTML = '<p class="text-red-600">Failed to load prescription details</p>';
+      }
+    };
+
+    function loadAddresses(user) {
+      const list = document.getElementById("addressList");
+      list.innerHTML = '';
+      if (user.addressLandmark && user.addressLandmark.trim() !== '') {
+        document.getElementById("noAddressMsg")?.classList.add("hidden");
+        const div = document.createElement("div");
+        div.className = "border border-gray-300 rounded-md p-4 flex justify-between items-start";
+        div.innerHTML = `
+          <div>
+            <p class="font-semibold">${user.firstName} ${user.lastName}</p>
+            <p class="text-gray-600">${user.addressLandmark}, ${user.addressArea}, ${user.addressCity} - ${user.addressPincode}</p>
+            <p class="text-gray-600">Phone: ${user.phone}</p>
+            <p class="text-gray-500">${user.addressType || 'HOME'} Address</p>
+          </div>
+          <div class="">
+            <button onclick="editAddress()" class="bg-primary  text-white px-3 py-1 rounded-md hover:bg-secondary">Edit</button>
+            <button onclick="deleteAddress()" class="bg-red-600 mt-2 text-white px-3 py-1 rounded-md hover:bg-red-700">Delete</button>
+          </div>
+        `;
+        list.appendChild(div);
+      } else {
+        list.innerHTML = `<p class="text-gray-600">You currently have no saved addresses.</p>`;
+      }
+    }
+
+   function setupEventListeners() {
+      document.getElementById("profileTab").onclick = () => {
+        document.getElementById("profileInfo").classList.remove("hidden");
+        document.getElementById("addressInfo").classList.add("hidden");
+        document.getElementById("ordersInfo").classList.add("hidden");
+        document.getElementById("profileTab").classList.add("bg-primary", "text-white");
+        document.getElementById("addressTab").classList.remove("bg-primary", "text-white");
+        document.getElementById("ordersTab").classList.remove("bg-primary", "text-white");
+      };
+      document.getElementById("addressTab").onclick = () => {
+        document.getElementById("addressInfo").classList.remove("hidden");
+        document.getElementById("profileInfo").classList.add("hidden");
+        document.getElementById("ordersInfo").classList.add("hidden");
+        document.getElementById("addressTab").classList.add("bg-primary", "text-white");
+        document.getElementById("profileTab").classList.remove("bg-primary", "text-white");
+        document.getElementById("ordersTab").classList.remove("bg-primary", "text-white");
+      };
+      
+      // New Orders Tab Event Listener
+      document.getElementById("ordersTab").onclick = () => {
+        document.getElementById("ordersInfo").classList.remove("hidden");
+        document.getElementById("profileInfo").classList.add("hidden");
+        document.getElementById("addressInfo").classList.add("hidden");
+        document.getElementById("ordersTab").classList.add("bg-primary", "text-white");
+        document.getElementById("profileTab").classList.remove("bg-primary", "text-white");
+        document.getElementById("addressTab").classList.remove("bg-primary", "text-white");
+      };
+
+      document.getElementById("editBtn").onclick = toggleEditProfile;
+      document.getElementById("changePasswordBtn").onclick = () => document.getElementById("passwordModal").classList.remove("hidden");
+      document.getElementById("cancelPassBtn").onclick = () => document.getElementById("passwordModal").classList.add("hidden");
+      document.getElementById("savePassBtn").onclick = handlePasswordChange;
+      document.getElementById("addAddressBtn").onclick = () => openAddressModal();
+      document.getElementById("cancelAddressBtn").onclick = () => document.getElementById("addressModal").classList.add("hidden");
+      document.getElementById("saveAddressBtn").onclick = handleSaveAddress;
+      document.getElementById("deleteAccountBtn").onclick = handleDeleteAccount;
+
+      // Prescription Modal Close
+      document.getElementById("closePrescriptionModal").onclick = () => {
+        document.getElementById("prescriptionModal").classList.add("hidden");
+      };
+
+      // Close modals on outside click
+      document.getElementById("prescriptionModal").onclick = (e) => {
+        if (e.target.id === "prescriptionModal") {
+          e.target.classList.add("hidden");
+        }
+      };
+
+      // LOGOUT BUTTON — WORKS PERFECTLY
+      document.getElementById("logoutBtn").onclick = function() {
+        if (confirm("Are you sure you want to logout?")) {
+          sessionStorage.clear();
+          localStorage.removeItem('savedPincode');
+          localStorage.removeItem('savedLocation');
+          alert("Logged out successfully!");
+          window.location.href = "/index.html";
+        }
+      };
+    }
+
+    function toggleEditProfile() {
+      isEditingProfile = !isEditingProfile;
+      const inputs = document.querySelectorAll("#profileInfo input:not([id='accountStatus'])");
+      inputs.forEach(i => i.disabled = !isEditingProfile);
+      document.getElementById("editBtn").textContent = isEditingProfile ? "Save Profile" : "Edit Profile";
+      if (!isEditingProfile) saveProfileChanges();
+    }
+
+    async function saveProfileChanges() {
+      const data = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("emailAddress").value.trim(),
+        phone: document.getElementById("phoneNumber").value.trim()
+      };
+      try {
+        await fetch(`${API_BASE_URL}/patch-user-by-id/${currentUserId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        loadUserData();
+        alert("Profile updated successfully!");
+      } catch (err) {
+        alert("Update failed");
+      }
+    }
+
+    async function handlePasswordChange() {
+      const newP = document.getElementById("newPass").value;
+      const confP = document.getElementById("confirmPass").value;
+      if (newP !== confP) return alert("Passwords don't match");
+      if (newP.length < 6) return alert("Password too short");
+
+      try {
+        await fetch(`${API_BASE_URL}/patch-user-by-id/${currentUserId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: newP })
+        });
+        alert("Password changed successfully!");
+        document.getElementById("passwordModal").classList.add("hidden");
+        document.getElementById("newPass").value = '';
+        document.getElementById("confirmPass").value = '';
+      } catch (err) {
+        alert("Password change failed");
+      }
+    }
+
+    function openAddressModal() {
+      document.getElementById("addressModalTitle").textContent = currentUserData.addressLandmark ? "Edit Address" : "Add New Address";
+      document.getElementById("addressFirstName").value = currentUserData.firstName || '';
+      document.getElementById("addressLastName").value = currentUserData.lastName || '';
+      document.getElementById("addressEmail").value = currentUserData.email || '';
+      document.getElementById("addressPhone").value = currentUserData.phone || '';
+      document.getElementById("addressLandmark").value = currentUserData.addressLandmark || '';
+      document.getElementById("addressArea").value = currentUserData.addressArea || '';
+      document.getElementById("addressCity").value = currentUserData.addressCity || '';
+      document.getElementById("addressPincode").value = currentUserData.addressPincode || '';
+      document.getElementById("addressState").value = currentUserData.addressState || '';
+      document.getElementById("addressCountry").value = currentUserData.addressCountry || 'India';
+      document.getElementById("addressType").value = currentUserData.addressType || 'HOME';
+      document.getElementById("addressModal").classList.remove("hidden");
+    }
+
+    window.editAddress = openAddressModal;
+
+    async function handleSaveAddress() {
+      const data = {
+        firstName: document.getElementById("addressFirstName").value.trim(),
+        lastName: document.getElementById("addressLastName").value.trim(),
+        email: document.getElementById("addressEmail").value.trim(),
+        phone: document.getElementById("addressPhone").value.trim(),
+        addressLandmark: document.getElementById("addressLandmark").value.trim(),
+        addressArea: document.getElementById("addressArea").value.trim(),
+        addressCity: document.getElementById("addressCity").value.trim(),
+        addressPincode: document.getElementById("addressPincode").value.trim(),
+        addressState: document.getElementById("addressState").value.trim(),
+        addressCountry: document.getElementById("addressCountry").value.trim(),
+        addressType: document.getElementById("addressType").value
+      };
+
+      try {
+        await fetch(`${API_BASE_URL}/patch-user-by-id/${currentUserId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        document.getElementById("addressModal").classList.add("hidden");
+        loadUserData();
+        alert("Address saved successfully!");
+      } catch (err) {
+        alert("Failed to save address");
+      }
+    }
+
+    window.deleteAddress = async function() {
+      if (!confirm("Delete this address permanently?")) return;
+      try {
+        await fetch(`${API_BASE_URL}/patch-user-by-id/${currentUserId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            addressLandmark: "", addressArea: "", addressCity: "", addressPincode: "",
+            addressState: "", addressCountry: "", addressType: ""
+          })
+        });
+        loadUserData();
+        alert("Address deleted!");
+      } catch (err) {
+        alert("Delete failed");
+      }
+    };
+
+    async function handleDeleteAccount() {
+      if (!confirm("Delete your account permanently? This cannot be undone!")) return;
+      try {
+        await fetch(`${API_BASE_URL}/delete-by-user-id/${currentUserId}`, { method: 'DELETE' });
+        sessionStorage.clear();
+        alert("Account deleted successfully");
+        window.location.href = "/";
+      } catch (err) {
+        alert("Failed to delete account");
+      }
+    }
+
+    async function handleLogout() {
+  if (!confirm("Are you sure you want to logout?")) return;
+
+  // Clear all session & user data
+  sessionStorage.removeItem('userId');
+  sessionStorage.removeItem('currentUser');
+  localStorage.removeItem('loggedInUser');
+
+  // Optional: Clear saved pincode on logout (keeps guest mode clean)
+  localStorage.removeItem('savedPincode');
+  localStorage.removeItem('savedLocation');
+
+  alert("Logged out successfully!");
+  window.location.href = "/index.html"; // Redirect to home
+}
+  </script>
+</body>
+</html>

@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/IMG/LOGO_1-removebg-preview.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Orders</title>
+
+  <!-- Tailwind + Font Awesome + Toastify + html2pdf -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="../../Header/header.css">
+
+  <link rel="stylesheet" href="../../Footer/footer.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#36C2CE',
+            secondary: '#0ea5e9',
+            accent: '#10b981',
+            dark: '#1e293b',
+            neutral: '#F5F5F5'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .order-card {
+      background: white;
+      border: 1px solid #EDEDED;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .order-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      border: 1px solid;
+    }
+
+    .btn {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #36C2CE;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2AB1BD;
+    }
+
+    .btn-danger {
+      background: #EF4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #DC2626;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #36C2CE;
+      border: 1px solid #36C2CE;
+    }
+
+    .btn-outline:hover {
+      background: #36C2CE;
+      color: white;
+    }
+
+    .modal-card {
+      transform: scale(0.95);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .modal-card.show {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    @media (max-width: 1024px) {
+      #footer-placeholder {
+        display: none !important;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+
+      body * {
+        visibility: hidden;
+      }
+
+      #printableInvoice,
+      #printableInvoice * {
+        visibility: visible !important;
+      }
+
+      #printableInvoice {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 190mm;
+        padding: 0;
+        background: white;
+      }
+
+      .print-logo {
+        width: 90px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+    }
+
+    @media screen {
+      #printableInvoice {
+        position: fixed;
+        left: -9999px;
+        top: -9999px;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-white">
+  <div id="header-placeholder"></div>
+  <div class="max-w-4xl mx-auto px-4 mt-16">
+
+    <!-- Header -->
+    <div class="order-card mb-6 py-2">
+      <div class="flex items-center justify-between">
+        <button onclick="window.history.back()" class="p-2 rounded-lg bg-neutral hover:bg-gray-100">
+          <i class="fas fa-arrow-left text-primary text-lg"></i>
+        </button>
+        <div class="text-center flex-1">
+          <h1 class="text-xl font-bold text-primary">My Orders</h1>
+        </div>
+        <div class="w-10"></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button id="tab-upcoming" class="tab-btn flex-1 py-3 text-sm font-medium text-primary border-b-2 border-primary"
+        onclick="switchTab('upcoming')">Upcoming Orders (1)</button>
+      <button id="tab-cancelled" class="tab-btn flex-1 py-3 text-sm font-medium text-dark border-b-2 border-transparent"
+        onclick="switchTab('cancelled')">Cancelled Orders (0)</button>
+    </div>
+
+    <!-- Orders List -->
+    <div id="ordersList" class="space-y-6"></div>
+    <div class="h-20"></div>
+  </div>
+
+  <!-- View Modal -->
+  <div id="viewModal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-white rounded-xl max-w-md w-full overflow-auto h-[470px] mt-16 flex flex-col order-card modal-card">
+      <div class="flex justify-between items-center p-5 border-b border-gray-200">
+        <h2 class="text-lg font-bold text-primary">Order Details</h2>
+        <button onclick="closeModal('viewModal')" class="text-dark hover:text-primary">
+          <i class="fas fa-times text-lg"></i>
+        </button>
+      </div>
+      <div id="viewContent" class="flex-1 overflow-y-auto p-5 space-y-4 text-sm"></div>
+      <div class="p-5 border-t border-gray-200">
+        <button onclick="closeModal('viewModal')" class="w-full btn btn-primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Modal -->
+  <div id="cancelModal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full order-card modal-card">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-primary">Cancel Order?</h2>
+        <button onclick="closeModal('cancelModal')" class="text-dark hover:text-primary">
+          <i class="fas fa-times text-lg"></i>
+        </button>
+      </div>
+      <div id="cancelWarningText" class="text-sm mb-5"></div>
+      <div class="flex gap-3">
+        <button onclick="confirmCancel()" class="flex-1 btn btn-danger">Yes, Cancel</button>
+        <button onclick="closeModal('cancelModal')" class="flex-1 btn btn-outline">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exchange Modal -->
+  <div id="exchangeModal" class="fixed inset-0 bg-black/60 mt-10 flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-white rounded-xl max-w-md w-full overflow-auto h-[470px] flex flex-col order-card modal-card p-6 mt-10">
+      <div class="flex justify-between items-center mb-5">
+        <h2 class="text-lg font-bold text-primary">Request Size Exchange</h2>
+        <button onclick="closeModal('exchangeModal')" class="text-dark hover:text-primary">
+          <i class="fas fa-times text-lg"></i>
+        </button>
+      </div>
+      
+      <div class="mb-5">
+        <p class="text-sm text-gray-600 mb-2">Item: <span id="exchangeItemName" class="font-medium text-primary"></span></p>
+        <p class="text-sm text-gray-600">Current Size: <span id="exchangeCurrentSize" class="font-medium"></span></p>
+      </div>
+
+      <form id="exchangeForm">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-dark mb-1">Select New Size</label>
+          <select id="exchangeSizeSelect" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+            <option value="">-- Choose available size --</option>
+          </select>
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-sm font-medium text-dark mb-1">Reason for Exchange</label>
+          <textarea id="exchangeReason" rows="4" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g., Size too small / Prefer different fit..." required></textarea>
+        </div>
+
+        <div class="text-xs text-gray-500 mb-5 italic">
+          In case size is not available wait for 7-10 days or<br>
+          for further enquiry contact on : 08080473916 | kunashmedia@gmail.com
+        </div>
+
+        <div class="flex gap-3">
+          <button type="button" onclick="closeModal('exchangeModal')" class="flex-1 btn btn-outline">Cancel</button>
+          <button type="submit" class="flex-1 btn btn-primary">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 order-card text-center">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-3"></div>
+      <p class="text-primary font-semibold">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Printable Invoice -->
+  <div id="printableInvoice" class="hidden bg-white p-8 max-w-4xl mx-auto font-sans text-sm print:block">
+    <div class="flex justify-between items-start border-b pb-6 mb-6">
+      <div>
+        <img src="../Images/logo.png" alt="PharmaCare" class="print-logo w-32 mb-4">
+        <p>Pune, Maharashtra</p>
+        <p><strong>Contact:</strong> +91 9876543210</p>
+      </div>
+      <div class="text-right">
+        <h2 class="text-xl font-bold">INVOICE</h2>
+        <p><strong>Order ID:</strong> #<span id="printOrderId"></span></p>
+        <p><strong>Date:</strong> <span id="printOrderDate"></span></p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-6 mb-6">
+      <div>
+        <h3 class="font-bold mb-2">Bill To:</h3>
+        <p id="printCustomerName"></p>
+        <p id="printCustomerPhone"></p>
+      </div>
+      <div>
+        <h3 class="font-bold mb-2">Shipping To:</h3>
+        <p id="printShippingName"></p>
+        <div id="printShippingAddress"></div>
+        <p id="printShippingPhone"></p>
+      </div>
+    </div>
+    <table class="w-full border-collapse mb-6">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border p-2 text-left">Product</th>
+          <th class="border p-2 text-center">Qty</th>
+          <th class="border p-2 text-right">Rate</th>
+          <th class="border p-2 text-right">Amount</th>
+        </tr>
+      </thead>
+      <tbody id="printItemsTable"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="border p-2 text-right font-bold">Subtotal</td>
+          <td class="border p-2 text-right" id="printSubtotal"></td>
+        </tr>
+       
+         <tr>
+          <td colspan="3" class="border p-2 text-right">Discount</td>
+          <td class="border p-2 text-right" id="printDiscount">₹0.00</td>
+        </tr> 
+        
+        
+        <tr>
+          <td colspan="3" class="border p-2 text-right">Convenience Fee</td>
+          <td class="border p-2 text-right" id="printConvenienceFee">₹0.00</td>
+        </tr> 
+        
+        <!-- <tr>
+          <td colspan="3" class="border p-2 text-right">Coupon</td>
+          <td class="border p-2 text-right" id="printCoupon">₹0.00</td>
+        </tr> -->
+        
+        <tr class="font-bold text-lg">
+          <td colspan="3" class="border p-2 text-right bg-gray-100">Total</td>
+          <td class="border p-2 text-right bg-gray-100" id="printTotal"></td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="text-center text-xs text-gray-600">
+      <p>Thank you for your order!</p>
+      <p>In case of issues, contact: 9876543210</p>
+      <p>Consult your doctor before taking any medication</p>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    'use strict';
+
+    let orders = [];
+    let currentOrderId = null;
+    let activeTab = 'upcoming';
+    let currentExchangeItem = null;
+
+    const API_BASE_URL = 'http://localhost:8083/api/orders';
+
+    const statusMap = {
+      'placed': { display: 'Placed', class: 'bg-sky-100 text-sky-800 border-sky-300' },
+      'cancelled': { display: 'Cancelled', class: 'bg-red-100 text-red-800 border-red-300' },
+      'delivered': { display: 'Delivered', class: 'bg-green-100 text-green-800 border-green-300' },
+      'exchange_requested': { 
+        display: 'Exchange Requested', 
+        class: 'bg-orange-100 text-orange-800 border-orange-300' 
+  }
+    };
+
+    function getCurrentUserId() {
+      const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+      if (!userId) {
+        console.warn("No userId found in storage → user probably not logged in");
+        return null;
+      }
+      return parseInt(userId, 10);
+    }
+
+    function parseDate(dateStr) {
+      try {
+        return new Date(dateStr);
+      } catch (e) {
+        console.warn("Invalid date format:", dateStr);
+        return new Date();
+      }
+    }
+
+    function isWithinCancellationWindow(dateStr) {
+      const orderTime = parseDate(dateStr);
+      const now = new Date();
+      const diffMinutes = (now - orderTime) / (1000 * 60);
+      return diffMinutes < 30 && diffMinutes > -10;
+    }
+
+    function getCancellationNote(dateStr) {
+      const orderTime = parseDate(dateStr);
+      const now = new Date();
+      const diffMinutes = Math.floor((now - orderTime) / (1000 * 60));
+
+      if (diffMinutes < 30) {
+        const remaining = 30 - diffMinutes;
+        return `You can cancel within ${remaining} minute${remaining !== 1 ? 's' : ''}`;
+      } else {
+        return "Cancellation window closed (only allowed within 30 mins of placing order)";
+      }
+    }
+
+    function showModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.querySelector('.modal-card')?.classList.add('show'), 10);
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      const card = modal.querySelector('.modal-card');
+      if (card) card.classList.remove('show');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-primary', 'border-primary');
+        btn.classList.add('text-dark', 'border-transparent');
+      });
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      if (activeBtn) {
+        activeBtn.classList.add('text-primary', 'border-primary');
+        activeBtn.classList.remove('text-dark', 'border-transparent');
+      }
+      renderOrders();
+    }
+
+    async function fetchOrders() {
+      const userId = getCurrentUserId();
+      if (!userId) {
+        const container = document.getElementById('ordersList');
+        container.innerHTML = `
+          <div class="text-center py-20 order-card">
+            <i class="fas fa-user-lock text-7xl text-primary mb-6"></i>
+            <h2 class="text-3xl font-bold text-primary mb-4">Please log in</h2>
+            <p class="text-gray-600 mb-6">You need to be logged in to view orders.</p>
+            <a href="../Signup/auth.html" class="btn btn-primary">Login</a>
+          </div>`;
+        return;
+      }
+
+      const loading = document.getElementById('loadingOverlay');
+      const container = document.getElementById('ordersList');
+      loading?.classList.remove('hidden');
+      container.innerHTML = '';
+
+      try {
+        const resp = await fetch(`${API_BASE_URL}/get-order-by-userId/${userId}?page=0&size=50&sortBy=orderId&sortDir=desc`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+        const pageData = await resp.json();
+        const rawOrders = pageData.content || [];
+
+        orders = rawOrders.map(o => {
+          const items = (o.orderItems || []).map(item => ({
+            name: item.itemName || 'Unknown Item',
+            qty: item.quantity || 1,
+            weight: item.selectedSize || item.size || '',
+            price: (item.itemPrice || 0).toFixed(2),
+            image: (() => {
+              if (item.productId) {
+                return `http://localhost:8083/api/products/${item.productId}/image`;
+              }
+              if (item.mbpId) {
+                return `http://localhost:8083/api/mb/products/${item.mbpId}/image`;
+              }
+              return 'http://localhost:8083/120?text=No+Image';
+            })(),
+            productId: item.productId || null,
+            mbpId: item.mbpId || null,
+            orderItemId: item.orderItemId || null,
+            size: item.size || item.weight || ''
+          }));
+
+          const statusKey = (o.orderStatus || 'PLACED').toLowerCase();
+          const status = statusMap[statusKey] || { display: statusKey.charAt(0).toUpperCase() + statusKey.slice(1), class: 'bg-gray-100 text-gray-800' };
+
+          const placedOn = o.orderDate || new Date().toISOString();
+          const canCancel = statusKey === 'placed' && isWithinCancellationWindow(placedOn);
+
+          const orderDateObj = parseDate(placedOn);
+
+          const firstName = o.shippingFirstName || '';
+          const lastName = o.shippingLastName || '';
+          const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'Not provided';
+
+          return {
+            id: o.orderId,
+            date: orderDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            status: status.display,
+            statusClass: status.class,
+            canCancel,
+            items,
+            total: (o.totalAmount || 0).toFixed(2),
+            cancellationNote: getCancellationNote(placedOn),
+            placedOn,
+            paymentMethod: o.paymentMethod || 'COD',
+            convenienceFee : `${o.convenienceFee !== null ? `₹${o.convenienceFee}` : 'Free'}`,
+            address: {
+              fullName,
+              mobile: o.shippingPhone || o.customerPhone || 'Not provided',
+              flat: o.shippingAddress || '',
+              area: o.shippingAddress2 || '',
+              city: o.shippingCity || '',
+              state: o.shippingState || '',
+              pincode: o.shippingPincode || ''
+            },
+            itemCount: items.length,
+            isDelivered: statusKey === 'delivered'
+          };
+        }).sort((a, b) => b.id - a.id);
+
+        updateTabCounts();
+        renderOrders();
+
+      } catch (err) {
+        console.error("Orders fetch failed:", err);
+        container.innerHTML = `
+          <div class="text-center py-20 order-card">
+            <i class="fas fa-exclamation-triangle text-7xl text-red-500 mb-6"></i>
+            <h2 class="text-3xl font-bold text-primary mb-4">Failed to load orders</h2>
+            <p class="text-gray-600 mb-6">${err.message}</p>
+            <button onclick="fetchOrders()" class="btn btn-primary">Retry</button>
+          </div>`;
+      } finally {
+        loading?.classList.add('hidden');
+      }
+    }
+
+    function updateTabCounts() {
+      const upcoming = orders.filter(o => o.status.toLowerCase() !== 'cancelled').length;
+      const cancelled = orders.filter(o => o.status.toLowerCase() === 'cancelled').length;
+
+      document.getElementById('tab-upcoming').innerHTML = `Upcoming Orders (${upcoming})`;
+      document.getElementById('tab-cancelled').innerHTML = `Cancelled Orders (${cancelled})`;
+    }
+
+    // function renderOrders() {
+    //   const container = document.getElementById('ordersList');
+    //   container.innerHTML = '';
+
+    //   const filteredOrders = activeTab === 'upcoming'
+    //     ? orders.filter(o => o.status.toLowerCase() !== 'cancelled')
+    //     : orders.filter(o => o.status.toLowerCase() === 'cancelled');
+
+    //   if (!filteredOrders.length) {
+    //     const emptyMsg = activeTab === 'upcoming' ? 'No active orders' : 'No cancelled orders';
+    //     container.innerHTML = `<div class="text-center py-20 order-card">
+    //       <i class="fas fa-shopping-bag text-7xl text-primary mb-6"></i>
+    //       <h2 class="text-3xl font-bold text-primary mb-4">${emptyMsg}</h2>
+    //       <a href="../home.html" class="btn btn-primary">Shop Now</a>
+    //     </div>`;
+    //     return;
+    //   }
+
+    //   filteredOrders.forEach(order => {
+    //     const isCancelled = order.status.toLowerCase() === 'cancelled';
+
+    //     let cancelBtn = '';
+    //     if (!isCancelled && order.canCancel) {
+    //       cancelBtn = `<button class="btn btn-danger cancel-btn" data-id="${order.id}">Cancel Order</button>`;
+    //     } else if (!isCancelled && order.status.toLowerCase() === 'placed') {
+    //       cancelBtn = `<button class="btn btn-outline opacity-50 cursor-not-allowed" disabled title="Cancellation only allowed within 30 minutes">Cancel Order</button>`;
+    //     } else {
+    //       cancelBtn = `<button class="btn btn-outline opacity-50 cursor-not-allowed" disabled>Cancel Order</button>`;
+    //     }
+
+    //     let exchangeBtnsHtml = '';
+    //     const hoursSincePlaced = (new Date() - new Date(order.placedOn)) / (1000 * 60 * 60);
+    //     const isWithin48h = hoursSincePlaced <= 48;
+
+    //     const hasEligibleItem = order.isDelivered && isWithin48h &&
+    //       order.items.some(item => item.mbpId && item.orderItemId);
+
+    //     if (hasEligibleItem && !isCancelled) {
+    //       exchangeBtnsHtml = `<button class="btn btn-outline text-xs border-accent text-accent hover:bg-accent hover:text-white exchange-hint" disabled>Exchange Available (see Order Details)</button>`;
+    //     }
+
+    //     const invoiceBtn = order.isDelivered
+    //       ? `<button class="btn btn-success invoice-btn" data-id="${order.id}">Invoice</button>`
+    //       : '';
+
+    //     const viewBtn = `<button class="btn btn-primary view-btn" data-id="${order.id}">Order Details</button>`;
+
+    //     let itemsHtml = '';
+    //     const previewItems = order.items.slice(0, 2);
+    //     previewItems.forEach((item, idx) => {
+    //       itemsHtml += `
+    //         <div class="flex gap-3 items-center ${idx > 0 ? 'mt-3' : ''}">
+    //           <img src="${item.image}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+    //           <div class="flex-1">
+    //             <p class="font-medium text-primary text-sm">${item.name}</p>
+    //             <p class="text-xs text-dark">Qty: ${item.qty} ${item.weight ? '× ' + item.weight : ''}</p>
+    //           </div>
+    //           <p class="text-sm font-medium text-primary">₹${item.price}</p>
+    //         </div>`;
+    //     });
+
+    //     const moreItemsCount = order.items.length - 2;
+    //     const moreItemsHtml = moreItemsCount > 0
+    //       ? `<div class="text-center mt-2"><p class="text-xs text-gray-500">+ ${moreItemsCount} more item${moreItemsCount > 1 ? 's' : ''}</p></div>`
+    //       : '';
+
+    //     container.innerHTML += `
+    //       <div class="order-card">
+    //         <div class="flex justify-between items-center mb-3">
+    //           <div>
+    //             <h3 class="text-lg font-bold text-primary">Order #${order.id}</h3>
+    //             <p class="text-sm text-dark">₹${order.total}</p>
+    //           </div>
+    //           <div class="flex gap-2 flex-wrap">
+    //             ${viewBtn}
+    //             ${invoiceBtn}
+    //             ${exchangeBtnsHtml}
+    //             ${isCancelled ? '' : cancelBtn}
+    //           </div>
+    //         </div>
+
+    //         <div class="mb-4">
+    //           <span class="status-badge ${order.statusClass}">${order.status}</span>
+    //         </div>
+
+    //         <div class="mb-4">
+    //           ${itemsHtml}
+    //           ${moreItemsHtml}
+    //         </div>
+
+    //         <div class="mb-3">
+    //           <p class="text-sm text-dark">Payment: <span class="font-medium">${order.paymentMethod}</span> • ${order.date} </p>
+    //         </div>
+
+    //         ${isCancelled ? `<p class="text-sm font-medium text-red-600 mb-3">This order was cancelled.</p>` : ''}
+
+    //         <div class="text-xs text-gray-600">
+    //           <p>${order.itemCount} Item${order.itemCount !== 1 ? 's' : ''} • ${order.paymentMethod} • ${order.cancellationNote}</p>
+    //         </div>
+    //       </div>`;
+    //   });
+
+    //   attachButtons();
+    // }
+    
+    
+    function renderOrders() {
+  const container = document.getElementById('ordersList');
+  container.innerHTML = '';
+
+  const filteredOrders = activeTab === 'upcoming'
+    ? orders.filter(o => o.status.toLowerCase() !== 'cancelled')
+    : orders.filter(o => o.status.toLowerCase() === 'cancelled');
+
+  if (!filteredOrders.length) {
+    const emptyMsg = activeTab === 'upcoming' ? 'No active orders' : 'No cancelled orders';
+    container.innerHTML = `<div class="text-center py-20 order-card">
+      <i class="fas fa-shopping-bag text-7xl text-primary mb-6"></i>
+      <h2 class="text-3xl font-bold text-primary mb-4">${emptyMsg}</h2>
+      <a href="../home.html" class="btn btn-primary">Shop Now</a>
+    </div>`;
+    return;
+  }
+
+  filteredOrders.forEach(order => {
+    const isCancelled = order.status.toLowerCase() === 'cancelled';
+
+    // ────────────────────────────────────────────────
+    // CANCEL BUTTON LOGIC – only show when still cancellable
+    // ────────────────────────────────────────────────
+    let cancelBtnHtml = '';
+    if (!isCancelled && order.canCancel && order.status.toLowerCase() === 'placed') {
+      cancelBtnHtml = `
+        <button class="btn btn-danger cancel-btn text-sm px-4 py-2" data-id="${order.id}">
+          Cancel Order
+        </button>`;
+    }
+    // → If !canCancel → button is NOT rendered at all
+
+    let exchangeBtnsHtml = '';
+    const hoursSincePlaced = (new Date() - new Date(order.placedOn)) / (1000 * 60 * 60);
+    const isWithin48h = hoursSincePlaced <= 48;
+
+    const hasEligibleItem = order.isDelivered && isWithin48h &&
+      order.items.some(item => item.mbpId && item.orderItemId);
+
+    if (hasEligibleItem && !isCancelled) {
+      exchangeBtnsHtml = `<button class="btn btn-outline text-xs border-accent text-accent hover:bg-accent hover:text-white exchange-hint" disabled>Exchange Available (see Order Details)</button>`;
+    }
+
+    const invoiceBtn = order.isDelivered
+      ? `<button class="btn btn-success invoice-btn" data-id="${order.id}">Invoice</button>`
+      : '';
+
+    const viewBtn = `<button class="btn btn-primary view-btn" data-id="${order.id}">Order Details</button>`;
+
+    let itemsHtml = '';
+    const previewItems = order.items.slice(0, 2);
+    previewItems.forEach((item, idx) => {
+      itemsHtml += `
+        <div class="flex gap-3 items-center ${idx > 0 ? 'mt-3' : ''}">
+          <img src="${item.image}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+          <div class="flex-1">
+            <p class="font-medium text-primary text-sm">${item.name}</p>
+            <p class="text-xs text-dark">Qty: ${item.qty} ${item.weight ? '× ' + item.weight : ''}</p>
+          </div>
+          <p class="text-sm font-medium text-primary">₹${item.price}</p>
+        </div>`;
+    });
+
+    const moreItemsCount = order.items.length - 2;
+    const moreItemsHtml = moreItemsCount > 0
+      ? `<div class="text-center mt-2"><p class="text-xs text-gray-500">+ ${moreItemsCount} more item${moreItemsCount > 1 ? 's' : ''}</p></div>`
+      : '';
+
+    // ────────────────────────────────────────────────
+    // Better cancellation status message
+    // ────────────────────────────────────────────────
+    let cancellationInfo = '';
+    if (isCancelled) {
+      cancellationInfo = '<span class="text-red-600 font-medium">This order was cancelled.</span>';
+    } else if (order.status.toLowerCase() !== 'placed') {
+      cancellationInfo = '<span class="text-gray-500">Cancellation no longer available.</span>';
+    } else if (order.canCancel) {
+      cancellationInfo = `<span class="text-amber-600 font-medium">${order.cancellationNote}</span>`;
+    } else {
+      cancellationInfo = '<span class="text-gray-500">Cancellation window closed (30 min after placement)</span>';
+    }
+
+    container.innerHTML += `
+      <div class="order-card">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <h3 class="text-lg font-bold text-primary">Order #${order.id}</h3>
+            <p class="text-sm text-dark">₹${order.total}</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            ${viewBtn}
+            ${invoiceBtn}
+            ${exchangeBtnsHtml}
+            ${cancelBtnHtml}
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <span class="status-badge ${order.statusClass}">${order.status}</span>
+        </div>
+
+        <div class="mb-4">
+          ${itemsHtml}
+          ${moreItemsHtml}
+        </div>
+
+        <div class="mb-3">
+          <p class="text-sm text-dark">Payment: <span class="font-medium">${order.paymentMethod}</span> • ${order.date}</p>
+        </div>
+
+        <div class="text-xs text-gray-600 mt-2">
+          <p>${order.itemCount} Item${order.itemCount !== 1 ? 's' : ''} • ${order.paymentMethod} • ${cancellationInfo}</p>
+        </div>
+
+        ${isCancelled ? `<p class="text-sm font-medium text-red-600 mt-3">This order was cancelled.</p>` : ''}
+      </div>`;
+  });
+
+  attachButtons();
+}
+
+    function attachButtons() {
+      document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.onclick = () => handleCancel(btn.dataset.id);
+      });
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.onclick = () => handleView(btn.dataset.id);
+      });
+      document.querySelectorAll('.invoice-btn').forEach(btn => {
+        btn.onclick = () => generateInvoice(btn.dataset.id);
+      });
+    }
+
+    // Exchange functionality - document-level delegation
+    document.addEventListener('click', async function(e) {
+      const btn = e.target.closest('.exchange-btn');
+      if (!btn) return;
+
+      currentExchangeItem = {
+        orderItemId: btn.dataset.orderItemId,
+        mbpId: btn.dataset.mbpId,
+        name: btn.dataset.itemName,
+        currentSize: btn.dataset.currentSize
+      };
+
+      console.log('Exchange clicked for:', currentExchangeItem); // debug
+
+      document.getElementById('exchangeItemName').textContent = currentExchangeItem.name;
+      document.getElementById('exchangeCurrentSize').textContent = currentExchangeItem.currentSize;
+
+      const select = document.getElementById('exchangeSizeSelect');
+      select.innerHTML = '<option value="">-- Loading sizes... --</option>';
+
+      try {
+        const res = await fetch(`http://localhost:8083/api/mb/products/get-sizes-by-id/${currentExchangeItem.mbpId}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const sizes = await res.json();
+
+        select.innerHTML = '<option value="">-- Choose available size --</option>';
+        sizes.forEach(size => {
+          const opt = document.createElement('option');
+          opt.value = size;
+          opt.textContent = size;
+          if (size === currentExchangeItem.currentSize) {
+            opt.disabled = true;
+            opt.textContent += ' (current)';
+          }
+          select.appendChild(opt);
+        });
+      } catch (err) {
+        console.error('Sizes load error:', err);
+        select.innerHTML = '<option value="">Failed to load sizes</option>';
+        toast('Could not load available sizes', 'error');
+      }
+
+      closeModal('viewModal');
+      showModal('exchangeModal');
+    });
+
+    // Handle form submit
+    document.getElementById('exchangeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!currentExchangeItem) return;
+
+      const reason = document.getElementById('exchangeReason').value.trim();
+      const newSize = document.getElementById('exchangeSizeSelect').value;
+
+      if (!reason || !newSize) {
+        toast('Please fill reason and select new size', 'error');
+        return;
+      }
+
+      try {
+        const resp = await fetch(`http://localhost:8083/api/orders/request-exchange/${currentExchangeItem.orderItemId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            exchangeReason: reason,
+            exchangeSize: newSize
+          })
+        });
+
+        if (!resp.ok) {
+          const errText = await resp.text();
+          throw new Error(errText || 'Request failed');
+        }
+
+        toast('Exchange request submitted!', 'success');
+        closeModal('exchangeModal');
+        fetchOrders(); // refresh
+
+      } catch (err) {
+        toast('Error: ' + err.message, 'error');
+        console.error(err);
+      }
+    });
+
+    function handleCancel(id) {
+      const order = orders.find(o => o.id == id);
+      if (!order?.canCancel) return toast('Cancellation not allowed', 'error');
+      currentOrderId = id;
+      showModal('cancelModal');
+    }
+
+    async function confirmCancel() {
+      if (!currentOrderId) return;
+      closeModal('cancelModal');
+
+      const loading = document.getElementById('loadingOverlay');
+      loading?.classList.remove('hidden');
+
+      try {
+        const resp = await fetch(`${API_BASE_URL}/cancel-order/${currentOrderId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!resp.ok) throw new Error(await resp.text().catch(() => resp.statusText));
+
+        const idx = orders.findIndex(o => o.id == currentOrderId);
+        if (idx !== -1) {
+          orders[idx].status = 'Cancelled';
+          orders[idx].statusClass = statusMap.cancelled.class;
+          orders[idx].canCancel = false;
+        }
+
+        updateTabCounts();
+        renderOrders();
+        toast('Order cancelled successfully!', 'success');
+      } catch (err) {
+        console.error("Cancel failed:", err);
+        toast('Failed to cancel order: ' + err.message, 'error');
+      } finally {
+        loading?.classList.add('hidden');
+      }
+    }
+
+    function handleView(id) {
+      const order = orders.find(o => o.id == id);
+      if (!order) return;
+
+      const itemsHtml = order.items.map(item => {
+        let exchangeBtnHtml = '';
+
+        const hoursSincePlaced = (new Date() - new Date(order.placedOn)) / (1000 * 60 * 60);
+        const isWithin48h = hoursSincePlaced <= 48;
+
+        if (order.isDelivered && isWithin48h &&
+            item.mbpId &&
+            item.orderItemId) {
+          exchangeBtnHtml = `
+            <button 
+              class="mt-2 text-xs btn btn-outline border-accent text-accent hover:bg-accent hover:text-white px-3 py-1 exchange-btn"
+              data-order-item-id="${item.orderItemId}"
+              data-mbp-id="${item.mbpId}"
+              data-item-name="${item.name.replace(/"/g, '&quot;')}"
+              data-current-size="${(item.size || 'N/A').replace(/"/g, '&quot;')}"
+            >
+              <i class="fas fa-exchange-alt mr-1"></i> Exchange Size
+            </button>`;
+        }
+
+        return `
+          <div class="flex gap-4 items-start pb-3 border-b border-gray-100 last:border-0">
+            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-lg object-cover shadow-sm">
+            <div class="flex-1">
+              <p class="font-medium text-primary">${item.name}</p>
+              <p class="text-xs text-dark">Qty: ${item.qty} ${item.size ? '× ' + item.size : ''}</p>
+              ${exchangeBtnHtml}
+            </div>
+            <p class="text-sm font-medium text-primary">₹${item.price}</p>
+          </div>`;
+      }).join('');
+
+      let addressHtml = '';
+      if (order.address) {
+        const addr = order.address;
+        const hasContent = addr.fullName !== 'Not provided' || addr.mobile !== 'Not provided' || addr.flat !== 'Not provided';
+        if (hasContent) {
+          addressHtml = `
+            <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+              <p class="font-medium text-primary text-sm mb-2">Delivery Address:</p>
+              ${addr.fullName !== 'Not provided' ? `<p class="text-sm text-dark">${addr.fullName}</p>` : ''}
+              ${addr.mobile !== 'Not provided' ? `<p class="text-sm text-dark">${addr.mobile}</p>` : ''}
+              <p class="text-sm text-dark">${[addr.flat, addr.area].filter(Boolean).join(', ') || 'Address not provided'}</p>
+              <p class="text-sm text-dark">${[addr.city, addr.state].filter(Boolean).join(', ')} ${addr.pincode ? '- ' + addr.pincode : ''}</p>
+            </div>`;
+        }
+      }
+
+      document.getElementById('viewContent').innerHTML = `
+        <div class="space-y-4">${itemsHtml}</div>
+        <div class="mt-4 space-y-2 text-sm pt-3 border-t border-gray-200">
+          <div class="flex justify-between font-bold text-base"><span class="text-primary">Total</span><span class="text-primary">₹${order.total}</span></div>
+          <div class="flex justify-between"><span class="text-dark">Payment Method</span><span class="font-medium text-primary">${order.paymentMethod}</span></div>
+          <div class="flex justify-between"><span class="text-dark">Convenience Fee :</span><span class="font-medium text-primary">${(order.convenienceFee !== null && order.convenienceFee !== undefined) ? order.convenienceFee : '₹0.00'}</span></div>
+        </div>
+        <div class="mt-5 pt-4 border-t border-gray-200 space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-dark">Status</span><span class="${order.status.toLowerCase() === 'cancelled' ? 'text-red-600' : 'text-green-600'} font-medium">${order.status}</span></div>
+          <div class="flex justify-between"><span class="text-dark">Order ID</span><span class="font-mono">#${order.id}</span></div>
+          <div class="flex justify-between"><span class="text-dark">Placed On</span><span>${order.date}</span></div>
+          <div class="flex justify-between"><span class="text-dark">Items</span><span>${order.itemCount} items</span></div>
+        </div>
+        ${addressHtml}
+      `;
+
+      showModal('viewModal');
+    }
+
+    function generateInvoice(orderId) {
+      const order = orders.find(o => o.id == orderId);
+      if (!order) {
+        toast('Order not found', 'error');
+        return;
+      }
+
+      document.getElementById('printOrderId').textContent = order.id;
+      document.getElementById('printOrderDate').textContent = order.date;
+      
+      document.getElementById('printCustomerName').textContent = order.address.fullName || 'Customer';
+      document.getElementById('printCustomerPhone').textContent = order.address.mobile || '-';
+
+      document.getElementById('printShippingName').textContent = order.address.fullName || 'Customer';
+      document.getElementById('printShippingPhone').textContent = order.address.mobile || '-';
+
+      const addressLines = [
+        order.address.flat,
+        order.address.area,
+        `${order.address.city}, ${order.address.state} - ${order.address.pincode}`
+      ].filter(Boolean).join('<br>');
+
+      document.getElementById('printShippingAddress').innerHTML = addressLines || 'NA';
+
+      let itemsHtml = '';
+      let subtotal = 0;
+      order.items.forEach(item => {
+        const rate = parseFloat(item.price);
+        const amount = rate * item.qty;
+        subtotal += amount;
+
+        itemsHtml += `
+          <tr>
+            <td class="border p-2 text-left">${item.name} ${item.weight ? `(${item.weight})` : ''}</td>
+            <td class="border p-2 text-center">${item.qty}</td>
+            <td class="border p-2 text-right">₹${rate.toFixed(2)}</td>
+            <td class="border p-2 text-right">₹${amount.toFixed(2)}</td>
+          </tr>`;
+      });
+
+      document.getElementById('printItemsTable').innerHTML = itemsHtml || 
+        '<tr><td colspan="4" class="border p-2 text-center text-gray-500">No items found</td></tr>';
+
+      document.getElementById('printSubtotal').textContent = '₹' + subtotal.toFixed(2);
+      document.getElementById('printDiscount').textContent = '₹0.00';
+      document.getElementById('printTotal').textContent = '₹' + order.total;
+      document.getElementById('printConvenienceFee').textContent = order.convenienceFee || '₹0.00' ;
+      
+      if (order.convenienceFee > 0) {
+        document.querySelector('#printableInvoice tfoot').insertAdjacentHTML('beforeend', 
+            `<tr><td colspan="3" class="border p-2 text-right text-orange-600 font-medium">Convenience Fee:</td>
+            <td class="border p-2 text-right text-orange-600 font-medium">₹${order.convenienceFee.toFixed(2)}</td></tr>`
+        );
+      }
+
+      const printable = document.getElementById('printableInvoice');
+      printable.classList.remove('hidden');
+
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      });
+
+      setTimeout(() => {
+        printable.classList.add('hidden');
+      }, 2000);
+    }
+
+    function toast(message, type = 'info') {
+      Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: type === 'success' ? "#10b981" : type === 'error' ? "#EF4444" : "#3B82F6",
+      }).showToast();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchOrders();
+    });
+  </script>
+   <script>
+    function loadHeader() {
+        fetch('../Header/header.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+                const script = document.createElement('script');
+                script.src = '/Header/header.js?v=1.1.3';
+                script.onload = () => console.log('Header JS loaded');
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+        fetch('../Footer/footer.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHeader();
+        loadFooter();
+    });
+    
+</script>
+
+<script>
+  // Refresh orders when tab/window becomes visible again
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      fetchOrders();
+    }
+  });
+
+  // Refresh every 5 minutes while the tab is visible
+  setInterval(() => {
+    if (!document.hidden) {
+      fetchOrders();
+    }
+  }, 5 * 60 * 1000);
+</script>
+
+
+</body>
+</html>

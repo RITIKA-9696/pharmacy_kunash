@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist | OTC Medicines</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../Header/header.css">
+  <link rel="stylesheet" href="../Footer/footer.css">
+  <script>
+    tailwind.config = { theme: { extend: { colors: { primary: '#36C2CE', accent: '#10b981' }}}}
+  </script>
+  <style>
+  body { 
+  
+    padding-bottom: 0; 
+    min-height: 100vh; 
+    display: flex;
+    flex-direction: column;
+  }
+  .wishlist-item { transition: all 0.3s; }
+  .wishlist-item:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+  .empty-state { min-height: 60vh; }
+
+  /* Make main content grow so footer is pushed to bottom on short pages */
+  main { flex: 1; }
+</style>
+</head>
+<body class="min-h-screen bg-[#F0F0F0]">
+  <div id="header-placeholder"></div>
+  <div class="max-w-7xl mx-auto px-4 py-8 mt-12">
+    <h1 class="text-2xl font-bold text-gray-800 mb-8 text-center">
+      <i class="fas fa-heart text-red-500 mr-3"></i> My Wishlist
+    </h1>
+
+    <button id="clear-wishlist-btn" 
+          onclick="clearWishlist()" 
+          class="hidden bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition shadow-md mb-5 ">
+    <i class="fas fa-trash mr-2"></i> Clear Wishlist
+  </button>
+
+    <!-- This container will be used by backend wishlist JS -->
+    <div id="wishlist-items" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <!-- Items injected by wishlist.js (backend) -->
+    </div>
+
+    <!-- Loading & Empty States -->
+    <div id="loading-state" class="text-center py-10">
+      <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
+      <p class="mt-4 text-gray-600">Loading your wishlist...</p>
+    </div>
+
+    <div id="empty-state" class="empty-state flex flex-col items-center justify-center text-center hidden">
+      <i class="fas fa-heart-broken text-8xl text-gray-300 mb-6"></i>
+      <h2 class="text-2xl font-bold text-gray-600 mb-3">Your wishlist is empty</h2>
+      <p class="text-gray-500 mb-8">Add products you love and they'll appear here!</p>
+      <a href="/index.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-xl transition">
+        Continue Shopping
+      </a>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50"></div>
+
+  <!-- Load Header & Footer -->
+  <script>
+    function loadHeader() {
+      fetch('../Header/header.html')
+        .then(r => r.text())
+        .then(html => {
+          document.getElementById('header-placeholder').innerHTML = html;
+          const script = document.createElement('script');
+          script.src = '/Header/header.js?v=1.1.3';
+          document.body.appendChild(script);
+        });
+    }
+    function loadFooter() {
+      fetch('../Footer/footer.html')
+        .then(r => r.text())
+        .then(html => {
+          document.getElementById('footer-placeholder').innerHTML = html;
+        });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHeader();
+      loadFooter();
+    });
+  </script>
+
+  <!-- Your main wishlist script (backend-based) -->
+  <script src="wishlist.js?v=1.0.0"></script>
+</body>
+</html>

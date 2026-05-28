@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pharmacy- Inventory Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <style>
+        /* Sidebar Styles */
+        #sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #sidebar.collapsed {
+            width: 64px !important;
+        }
+        
+        #sidebar:not(.collapsed) {
+            width: 256px !important;
+        }
+        
+        .nav-text {
+            transition: all 0.3s ease-in-out;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .nav-icon {
+            transition: all 0.3s ease-in-out;
+            min-width: 20px;
+        }
+        
+        /* Tab System */
+        .tab-container {
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-list {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+        
+        .tab-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+        
+        .tab-item:hover {
+            background-color: #f9fafb;
+            color: #374151;
+        }
+        
+        .tab-item.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+            background-color: #eff6ff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Category Badges */
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin: 0.125rem;
+        }
+        
+        .category-medicine { background-color: #dbeafe; color: #1e40af; }
+        .category-mothercare { background-color: #fce7f3; color: #be185d; }
+        .category-babycare { background-color: #dcfce7; color: #166534; }
+        .category-wellness { background-color: #fef3c7; color: #92400e; }
+        .category-devices { background-color: #e0e7ff; color: #3730a3; }
+        .category-speciality { background-color: #ede9fe; color: #5b21b6; }
+        
+        /* Stock Indicators */
+        .stock-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .stock-available { background-color: #10b981; }
+        .stock-low { background-color: #f59e0b; }
+        .stock-out { background-color: #ef4444; }
+        .stock-expiring { background-color: #f97316; }
+        
+        /* Table Row Colors */
+        .row-stock-low { background-color: #fef3c7 !important; }
+        .row-stock-out { background-color: #fee2e2 !important; }
+        .row-expiring { background-color: #ffedd5 !important; }
+        
+        /* Batch Badge */
+        .batch-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin: 0.125rem;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-action-btn:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+        
+        /* Product Card */
+        .product-card {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .product-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Modal Tabs */
+        .modal-tab {
+            padding: 0.75rem 1.5rem;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .modal-tab.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        
+        /* Image Gallery */
+        .image-gallery {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .gallery-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .gallery-img.active {
+            border-color: #3b82f6;
+        }
+        
+        /* Custom Field */
+        .custom-field-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Loader */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Stats Card Animation */
+        .stats-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Responsive Table */
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .quick-action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .table-container {
+                overflow: visible !important;
+            }
+        }
+        
+        /* Staggered animation for nav items */
+        li:nth-child(1) { transition-delay: 0ms; }
+        li:nth-child(2) { transition-delay: 20ms; }
+        li:nth-child(3) { transition-delay: 40ms; }
+        li:nth-child(4) { transition-delay: 60ms; }
+        li:nth-child(5) { transition-delay: 80ms; }
+        li:nth-child(6) { transition-delay: 100ms; }
+        li:nth-child(7) { transition-delay: 120ms; }
+        li:nth-child(8) { transition-delay: 140ms; }
+        li:nth-child(9) { transition-delay: 160ms; }
+        li:nth-child(10) { transition-delay: 180ms; }
+        li:nth-child(11) { transition-delay: 200ms; }
+        
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 24px;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            font-family: "Inter", "Helvetica", "Arial", sans-serif;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .modal-content.max-w-4xl {
+            max-width: 900px;
+        }
+
+        .modal-content.max-w-2xl {
+            max-width: 600px;
+        }
+
+        .modal-content.max-w-md {
+            max-width: 400px;
+        }
+
+        .close {
+            color: #374151;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close:hover {
+            color: #991b1b;
+        }
+
+        /* Hidden class for variant sections */
+        .hidden {
+            display: none !important;
+        }
+
+         .menu-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+    <!-- Sidebar - UPDATED with working structure -->
+    <aside id="sidebar" class="border w-64 bg-white text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static transition-all duration-300 ease-in-out">
+        <div class="border-b h-[75px] p-4  sticky top-0 z-10 flex justify-between items-center">
+            <div class="ml-6 transition-all duration-300 ease-in-out overflow-hidden">
+                <img src="../Images/kunash-logo.png" alt="PharmaCare Logo"
+                    class="w-full h-[44px] sidebar-logo-expanded transition-all duration-300 ease-in-out">
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="toggle-sidebar-logo" class="flex items-center transition-all duration-300 ease-in-out">
+                    <i id="sidebar-arrow"
+                        class="fas fa-chevron-left ml-2 text-black transition-transform duration-300 ease-in-out"></i>
+                </button>
+                <button id="close-sidebar" class="md:hidden text-black transition-all duration-300 ease-in-out">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 transition-all duration-300 ease-in-out">
+            <ul class="space-y-1">
+                <!-- Each list item -->
+                <li data-menu-type="dashboard" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Dashboard/dashboard.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-home mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="bg-blue-700 text-white rounded-md transition-all duration-200 ease-in-out">
+                    <a href="../Inventory/inventory.html"
+                        class="flex items-center py-3 px-4 text-white transition-colors duration-200">
+                        <i class="fas fa-pills mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Inventory Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Prescriptions/prescription.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-file-prescription mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Prescriptions</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="customers" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Customer/customer management.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-users mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Customers Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Order/ordermanagment.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-shopping-cart mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Order Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Product Management/product.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-box mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Medicine Product Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Mother and Baby Care/motherbabycare.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fa-solid fa-baby mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Mother & Baby Care Product Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Banner/banner.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-image mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Banner Management</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="reports" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <a href="../Reports/report.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-file-invoice mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Reports</span>
+                    </a>
+                </li>
+
+                <li data-menu-type="admin-management"  class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md mb-4">
+                    <a href="../Admin/admin.html"
+                        class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-user-shield mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Admin Management</span>
+                    </a>
+                </li>
+
+                <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                    <button id="logoutBtn"
+                        class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-white font-semibold text-left transition-colors duration-200">
+                        <i class="fas fa-sign-out-alt mr-3 nav-icon transition-all duration-200"></i>
+                        <span class="nav-text transition-all duration-200">Logout</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white shadow sticky top-0 z-10">
+            <div class="flex justify-between items-center p-4">
+                <div class="flex items-center">
+                    <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold text-gray-800">
+                        Inventory Management
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- User Profile -->
+                    <div class="flex items-center">
+                        <div id="user-initials" class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold">SK</div>
+                        <div class="ml-2">
+                            <span id="user-name" class="text-gray-800"></span>
+                            <span id="user-role" class="text-gray-500 text-sm block"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Inventory Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <div class="tab-list">
+                    <div class="tab-item active" data-tab="all-products">
+                        <i class="fas fa-boxes mr-2"></i>All Products
+                    </div>
+                    <div class="tab-item" data-tab="medicines">
+                        <i class="fas fa-pills mr-2"></i>Medicines
+                    </div>
+                    <div class="tab-item" data-tab="mothercare">
+                        <i class="fas fa-baby mr-2"></i>Mother & Baby Care
+                    </div>
+                   
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button id="bulk-upload" class="quick-action-btn bg-green-50 border-green-200 text-green-700 hover:bg-green-100">
+                    <i class="fas fa-upload"></i>
+                    <span>Bulk Upload</span>
+                </button>
+                <button id="export-csv" class="quick-action-btn bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100">
+                    <i class="fas fa-download"></i>
+                    <span>Export</span>
+                </button>
+                
+                <div class="flex-1"></div>
+                
+                <div class="flex items-center gap-2">
+                  <select id="filter-category" class="border rounded-lg py-2 px-3 bg-white border-gray-300 text-sm">
+                    <option value="">All Categories</option>
+                    <option value="Medicines & Healthcare">Medicines & Healthcare</option>
+                    <option value="Medicine & HealthCare">Medicine & HealthCare</option>
+                    <option value="Wellness">Wellness</option>
+                    <option value="Wellness & Personal Care">Wellness & Personal Care</option>
+                    <option value="Devices">Devices</option>
+                    <option value="Medical Devices & Equipment">Medical Devices & Equipment</option>
+                    <option value="Surgical Items">Surgical Items</option>
+                    <option value="Speciality Care">Speciality Care</option>
+                    <option value="Mother Care & Maternity">Mother Care</option>
+                    <option value="Baby Care">Baby Care</option>
+                  </select>
+                    
+                    <select id="filter-stock" class="border rounded-lg py-2 px-3 bg-white border-gray-300 text-sm">
+                        <option value="">All Stock</option>
+                        <option value="in-stock">In Stock</option>
+                        <option value="low-stock">Low Stock</option>
+                        <option value="out-of-stock">Out of Stock</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Overview Cards - Updated with Stock Value in card -->
+            <div class="flex justify-content justify-between gap-4 mb-6">
+                <div class="stats-card bg-white rounded-xl border-l-4 border-blue-500 shadow p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Total Products</p>
+                            <h2 id="total-items" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-boxes text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-card bg-white rounded-xl border-l-4 border-green-500 shadow p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">In Stock</p>
+                            <h2 id="in-stock" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-card bg-white rounded-xl border-l-4 border-yellow-500 shadow p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Low Stock</p>
+                            <h2 id="low-stock-count" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-exclamation-circle text-yellow-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-card bg-white rounded-xl border-l-4 border-orange-500 shadow p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Expiring Soon</p>
+                            <h2 id="expiring-soon" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-hourglass-half text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-card bg-white rounded-xl border-l-4 border-red-500 shadow p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Out of Stock</p>
+                            <h2 id="out-of-stock" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <i class="fas fa-times-circle text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stock Value Card -->
+                <div data-sensitive="stock-value" class="stats-card bg-white rounded-xl border-l-4 border-purple-500 shadow p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Stock Value</p>
+                            <h2 id="total-stock-value" class="text-2xl font-bold text-gray-800 mt-1">₹0</h2>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-rupee-sign text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: All Products -->
+            <div class="tab-content active" id="all-products">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">All Products</h3>
+                    <div class="text-sm text-gray-600">
+                        Showing <span id="showing-count">0</span> of <span id="total-count">0</span> products
+                    </div>
+                </div>
+                
+                <div class="table-container h-[400px] bg-white rounded-lg shadow overflow-auto">
+                    <table id="inventoryTable" class="min-w-full display ">
+                        <thead>
+                            <tr>
+                                <th class="py-3 px-4 text-left">#IDs</th>
+                                <th class="py-3 px-4 text-left">Product</th>
+                                <th class="py-3 px-4 text-left">Category</th>
+                                <th class="py-3 px-4 text-left">Stock</th>
+                                <th class="py-3 px-4 text-left">Price</th>
+                                <th class="py-3 px-4 text-left">Expiry</th>
+                                <th class="py-3 px-4 text-left">Status</th>
+                                <th class="py-3 px-4 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Content: Medicines -->
+            <div class="tab-content" id="medicines">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Medicines & Healthcare Products</h3>
+                    <p class="text-gray-600 text-sm">Pharmaceuticals, medical devices, and healthcare products</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-3">
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="p-4 border-b">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-gray-800">Medicine Inventory</h4>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-600" id="medicine-count">0 medicines</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="overflow-x-auto h-[400px] ">
+                                    <table class="min-w-full" id="medicines-table">
+                                        <thead>
+                                            <tr class="bg-gray-50 sticky top-0">
+                                                <!--<th class="py-3 px-4 text-left">Image</th>-->
+                                                <th class="py-3 px-4 text-left">Product</th>
+                                                <th class="py-3 px-4 text-left">Category</th>
+                                                <th class="py-3 px-4 text-left">Stock</th>
+                                                <th class="py-3 px-4 text-left">Price</th>
+                                                <th class="py-3 px-4 text-left">Expiry</th>
+                                                <th class="py-3 px-4 text-left">Status</th>
+                                                <th class="py-3 px-4 text-left">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="medicines-table-body">
+                                            <!-- Medicines will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Mother & Baby Care -->
+            <div class="tab-content" id="mothercare">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Mother & Baby Care Products</h3>
+                    <div class="flex gap-2 mb-4">
+                        <button class="category-filter-btn active px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800" data-subcategory="all">All</button>
+                        <!--<button class="category-filter-btn px-3 py-1 rounded-full text-sm bg-pink-100 text-pink-800" data-subcategory="Mother Care & Maternity">Mother Care</button>-->
+                        <!--<button class="category-filter-btn px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-subcategory="Baby Care">Baby Care</button>-->
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-3">
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="p-4 border-b">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-gray-800">Mother & Baby Products</h4>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-600" id="mothercare-count">0 products</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="overflow-x-auto h-[400px] ">
+                                    <table class="min-w-full" id="mothercare-table">
+                                        <thead>
+                                            <tr class="bg-gray-50 sticky top-0">
+                                                <th class="py-3 px-4 text-left">Product</th>
+                                                <th class="py-3 px-4 text-left">Category</th>
+                                                <th class="py-3 px-4 text-left">Stock</th>
+                                                <th class="py-3 px-4 text-left">Price</th>
+                                                <th class="py-3 px-4 text-left">Expiry</th>
+                                                <th class="py-3 px-4 text-left">Status</th>
+                                                <th class="py-3 px-4 text-left">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="mothercare-table-body">
+                                            <!-- Mother & Baby Care products will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Batch Management -->
+            <div class="tab-content" id="batches">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Batch Management</h3>
+                    <p class="text-gray-600 text-sm">Manage inventory batches for each product</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-medium text-gray-800">All Inventory Batches</h4>
+                                <div class="flex items-center gap-2">
+                                    <select id="batch-product-filter" class="border rounded py-1 px-2 text-sm">
+                                        <option value="">All Products</option>
+                                        <!-- Product options will be loaded dynamically -->
+                                    </select>
+                                    <button id="refresh-batches" class="bg-gray-100 p-2 rounded hover:bg-gray-200">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="batches-table-container">
+                                <!-- Batches will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h4 class="font-medium text-gray-800 mb-4">Add New Batch</h4>
+                            <form id="add-batch-form" class="space-y-3">
+                                <div>
+                                    <label class="block text-sm text-gray-700 mb-1">Select Product</label>
+                                    <select id="batch-product" required class="w-full border rounded p-2 text-sm">
+                                        <option value="">Select Product</option>
+                                        <!-- Products will be loaded dynamically -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-700 mb-1">Batch Number</label>
+                                    <input type="text" id="batch-number" required class="w-full border rounded p-2 text-sm" placeholder="BATCH-2025-001">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-700 mb-1">Quantity</label>
+                                    <input type="number" id="batch-quantity" required min="1" class="w-full border rounded p-2 text-sm" placeholder="100">
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block text-sm text-gray-700 mb-1">MFG Date</label>
+                                        <input type="date" id="batch-mfg-date" required class="w-full border rounded p-2 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-700 mb-1">Expiry Date</label>
+                                        <input type="date" id="batch-expiry-date" required class="w-full border rounded p-2 text-sm">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-700 mb-1">Stock Status</label>
+                                    <select id="batch-status" class="w-full border rounded p-2 text-sm">
+                                        <option value="AVAILABLE">Available</option>
+                                        <option value="RESERVED">Reserved</option>
+                                        <option value="DAMAGED">Damaged</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                                    Add Batch
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h4 class="font-medium text-gray-800 mb-4">Batch Statistics</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">Total Batches</span>
+                                    <span class="font-medium" id="total-batches">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">Expiring This Month</span>
+                                    <span class="font-medium text-orange-600" id="expiring-batches">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">Low Quantity Batches</span>
+                                    <span class="font-medium text-yellow-600" id="low-batches">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Alerts -->
+            <div class="tab-content" id="alerts">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Inventory Alerts</h3>
+                    <p class="text-gray-600 text-sm">Products that need immediate attention</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-6">
+                        <!-- Low Stock Alerts -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="p-4 border-b bg-red-50">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-red-800">
+                                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                                        Low Stock Alerts
+                                    </h4>
+                                    <span class="bg-red-100 text-red-800 text-sm px-2 py-1 rounded" id="low-alert-count">0 items</span>
+                                </div>
+                            </div>
+                            <div id="low-stock-alerts" class="p-4">
+                                <!-- Low stock alerts will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Expiry Alerts -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="p-4 border-b bg-orange-50">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-orange-800">
+                                        <i class="fas fa-hourglass-end mr-2"></i>
+                                        Expiry Alerts
+                                    </h4>
+                                    <span class="bg-orange-100 text-orange-800 text-sm px-2 py-1 rounded" id="expiry-alert-count">0 items</span>
+                                </div>
+                            </div>
+                            <div id="expiry-alerts" class="p-4">
+                                <!-- Expiry alerts will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <!-- Out of Stock Alerts -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                            <div class="p-4 border-b bg-red-50">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-red-800">
+                                        <i class="fas fa-times-circle mr-2"></i>
+                                        Out of Stock
+                                    </h4>
+                                    <span class="bg-red-100 text-red-800 text-sm px-2 py-1 rounded" id="out-of-stock-alert-count">0 items</span>
+                                </div>
+                            </div>
+                            <div id="out-of-stock-alerts" class="p-4">
+                                <!-- Out of stock alerts will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Batch Management Modal (for add/edit/delete) -->
+    <div id="batchModal" class="modal">
+        <div class="modal-content max-w-2xl">
+            <span class="close" id="closeBatchModal">&times;</span>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4" id="batchModalTitle">Manage Batches</h2>
+            <div id="batchModalContent">
+                <!-- Batch form and table will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content max-w-md">
+            <span class="close" id="closeDelete">&times;</span>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Confirm Delete</h2>
+            <p class="text-gray-700 mb-6">Are you sure you want to delete this batch? This action cannot be undone.</p>
+            <div class="flex justify-end gap-4">
+                <button onclick="closeModal('deleteModal')" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600">Cancel</button>
+                <button id="confirmDelete" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Modal -->
+    <div id="bulkUploadModal" class="modal">
+        <div class="modal-content max-w-md">
+            <span class="close" id="closeBulkUpload">&times;</span>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Bulk Upload Products</h2>
+            <form id="bulkUploadForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-1">Excel File *</label>
+                    <input type="file" id="bulkExcelInput" accept=".xlsx,.xls"  required class="w-full border rounded-lg p-2">
+                    <p class="text-sm text-gray-500 mt-1">Download template with sample entries: <a href="#" id="download-template" class="text-blue-600 hover:underline">inventory_template.xlsx</a></p>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1">Product Images (Images file)</label>
+                    <input type="file" id="bulkImagesInput" multiple accept="image/*" class="w-full border rounded-lg p-2">
+                    <p class="text-sm text-gray-500 mt-1">Optional:  file containing all product images</p>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" onclick="closeModal('bulkUploadModal')" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="loader"></div>
+    </div>
+
+    <script src="../orderBadge.js"></script>
+    <script src="../auth.js"></script>
+    
+    <script src="../Inventory/inventory.js"></script>
+  
+    
+    <script>
+        function hideMenuItemsByRole() {
+            const admin = Auth.getCurrentAdmin();
+            if (!admin?.role) return;
+            const role = admin.role.trim().toUpperCase();
+
+            const menuItems = document.querySelectorAll('aside li[data-menu-type]');
+            menuItems.forEach(item => {
+                const type = item.getAttribute('data-menu-type');
+                if (role === 'ROLE_ADMIN') {
+                    if (['dashboard','customers','reports','admin-management'].includes(type)) {
+                        item.classList.add('menu-hidden');
+                    }
+                }
+            });
+
+            // Hide Stock Value card – match the attribute you already put in HTML
+            if (role === 'ROLE_ADMIN') {
+                const stockCard = document.querySelector('[data-sensitive="stock-value"]');
+                if (stockCard) {
+                    stockCard.classList.add('menu-hidden');
+                }
+            }
+        }
+        
+        function displayUserProfile() {
+        const admin = Auth.getCurrentAdmin(); // This returns the admin object like { id: 4, firstName: "Sumer", lastName: "Khan", ... }
+
+        const userInitials = document.getElementById('user-initials');
+        const userName = document.getElementById('user-name');
+        const userRole = document.getElementById('user-role');
+
+        if (!admin || !admin.firstName) {
+            // Fallback if no admin is logged in (shouldn't happen due to Auth.requireAuth())
+            userName.textContent = "Guest";
+            userRole.textContent = "Unknown";
+            userInitials.textContent = "??";
+            return;
+        }
+
+        // Full name
+        const fullName = `${admin.firstName} ${admin.lastName || ''}`.trim();
+        const role = `${admin.role}`
+
+        // Generate initials (e.g., "SK" for Sumer Khan)
+        const nameParts = fullName.trim().split(' ');
+        const initials = nameParts.length > 1
+            ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+            : (nameParts[0]?.[0] || '?');
+
+        // Update DOM
+        userInitials.textContent = initials.toUpperCase();
+        userName.textContent = fullName;
+        userRole.textContent = role; // You can make this dynamic later if needed
+        }
+
+        Auth.requireAuth();
+        Auth.startSessionTimer();
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            const admin = Auth.getCurrentAdmin();
+            if (admin) {
+                console.log("Logged in as:", admin.firstName + " " + admin.lastName);
+            }
+            displayUserProfile();
+            hideMenuItemsByRole();
+        });
+    </script>
+</body>
+</html>

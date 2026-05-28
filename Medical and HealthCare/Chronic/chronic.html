@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="title">DEMO PHARMACY KUNASH</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../Header/header.css">
+  <link rel="stylesheet" href="../../Footer/footer.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#36C2CE',
+            secondary: '#0ea5e9',
+            accent: '#10b981',
+            dark: '#1e293b',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+  /* Hide footer only on mobile & tablet (≤1024px) */
+  @media (max-width: 1024px) {
+    #footer-placeholder {
+      display: none !important;
+    }
+  }
+</style>
+  <style>
+    /* Ensure subcategory is hidden by default */
+    .subcategory.hidden {
+      display: none;
+    }
+    /* Smooth transitions for product card hover effects */
+    .product-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid #36C2CE !important; /* Blue border for product cards */
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    /* Consistent image sizing */
+    .product-image {
+      object-fit: contain;
+      width: 100%;
+      height: 160px;
+    }
+    /* Ensure consistent card height */
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    /* Blue border for left navigation sidebar */
+    .nav-sidebar {
+      border: 1px solid #36C2CE !important; /* Blue border for left nav bar */
+    }
+  </style>
+</head>
+<body class="bg-white" onload="initializePage()">
+    <!-- Header Placeholder (loads header.html dynamically) -->
+    <div id="header-placeholder"></div>
+<section
+  class="w-full h-96 relative bg-center bg-cover mt-32"
+  style="background-image: url('../../Images/Banners/Banners/Chronic/CHRONIC.png');"
+>
+  <!-- Overlay for better contrast -->
+  <div class="absolute inset-0 bg-black/30"></div>
+
+  <!-- Centered content -->
+  <div class="relative z-10 flex items-center justify-center h-full">
+    
+  </div>
+</section>
+
+
+  <div class="container mx-auto px-1 py-6">
+    <div class="flex flex-col md:flex-row gap-6">
+      <!-- Sidebar with Scroll -->
+      <div class="w-full md:w-1/5 md:h-[calc(90vh-4rem)] md:sticky md:top-16 overflow-y-auto bg-white p-3 rounded-lg shadow nav-sidebar">
+        <div class="mb-4">   
+        <!-- Sorting -->
+<div class="flex justify-start mb-6">
+  <select 
+    class="w-52 border border-gray-300 p-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary" 
+    id="sortSelect">
+    <option>Sort By: Relevance</option>
+    <option>Price: Low to High</option>
+    <option>Price: High to Low</option>
+  </select>
+</div>
+
+            
+          <h2 class="text-lg font-bold mb-2">Categories</h2>
+          <ul id="categoryList" class="space-y-2">
+            <li>
+          <ul id="categoryList" class="space-y-2">
+            <li>
+              <a href="#" class="category-link font-medium">Diabetes</a>
+              <span class="expand-toggle cursor-pointer ml-2 text-lg font-bold text-primary">+</span>
+            </li>
+            <li>
+              <a href="#" class="category-link font-medium">Cardiac</a>
+              <span class="expand-toggle cursor-pointer ml-2 text-lg font-bold text-primary">+</span>
+            </li>
+            <li>
+              <a href="#" class="category-link font-medium">Asthma</a>
+              <span class="expand-toggle cursor-pointer ml-2 text-lg font-bold text-primary">+</span>
+            </li>
+            <li>
+              <a href="#" class="category-link font-medium">Thyroid</a>
+              <span class="expand-toggle cursor-pointer ml-2 text-lg font-bold text-primary">+</span>
+            </li>
+            <li>
+              <a href="#" class="category-link font-medium">Hypertension</a>
+              <span class="expand-toggle cursor-pointer ml-2 text-lg font-bold text-primary">+</span>
+            </li>
+          </ul>
+        </div>
+        <!-- Brands -->
+        <div>
+          <h2 class="text-lg font-bold mb-2">
+            Brands <span class="expand-toggle cursor-pointer">+</span>
+          </h2>
+          <ul id="brandList" class="hidden space-y-2">
+            <li><label><input type="checkbox" class="brand-filter" value="BrandX"> BrandX</label></li>
+            <li><label><input type="checkbox" class="brand-filter" value="BrandY"> BrandY</label></li>
+            <li><label><input type="checkbox" class="brand-filter" value="BrandZ"> BrandZ</label></li>
+            <li><label><input type="checkbox" class="brand-filter" value="BrandW"> BrandW</label></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Product Section -->
+      <section class="w-full md:w-5/6">
+      
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="productGrid">
+          <!-- Products populated by JS -->
+        </div>
+      </section>
+    </div>
+  </div>
+
+<!-- Upload Prescription Modal -->
+<div id="uploadModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-2xl w-11/12 max-w-3xl p-10 relative">
+    
+    <!-- Close Button -->
+    <button onclick="document.getElementById('uploadModal').classList.add('hidden')"
+            class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold">
+      ✕
+    </button>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Left Section -->
+      <div class="border rounded-xl p-5 shadow-md">
+        <h2 class="text-lg font-semibold mb-4">Enjoy Easy and Hassle Free Ordering</h2>
+        
+        <!-- Upload Box -->
+        <label class="border rounded-lg p-4 mb-3 flex items-center justify-between cursor-pointer hover:bg-gray-50">
+          <div class="flex items-center gap-3">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 16v-8m0 0l-4 4m4-4l4 4M4 20h16"/>
+            </svg>
+            <span class="font-medium text-gray-700">Upload Prescription</span>
+          </div>
+          <input type="file" class="hidden" />
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </label>
+
+       <!-- Valid Prescription Info (trigger button) -->
+<p id="validPrescriptionBtn" class="text-sm text-gray-600 mb-3 flex items-center gap-2 cursor-pointer border-b border-blue-600 inline-block pb-1 w-fit">
+  <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+          d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+  </svg>
+  What is valid prescription?
+</p>
+
+<!-- Urgent Order Info Box with Call Button -->
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-600 font-semibold text-center">
+  <p class="mb-3">For urgent orders, please contact us directly:</p>
+  <button onclick="window.location.href='tel:1234567890'" 
+          class="px-5 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+    📞1234567890
+  </button>
+</div>
+
+      </div>
+
+      <!-- Right Section -->
+      <div>
+        <h2 class="text-lg font-semibold mb-4">How will the Pharmacist help you?</h2>
+        <ul class="space-y-5 text-gray-700">
+
+          <li class="flex items-start gap-3">
+            <img src="https://assets.pharmeasy.in/web-assets/images/uploadStep1.png?dim=64x64&q=75" alt="Step 1" class="w-12 h-12">
+            <span>Pharmacist will check items on prescription and add to cart</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <img src="https://assets.pharmeasy.in/web-assets/images/uploadStep2.png?dim=64x64&q=75" alt="Step 2" class="w-12 h-12">
+            <span>You can ask for additional items if needed</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <img src="https://assets.pharmeasy.in/web-assets/images/uploadStep3.png?dim=64x64&q=75" alt="Step 3" class="w-12 h-12">
+            <span>They will apply the best coupon & get you the max savings</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <img src="https://assets.pharmeasy.in/web-assets/images/uploadStep4.png?dim=64x64&q=75" alt="Step 4" class="w-12 h-12">
+            <span>Choose the earliest delivery date</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <img src="https://assets.pharmeasy.in/web-assets/images/uploadStep5.png?dim=64x64&q=75" alt="Step 5" class="w-12 h-12">
+            <span>Finally, Share payment methods options</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Valid Prescription Modal -->
+<div id="validPrescriptionModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-2xl w-11/12 max-w-xl p-12 relative">
+
+    <!-- Close Button -->
+    <button onclick="document.getElementById('validPrescriptionModal').classList.add('hidden')"
+            class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold">
+      ✕
+    </button>
+
+    <!-- Modal Content -->
+    <h2 class="text-xl font-semibold mb-6 text-center">A valid prescription contains:</h2>
+
+    <!-- Icons Row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-6">
+      <div class="flex flex-col items-center">
+        <svg class="w-8 h-8 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0118 20.944V21l-6-3-6 3v-.056a12.083 12.083 0 01-.16-10.366L12 14z"/>
+        </svg>
+        <span class="text-sm font-medium">Doctor Details</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <svg class="w-8 h-8 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10m-11 4h12M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span class="text-sm font-medium">Date of Prescription</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <svg class="w-8 h-8 text-purple-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.969 9.969 0 0112 15c2.21 0 4.242.72 5.879 1.928M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span class="text-sm font-medium">Patient Details</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <svg class="w-8 h-8 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h13V7H9V1L1 9l8 8z"/>
+        </svg>
+        <span class="text-sm font-medium">Dosage Details</span>
+      </div>
+    </div>
+
+   <!-- Divider -->
+<hr class="my-4 border-t-4 border-blue-500 rounded">
+
+
+    <!-- Do's and Don'ts -->
+    <h3 class="text-lg font-semibold mb-4">DO'S AND DON'Ts</h3>
+    <ul class="space-y-3 text-sm">
+      <li class="flex items-start gap-2">
+        <span class="text-green-600 font-bold">✔</span>
+        <span><b>Upload Clear Image</b> — Ensure picture is taken with clear visible handwriting/type. Place prescription on a flat surface to get better focus and clear image.</span>
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-red-600 font-bold">✘</span>
+        <span><b>No Picture of Medicines</b></span>
+      </li>
+      <li class="flex items-start gap-2">
+        <span class="text-red-600 font-bold">✘</span>
+        <span><b>Do not crop the Image</b></span>
+      </li>
+    </ul>
+
+  </div>
+</div>
+      <div id="footer-placeholder"></div>
+    
+
+
+ <script>
+    function loadHeader() {
+        fetch('../../Header/header.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+                const script = document.createElement('script');
+                script.src = '../../Header/header.js';
+                script.onload = () => console.log('Header JS loaded');
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+        fetch('../../Footer/footer.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHeader();
+        loadFooter();
+        // ... rest of your code
+    });
+</script>
+<script src="../../cart-wishlist-system.js" defer></script>
+  <script src="./chronic.js?v=1.0.0"></script>
+</body>
+</html>
+          

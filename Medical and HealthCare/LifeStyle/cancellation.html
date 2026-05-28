@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <link rel="apple-touch-icon" sizes="180x180" href="favicon_io-GN/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io-GN/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io-GN/favicon-16x16.png">
+    <link rel="manifest" href="favicon_io-GN/site.webmanifest">
+  <title>Cancellation Policy - Pharmacy Kunash</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./Footer/footer.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <!-- header -->
+   <div id="header-placeholder"></div>
+
+  <main class="max-w-4xl mx-auto px-6 py-12 mt-44">
+    <h1 class="text-4xl font-bold text-center mb-8 text-pink-700">Cancellation Policy</h1>
+    
+    <div class="bg-white rounded-xl shadow-lg p-8 md:p-12 space-y-8">
+      <div class="bg-amber-50 border border-amber-300 rounded-lg p-6">
+        <p class="font-bold text-amber-800">You can cancel your order only before it is dispatched.</p>
+      </div>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-green-600 mb-4">Cancellation Window</h2>
+        <ul class="list-disc pl-6 space-y-3">
+          <li><strong>Within 2 hours</strong> of placing order → Full refund</li>
+          <li><strong>After pharmacist verification</strong> → Cancellation not allowed</li>
+          <li><strong>After dispatch</strong> → Cannot be cancelled</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-pink-600 mb-4">How to Cancel</h2>
+        <ol class="list-decimal pl-6 space-y-2">
+          <li>Go to My Orders</li>
+          <li>Select the order</li>
+          <li>Click "Cancel Order" (if eligible)</li>
+          <li>Or call us at +91-XXXXXXXXXX</li>
+        </ol>
+      </section>
+
+      <p class="text-sm text-gray-500 mt-10">Last Updated: December 2025</p>
+    </div>
+  </main>
+  <!-- footer -->
+   <div id="footer-placeholder"></div>
+
+    <script>
+    function loadHeader() {
+        fetch('../Header/header.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+                const script = document.createElement('script');
+                script.src = '../Header/header.js';
+                script.onload = () => console.log('Header JS loaded');
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+        fetch('../Footer/footer.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHeader();
+        loadFooter();
+        // ... rest of your code
+    });
+</script>
+</body>
+</html>

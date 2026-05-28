@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="./Footer/footer.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pharmeasy-green': '#0d924f',
+                        'pharmeasy-red': '#d9363e',
+                        'pharmeasy-light-green': '#e8f5e8',
+                        'pharmeasy-gray': '#f8f9fa',
+                        'pharmeasy-teal': '#0d924f',
+                        'pharmeasy-blue': '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+  
+  <style>
+  @media (max-width: 1024px) {
+    #footer-placeholder {
+      display: none !important;
+    }
+  }
+</style> 
+
+<style>
+     #share-btn:hover ~ #share-overlay,
+    #share-overlay:not(.hidden) {
+        display: flex !important;
+    }
+</style>
+    <style>
+        .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.8s infinite; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        /* Tab Styling */
+        .tab-button {
+            position: relative;
+            padding: 12px 24px;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #3b82f6;
+            border-radius: 3px 3px 0 0;
+        }
+        
+        /* Specifications Table Styling */
+        .specs-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .specs-table th {
+            text-align: left;
+            padding: 20px;
+            background-color: #f9fafb;
+            font-weight: 700;
+            color: #111827;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.25rem;
+        }
+
+        .specs-table .section-header {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 16px 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+                
+        .specs-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        .specs-table tr:last-child td {
+            border-bottom: none;
+        }
+                
+        .specs-table .spec-label {
+            font-weight: 600;
+            color: #374151;
+            width: 35%;
+            background-color: #f9fafb;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .specs-table .spec-value {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .specs-table ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .specs-table li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .specs-table li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Alternate row colors for better readability */
+        .specs-table tbody tr:nth-child(odd):not(.section-header) {
+            background-color: #ffffff;
+        }
+
+        .specs-table tbody tr:nth-child(even):not(.section-header) {
+            background-color: #f8fafc;
+        }
+        
+        /* Spacing between sections */
+        .specs-table .section-spacer {
+            height: 24px;
+            background-color: transparent;
+        }
+
+        /* Badge styling for status */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .status-in-stock {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .status-out-of-stock {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        /* Date styling */
+        .date-value {
+            font-family: 'Courier New', monospace;
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+    
+        /* Tab Content Animation */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Benefits list styling */
+        .benefits-list li {
+            transition: all 0.3s ease;
+        }
+        
+        .benefits-list li:hover {
+            transform: translateX(5px);
+        }
+        
+        /* Ingredients list styling */
+        .ingredients-list li {
+            transition: all 0.3s ease;
+        }
+        
+        .ingredients-list li:hover {
+            background-color: #f0f9ff;
+        }
+        
+        /* Directions list styling */
+        .directions-list li {
+            transition: all 0.3s ease;
+        }
+        
+        .directions-list li:hover {
+            background-color: #fff7ed;
+        }
+        
+ @keyframes giftBounce {
+    0%, 100% {
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-6px) scale(1.1) rotate(-5deg);
+    }
+    75% {
+        transform: translateY(-4px) scale(1.08) rotate(4deg);
+    }
+}
+
+.animate-giftBounce {
+    display: inline-block;
+    animation: giftBounce 2.0s ease-in-out infinite;
+    transform-origin: center bottom;
+}
+    </style>
+</head>
+<body class="bg-[#F9F8F6] top-0">
+
+    <div id="header-placeholder"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-6xl mx-auto px-1 sm:px-4 lg:px-6 mt-16 pb-24">
+        <div class="flex gap-8">
+
+            <!-- LEFT + CENTER: Product Details -->
+            <div class="flex-1">
+                <div class="rounded-lg shadow-sm border overflow-hidden">
+                    <div class="flex flex-col lg:flex-row">
+
+                       <!-- Image Section -->
+                       <div class="lg:w-10/8 p-2 lg:p-1 lg:mr-12 mb-6">
+                            <div class="relative">
+                                <!-- Share Button -->
+                                <button id="share-btn" 
+                                        class="absolute bottom-3 right-3 w-11 h-11 bg-blue-100 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 border border-gray-300 hover:border-pharmeasy-green group z-10">
+                                    <i class="fas fa-share-alt text-xl text-gray-600 group-hover:text-pharmeasy-green transition"></i>
+                                </button>
+
+                                <!-- Main Product Image -->
+                                <img id="main-product-image" 
+                                     src="./Images/product_details_fallback_img.jpg" 
+                                     alt="Product" 
+                                     class="w-full h-64 lg:h-80 object-contain rounded-lg shadow-sm skeleton">
+                            </div>
+
+                            <!-- Thumbnails -->
+                            <div class="flex gap-3 mt-6 justify-center" id="thumbnail-container">
+                                <div class="w-16 h-16 lg:w-20 lg:h-20 bg-gray-200 rounded-lg skeleton">
+                                    <img src="" alt="">
+                                </div>
+                                <div class="w-16 h-16 lg:w-20 lg:h-20 bg-gray-200 rounded-lg skeleton"></div>
+                                <div class="w-16 h-16 lg:w-20 lg:h-20 bg-gray-200 rounded-lg skeleton"></div>
+                            </div>
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="lg:w-3/5 pl-4 mt-1 border-t lg:border-t-0 lg:border-l">
+                            <div class="flex justify-between items-start">
+                                <h1 id="product-name" class="text-2xl lg:text-2xl font-bold text-gray-900leading-snug skeleton h-14 w-35 rounded mt-2">
+                                    Loading Product...
+                                </h1>
+                                <!-- Wishlist Button -->
+                                <button id="wishlist-btn" class="w-12 h-12 bg-white rounded-full shadow-md flex items-center mt-2 mr-4 justify-center hover:shadow-lg transition">
+                                    <i class="far fa-heart text-2xl text-gray-600"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- SKU -->
+                            <!-- <div class="mb-4">
+                                <p id="product-sku" class="text-sm text-gray-600 skeleton w-26 h-4 rounded"></p>
+                            </div> -->
+                            
+                            <!-- Rating -->
+                            <!-- <div class="flex items-center mt-2 mb-4" id="product-rating">
+                                <div class="skeleton w-24 h-5 rounded"></div>
+                            </div> -->
+
+                            <!-- Pricing -->
+                            <div class="flex items-baseline gap-4 mt-2">
+                                <span id="selling-price" class="text-xl font-bold text-pharmeasy-green skeleton h-12 rounded">Loading..</span>
+                                <span class="text-sm text-gray-500 line-through hidden">MRP <span id="mrp-price">Loading..</span></span>
+                                <span id="discount-badge" class="border 2px border-orange-500 bg-pharmeasy-red text-white px-2 py-1 rounded-full text-sm font-semibold">Loading..</span>
+                            </div>
+
+                           <!-- Pincode Checker & Delivery Info -->
+                            <div class="mb-6">
+    <label class="block text-sm font-medium text-gray-700 mb-2">Check Delivery</label>
+    <div class="flex gap-2 w-[250px]">
+        <input type="text" id="pincodeInput" placeholder="Enter pincode" maxlength="6"
+            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-pharmeasy-blue">
+        <button id="checkPincodeBtn"
+            class="px-4 bg-pharmeasy-blue hover:bg-blue-700 text-white font-medium rounded-lg transition flex items-center gap-2">
+            <i class="fas fa-search-location"></i>
+        </button>
+    </div>
+
+    <!-- Delivery Result -->
+    <div id="deliveryResult" class="mt-4 hidden">
+        <!-- Success State -->
+        <div id="deliverySuccess" class="hidden p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-start">
+                <i class="fas fa-check-circle text-green-600 text-xl mr-3 mt-1"></i>
+                <div class="flex-1">
+                    <p class="font-medium text-green-800">Delivery Available!</p>
+                    <p id="deliveryLocation" class="text-sm text-gray-700 mt-1">Location</p>
+                    <!--<p class="text-sm font-medium text-green-700 mt-2">Free Delivery</p>-->
+                    <p id="deliveryTime" class="text-sm font-semibold text-green-800 mt-2">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="deliveryError" class="hidden p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div class="flex items-start">
+                <i class="fas fa-times-circle text-red-600 text-xl mr-3 mt-1"></i>
+                <div class="flex-1">
+                    <p class="font-medium text-red-800">Delivery Not Available</p>
+                    <p class="text-sm text-gray-700 mt-1">
+                        Sorry, we currently deliver only to select areas around Phaltan, Satara.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Default Info (shown until pincode is checked) -->
+    <!--<div class="border border-pink-300 rounded-lg p-4 mt-4">-->
+    <!--    <p class="text-gray-700 text-sm font-medium" id="deliveryTimeDefault">-->
+    <!--        Check pincode to see delivery details-->
+    <!--    </p>-->
+    <!--    <p class="text-xs text-gray-600 mt-2" id="deliveryOffer">-->
+    <!--        *Free Delivery • No minimum order required (in selected areas)-->
+    <!--    </p>-->
+    <!--</div>-->
+    
+            <div class="border-2 border-pink-400 rounded-xl p-4 sm:p-5 mt-4 mr-4 bg-gradient-to-r from-pink-50 via-purple-50 to-pink-50 shadow-sm">
+            <p class="text-gray-800 text-base sm:text-lg font-semibold" id="deliveryTimeDefault">
+                Check pincode to see delivery details
+            </p>
+        
+            <div class="mt-3 inline-flex flex-wrap items-center gap-2 sm:gap-3 bg-white px-3 sm:px-4 py-2 rounded-full shadow-sm border border-pink-200">
+                <span class="gift-icon text-2xl sm:text-3xl animate-giftBounce">🎁</span>
+                <span class="font-bold text-pink-600 text-sm sm:text-base">FREE DELIVERY</span>
+                <span class="text-gray-700 text-sm sm:text-base">
+                    on orders above <strong>₹799</strong>
+                </span>
+            </div>
+        
+            <p class="text-xs sm:text-sm text-gray-600 mt-3">
+                Grab your exclusive deal 😊
+            </p>
+        </div>
+    </div>
+                    <!-- Quantity Selector -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity:</label>
+                        <div class="flex items-center">
+                            <button id="decrease-qty" class="w-10 h-10 bg-gray-200 rounded-l-lg flex items-center justify-center text-xl hover:bg-gray-300 transition">-</button>
+                            <input id="quantity-input" type="number" value="1" min="1" max="10" 
+                                   class="w-16 h-10 text-center border-t border-b border-gray-300 focus:outline-none focus:ring-2 focus:ring-pharmeasy-blue">
+                            <button id="increase-qty" class="w-10 h-10 bg-gray-200 rounded-r-lg flex items-center justify-center text-xl hover:bg-gray-300 transition">+</button>
+                            <span class="ml-4 text-sm text-gray-600" id="product-unit">Unit</span>
+                        </div>
+                    </div>
+        
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-4 mb-8">
+                        
+                        <div class="flex gap-4 mr-4 w-full">
+                             <button id="add-to-cart-btn"
+                            class="flex-1 px-2 bg-[#295F98] hover:bg-[#5C7285] text-white font-bold py-3 rounded-lg text-md shadow-lg transition flex items-center justify-center transition">
+                            <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                        </button>
+                        <button id="buy-now-btn" class="px-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg text-md shadow-lg transition">
+                            <i class="fas fa-bolt mr-2"></i> Buy Now
+                        </button>
+                            
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- Tabs Section -->
+                <div class="mt-8 rounded-xl shadow-sm border overflow-hidden">
+                    <!-- Tab Headers -->
+                    <div class="border-b border-gray-200">
+                        <div class="flex space-x-8 px-6">
+                            <button class="tab-button active" data-tab="specifications">
+                                Product Details
+                            </button>
+                            <button class="tab-button" data-tab="benefits">
+                                Benefits
+                            </button>
+                            <button class="tab-button" data-tab="ingredients">
+                                Ingredients
+                            </button>
+                            <!-- <button class="tab-button" data-tab="directions">
+                                Directions for Use
+                            </button> -->
+                        </div>
+                    </div>
+
+                    <!-- Tab Contents -->
+                    <div class="p-6">
+                        <!-- Product Details Tab -->
+                        <div id="specifications-content" class="tab-content active">
+                            <table class="specs-table">
+                                <tbody id="specifications-table-body">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Benefits Tab -->
+                        <div id="benefits-content" class="tab-content">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+
+                        <!-- Ingredients Tab -->
+                        <div id="ingredients-content" class="tab-content">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+
+                        <!-- Directions Tab -->
+                        <div id="directions-content" class="tab-content">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+               <!-- Related Products Section -->
+                <div class="mt-8">
+                    <h3 class="text-2xl font-bold mb-4">Related Products</h3>
+                    <div id="related-products-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <!-- Related products will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Share Overlay -->
+    <div id="share-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center" onclick="this.classList.add('hidden')">
+        <div class="bg-gray-200 rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-xl font-bold text-gray-800">Share this product</h3>
+                <button onclick="document.getElementById('share-overlay').classList.add('hidden')" class="text-gray-500 hover:text-gray-800">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <!-- WhatsApp -->
+                <button onclick="shareViaWhatsApp()" class="flex flex-col items-center p-4 rounded-xl hover:bg-gray-50 transition">
+                    <i class="fab fa-whatsapp text-4xl text-green-500 mb-2"></i>
+                    <span class="text-sm font-medium">WhatsApp</span>
+                </button>
+
+                <!-- Email -->
+                <button onclick="shareViaEmail()" class="flex flex-col items-center p-4 rounded-xl hover:bg-gray-50 transition">
+                    <i class="fas fa-envelope text-4xl text-blue-600 mb-2"></i>
+                    <span class="text-sm font-medium">Email</span>
+                </button>
+
+                <!-- Copy Link -->
+                <button onclick="copyLink()" class="flex flex-col items-center p-4 rounded-xl hover:bg-gray-50 transition">
+                    <i class="fas fa-link text-4xl text-gray-700 mb-2"></i>
+                    <span class="text-sm font-medium">Copy Link</span>
+                </button>
+            </div>
+
+            <div class="mt-5 text-center">
+                <span id="copy-feedback" class="text-green-600 font-medium text-sm hidden">Link copied!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <script>
+    function loadHeader() {
+        fetch('/Header/header.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+                const script = document.createElement('script');
+                script.src = '/Header/header.js?v=1.1.3'; 
+                script.onload = () => console.log('Header JS loaded');
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+        fetch('/Footer/footer.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHeader();
+        loadFooter();
+    });
+    </script>
+
+    <script>
+        // Open overlay when share button is clicked
+        document.getElementById('share-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('share-overlay').classList.remove('hidden');
+        });
+
+        // Close when clicking outside
+        document.getElementById('share-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                e.currentTarget.classList.add('hidden');
+            }
+        });
+
+        // Share via WhatsApp
+        function shareViaWhatsApp() {
+            const productName = document.getElementById('product-name').textContent.trim();
+            const price = document.getElementById('selling-price').textContent.trim();
+            const url = window.location.href;
+
+            const message = `*${productName}*\n${price}\n\nCheck out this amazing deal!\n🔗 ${url}\n\nShared via PHARMACY KUNASH`;
+
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Share via Email
+        function shareViaEmail() {
+            const productName = document.getElementById('product-name').textContent.trim();
+            const price = document.getElementById('selling-price').textContent.trim();
+            const url = window.location.href;
+
+            const subject = `${productName} - Only ${price} on PHARMACY KUNASH!`;
+            const body = `Hi there,\n\nI found this great product for you:\n\n` +
+                         `Product: ${productName}\n` +
+                         `Price: ${price}\n\n` +
+                         `View it here: ${url}\n\n` +
+                         `Shared via PHARMACY KUNASH`;
+
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+
+        // Copy link to clipboard
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const feedback = document.getElementById('copy-feedback');
+                feedback.classList.remove('hidden');
+                setTimeout(() => feedback.classList.add('hidden'), 2000);
+            });
+        }
+    </script>
+    
+    
+<script>
+// ===== SCROLL TO TOP ON PAGE REFRESH =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
+    // Handle browser back/forward navigation
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.scrollTo(0, 0);
+        }
+    };
+    
+    // Also scroll to top on page load (redundancy for safety)
+    window.onload = function() {
+        setTimeout(function() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }, 0);
+    };
+});
+
+// Force scroll to top even before DOM is fully loaded
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+} else {
+    window.onbeforeunload = function() {
+        window.scrollTo(0, 0);
+    };
+}
+</script>
+
+    <!--<script src="cart-wishlist-system.js?v=1.0.0" defer></script>-->
+    <script src="productdetails.js?v=1.1.2"></script>
+</body>
+</html>

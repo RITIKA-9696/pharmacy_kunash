@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pharmacy- Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+  <!-- <link rel="stylesheet" href="dashboard.css"> -->
+
+
+  <style>
+
+
+
+      /* Smooth transition classes */
+#sidebar {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar.collapsed {
+    width: 64px !important;
+}
+
+#sidebar:not(.collapsed) {
+    width: 256px !important;
+}
+
+.nav-text {
+    transition: all 0.3s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.nav-icon {
+    transition: all 0.3s ease-in-out;
+    min-width: 20px;
+}
+
+/* For smoother hover effects */
+li {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Staggered animation for nav items */
+li:nth-child(1) { transition-delay: 0ms; }
+li:nth-child(2) { transition-delay: 20ms; }
+li:nth-child(3) { transition-delay: 40ms; }
+li:nth-child(4) { transition-delay: 60ms; }
+li:nth-child(5) { transition-delay: 80ms; }
+li:nth-child(6) { transition-delay: 100ms; }
+li:nth-child(7) { transition-delay: 120ms; }
+li:nth-child(8) { transition-delay: 140ms; }
+li:nth-child(9) { transition-delay: 160ms; }
+li:nth-child(10) { transition-delay: 180ms; }
+li:nth-child(11) { transition-delay: 200ms; }
+
+.menu-hidden {
+   display: none !important;
+ }
+
+        
+  </style>
+</head>
+<body class="bg-white h-screen flex overflow-hidden transition-colors duration-300">
+  
+   <aside id="sidebar"
+    class="border w-64 bg-white text-white flex-shrink-0 flex flex-col fixed h-full z-20 md:static transition-all duration-300 ease-in-out">
+    <div class="border-b p-4  sticky top-0 z-10 flex justify-between items-center">
+        <div class="ml-6 transition-all duration-300 ease-in-out overflow-hidden">
+            <img src="../Images/kunash-logo.png" alt="PharmaCare Logo"
+                class="w-full h-[44px] sidebar-logo-expanded transition-all duration-300 ease-in-out">
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="toggle-sidebar-logo" class="flex items-center transition-all duration-300 ease-in-out">
+                <i id="sidebar-arrow"
+                    class="fas fa-chevron-left ml-2 text-black transition-transform duration-300 ease-in-out"></i>
+            </button>
+            <button id="close-sidebar" class="md:hidden text-black transition-all duration-300 ease-in-out">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4 transition-all duration-300 ease-in-out">
+        <ul class="space-y-1">
+            <!-- Each list item -->
+            <li data-menu-type="dashboard" class="bg-blue-700 text-white rounded-md transition-all duration-200 ease-in-out">
+                <a href="../Dashboard/dashboard.html"
+                    class="flex items-center py-3 px-4 text-gray-700 text-white transition-colors duration-200">
+                    <i class="fas fa-home mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Inventory/inventory.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-pills mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Inventory Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Prescriptions/prescription.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-file-prescription mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Prescriptions</span>
+                </a>
+            </li>
+
+            <li data-menu-type="customers" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Customer/customer management.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-users mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Customers Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Order/ordermanagment.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-shopping-cart mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Order Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Product Management/product.html"
+                    class="flex items-center py-3 px-4 text-gray-700  hover:text-white transition-colors duration-200">
+                    <i class="fas fa-box mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200 ">Medicine Product Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Mother and Baby Care/motherbabycare.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fa-solid fa-baby mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Mother & Baby Care Product Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Banner/banner.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-image mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Banner Management</span>
+                </a>
+            </li>
+
+            <li data-menu-type="reports" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <a href="../Reports/report.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-file-invoice mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Reports</span>
+                </a>
+            </li>
+
+            <li data-menu-type="admin-management" class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md mb-4">
+                <a href="../Admin/admin.html"
+                    class="flex items-center py-3 px-4 text-gray-700 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-user-shield mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Admin Management</span>
+                </a>
+            </li>
+
+            <li class="hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out rounded-md">
+                <button id="logoutBtn"
+                    class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-white font-semibold text-left transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt mr-3 nav-icon transition-all duration-200"></i>
+                    <span class="nav-text transition-all duration-200">Logout</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="bg-white shadow sticky top-0 z-10">
+      <div class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+          <button id="toggle-sidebar-mobile" class="text-gray-500 mr-4 md:hidden"><i class="fas fa-bars"></i></button>
+          <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
+        </div>
+  
+        <div class="flex gap-4">
+  
+          <!-- Notification Bell -->
+          <div class="relative mt-2">
+            <button id="notification-bell"
+              class="relative text-gray-600 hover:text-gray-900 focus:outline-none transition-colors">
+              <i class="fas fa-bell text-2xl"></i>
+              <span id="notification-badge"
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 hidden">
+                0
+              </span>
+            </button>
+  
+            <!-- Dropdown Menu -->
+            <div id="notification-dropdown"
+              class="hidden absolute right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl z-50 overflow-hidden border border-gray-200 transform origin-top-right transition-all duration-200 scale-95 opacity-0">
+              <div class="p-4 bg-gray-50 border-b">
+                <div class="flex justify-between items-center">
+                  <h3 class="font-semibold text-gray-800 text-lg">Alerts</h3>
+                  <span id="notification-count" class="text-sm text-gray-500"></span>
+                </div>
+              </div>
+  
+              <div id="notification-list" class="max-h-[420px] overflow-y-auto divide-y divide-gray-100">
+                <!-- Dynamic alerts will go here -->
+              </div>
+  
+              <div class="p-4 border-t bg-gray-50 text-center">
+                <button id="clear-notifications" class="text-sm text-blue-600 hover:text-blue-800 font-medium transition">
+                  Clear All Alerts
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <div class="flex items-center">
+              <div id="user-initials"
+                class="w-10 h-10 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center text-lg font-semibold">
+              </div>
+              <div class="ml-2">
+                <span id="user-name" class="text-gray-800"></span>
+                <span id="user-role" class="text-gray-500 text-sm block"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+  
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-4 bg-white">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
+  <div class="flex justify-between items-center">
+    <div>
+      <p class="text-gray-500">Total Profit</p>
+      <h2 class="text-2xl font-bold text-gray-800">₹0</h2>
+      <p class="text-green-600 text-sm">
+        <i class="fas fa-arrow-up"></i> Increased this month
+      </p>
+    </div>
+    <div class="bg-blue-50 p-3 rounded-full">
+      <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+    </div>
+  </div>
+</div>
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Prescriptions</p>
+              <h2 class="text-2xl font-bold text-gray-800">0</h2>
+              <p class="text-green-600 text-sm"><i class="fas fa-arrow-up"></i></p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-full">
+              <i class="fas fa-file-prescription text-green-400 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Inventory Items</p>
+              <h2 class="text-2xl font-bold text-gray-800"></h2>
+              <p class="text-red-600 text-sm"><i class="fas fa-arrow-down"></i></p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-full">
+              <i class="fas fa-pills text-orange-400 text-xl"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border shadow-xl p-4 hover:scale-105 transition-transform duration-300 stats-card">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Low Stock Items</p>
+              <h2 class="text-2xl font-bold text-gray-800"></h2>
+              <p class="text-red-600 text-sm"><i class="fas fa-exclamation-circle"></i> Needs attention</p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-full">
+              <i class="fas fa-exclamation-triangle text-purple-500 text-xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow border p-4 chart-card">
+          <h2 class="text-lg font-semibold mb-4 text-gray-800">Monthly Revenue Overview</h2>
+          <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow border p-4 chart-card">
+          <h2 class="text-lg font-semibold mb-4 text-gray-800">Product Category Distribution</h2>
+          <div class="chart-container">
+            <canvas id="categoriesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-lg border shadow p-4">
+          <h2 class="text-lg m-2 font-semibold text-gray-800">Recent Prescriptions</h2>
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center">
+              <select id="prescriptions-status-filter" class="border rounded py-1 px-2 mr-2 bg-white border-blue-200">
+                <option value="">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+              <select id="prescriptions-time-filter" class="border rounded py-1 px-2 bg-white border-blue-200">
+                <option value="all">All Time</option>
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+              </select>
+
+              <button id="reset-prescriptions" class="ml-2 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full" id="prescriptions-table">
+              <thead>
+                <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                  <th class="pb-2 cursor-pointer" data-sort="patient">Patient <i class="fas fa-sort"></i></th>
+                  <th class="pb-2 cursor-pointer" data-sort="medication">Medication <i class="fas fa-sort"></i></th>
+                  <th class="pb-2 cursor-pointer" data-sort="date">Date <i class="fas fa-sort"></i></th>
+                  <th class="pb-2">Status</th>
+                </tr>
+              </thead>
+              <tbody id="prescriptionsTable" class="text-gray-800"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg border shadow p-4">
+          <h2 class="text-lg m-2 font-semibold text-gray-800">Low Stock Alert</h2>
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center">
+              <input id="lowstock-search" type="text" placeholder="Search product..." class="border rounded py-1 px-2 mr-2 bg-white border-blue-200" />
+              <select id="lowstock-filter" class="border rounded py-1 px-2 bg-white border-blue-200">
+                <option value="">All</option>
+                <option value="low">Low Stock</option>
+                <option value="finished">Finished Stock</option>
+              </select>
+              <button id="reset-lowstock" class="ml-2 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full" id="lowstock-table">
+              <thead>
+                <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                  <th class="pb-2 cursor-pointer" data-sort="medication">Medication <i class="fas fa-sort"></i></th>
+                  <th class="pb-2 cursor-pointer" data-sort="stock">Current Stock <i class="fas fa-sort"></i></th>
+                  <th class="pb-2">Alert Level</th>
+                  <th class="pb-2">Action</th>
+                </tr>
+              </thead>
+              <tbody id="lowStockTable" class="text-gray-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-lg border shadow p-4 chart-card">
+          <h2 class="text-lg font-semibold mb-4 text-gray-800">Medication Expiry Tracker</h2>
+          <div class="chart-container">
+            <canvas id="expiryChart"></canvas>
+          </div>
+          <div class="overflow-x-auto mt-4">
+            <table class="min-w-full" id="expiry-table">
+              <thead>
+                <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                  <th class="pb-2 cursor-pointer" data-sort="medication">Medication <i class="fas fa-sort"></i></th>
+                  <th class="pb-2 cursor-pointer" data-sort="expiryDate">Expiry Date <i class="fas fa-sort"></i></th>
+                  <th class="pb-2">Expiry Period</th>
+                </tr>
+              </thead>
+              <tbody id="expiryTable" class="text-gray-800"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg border shadow p-4">
+          <h2 class="text-lg m-2 font-semibold text-gray-800">Top Selling products</h2>
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+              <input id="topselling-search" type="text" placeholder="Search product..." class="border rounded py-1 px-2 mr-2 bg-white border-blue-200" />
+              <button id="reset-topselling" class="ml-2 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">
+                Reset
+              </button>
+              <button id="export-topselling" class="bg-blue-400 text-white py-1 px-3 rounded">Export to Excel</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full" id="topselling-table">
+              <thead>
+                <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                  <th class="pb-2 cursor-pointer" data-sort="medication">Medication <i class="fas fa-sort"></i></th>
+                  <th class="pb-2 cursor-pointer" data-sort="units">Units Sold <i class="fas fa-sort"></i></th>
+                  <th class="pb-2 cursor-pointer" data-sort="revenue">Revenue <i class="fas fa-sort"></i></th>
+                </tr>
+              </thead>
+              <tbody id="topSellingTable" class="text-gray-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Confirm Logout</h3>
+      <button id="closeLogoutModal" class="text-gray-400 hover:text-gray-600">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <p class="text-gray-600 mb-6">Are you sure you want to logout?</p>
+    <div class="flex justify-center gap-3">
+      <button id="confirmLogout" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition">Yes</button>
+      <button id="cancelLogout" class="bg-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-400 transition">No</button>
+    </div>
+  </div>
+</div>
+<script src="../orderBadge.js"></script>
+<script src="./dashboard.js"></script>
+ <script src="../auth.js"></script>
+ 
+
+ <script>
+        function hideMenuItemsByRole() {
+            const admin = Auth.getCurrentAdmin();
+            if (!admin?.role) return;
+
+            const role = admin.role.trim().toUpperCase();
+            const menuItems = document.querySelectorAll('aside li[data-menu-type]');
+
+            menuItems.forEach(item => {
+                const type = item.getAttribute('data-menu-type');
+                if (role === 'ROLE_ADMIN') {
+                    if (['dashboard','customers','reports','admin-management'].includes(type)) {
+                        item.classList.add('menu-hidden');
+                    }
+                }
+            });
+        }
+
+        function displayUserProfile() {
+        const admin = Auth.getCurrentAdmin(); // This returns the admin object like { id: 4, firstName: "Sumer", lastName: "Khan", ... }
+
+        const userInitials = document.getElementById('user-initials');
+        const userName = document.getElementById('user-name');
+        const userRole = document.getElementById('user-role');
+
+        if (!admin || !admin.firstName) {
+            // Fallback if no admin is logged in (shouldn't happen due to Auth.requireAuth())
+            userName.textContent = "Guest";
+            userRole.textContent = "Unknown";
+            userInitials.textContent = "??";
+            return;
+        }
+
+        // Full name
+        const fullName = `${admin.firstName} ${admin.lastName || ''}`.trim();
+        const role = `${admin.role}`
+
+        // Generate initials (e.g., "SK" for Sumer Khan)
+        const nameParts = fullName.trim().split(' ');
+        const initials = nameParts.length > 1
+            ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+            : (nameParts[0]?.[0] || '?');
+
+        // Update DOM
+        userInitials.textContent = initials.toUpperCase();
+        userName.textContent = fullName;
+        userRole.textContent = role; // You can make this dynamic later if needed
+        }
+
+
+        // This will redirect to login if session is missing or expired
+        Auth.requireAuth();
+        // Optional: start background timer to warn on expiration
+        Auth.startSessionTimer();
+    
+        // Example: display admin name
+        document.addEventListener("DOMContentLoaded", () => {
+            const admin = Auth.getCurrentAdmin();
+            if (admin) {
+                console.log("Logged in as:", admin.firstName + " " + admin.lastName);
+                // e.g., document.getElementById('adminName').textContent = admin.firstName;
+            }
+
+            displayUserProfile();
+            hideMenuItemsByRole();
+        });
+    </script>
+    
+    
+</body>
+</html>

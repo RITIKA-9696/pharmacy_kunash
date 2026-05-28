@@ -1,0 +1,3255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmacy Kunash - Checkout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../Footer/footer.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    #address-modal { display: none; }
+    #order-success-modal { display: none; }
+    #upi-qr-modal { display: none; }
+    #payment-confirm-modal { display: none; }
+    #invoice-modal { display: none; }
+    #address-modal.show { display: flex !important; }
+    #order-success-modal.show { display: flex !important; }
+    #upi-qr-modal.show { display: flex !important; }
+    #payment-confirm-modal.show { display: flex !important; }
+    #invoice-modal.show { display: flex !important; }
+    
+    /* Custom scrollbar for items container */
+    #order-items-container {
+      max-height: 420px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #F875AA #f8fafc;
+    }
+    
+    #address-overlay-margin{
+      margin-left: 27%;
+      height: 500px;
+    }
+
+    #order-items-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    #order-items-container::-webkit-scrollbar-track {
+      background: #f8fafc;
+      border-radius: 10px;
+    }
+    
+    #order-items-container::-webkit-scrollbar-thumb {
+      background: #F875AA;
+      border-radius: 10px;
+    }
+    
+    #order-items-container::-webkit-scrollbar-thumb:hover {
+      background: #F875AA;
+    }
+    
+    /* Hide scrollbar when less than 3 items */
+    #order-items-container.no-scroll {
+      overflow-y: hidden;
+      max-height: none;
+    }
+    
+    /* Smooth transitions */
+    .transition-all { transition: all 0.3s ease; }
+    
+    /* Quantity selector styles */
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      width: fit-content;
+    }
+    
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .qty-btn:hover {
+      background: #f3f4f6;
+    }
+    
+    .qty-btn.decrease {
+      border-right: 1px solid #e5e7eb;
+    }
+    
+    .qty-btn.increase {
+      border-left: 1px solid #e5e7eb;
+    }
+    
+    .qty-value {
+      width: 40px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      background: rgb(255, 255, 255);
+      padding: 6px 0;
+    }
+    
+    .qty-value:focus {
+      outline: none;
+      background: #fef3f7;
+    }
+    
+    /* Delete button styles */
+    .delete-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 1px solid #fecaca;
+      color: #ef4444;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .delete-btn:hover {
+      background: #fef2f2;
+      transform: scale(1.05);
+    }
+    
+    /* Item quantity indicator */
+    .item-quantity-indicator {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #F875AA;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Payment option styles */
+    .payment-option {
+      transition: all 0.3s ease;
+    }
+    
+    .payment-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .payment-option.selected {
+      border-color: #70B2B2;
+      background-color: #f0f9f9;
+    }
+    
+    /* Order success modal styles */
+    .confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+    }
+    
+    .success-checkmark {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    .success-checkmark .check-icon {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      border-radius: 50%;
+      box-sizing: content-box;
+      border: 4px solid #4CAF50;
+    }
+    
+    .success-checkmark .check-icon::before {
+      top: 3px;
+      left: -2px;
+      width: 30px;
+      transform-origin: 100% 50%;
+      border-radius: 100px 0 0 100px;
+    }
+    
+    .success-checkmark .check-icon::after {
+      top: 0;
+      left: 30px;
+      width: 60px;
+      transform-origin: 0 50%;
+      border-radius: 0 100px 100px 0;
+      animation: rotate-circle 4.25s ease-in;
+    }
+    
+    .success-checkmark .check-icon .icon-line {
+      height: 5px;
+      background-color: #4CAF50;
+      display: block;
+      border-radius: 2px;
+      position: absolute;
+      z-index: 10;
+    }
+    
+    .success-checkmark .check-icon .icon-line.line-tip {
+      top: 46px;
+      left: 14px;
+      width: 25px;
+      transform: rotate(45deg);
+      animation: icon-line-tip 0.75s;
+    }
+    
+    .success-checkmark .check-icon .icon-line.line-long {
+      top: 38px;
+      right: 8px;
+      width: 47px;
+      transform: rotate(-45deg);
+      animation: icon-line-long 0.75s;
+    }
+    
+    .success-checkmark .icon-circle {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 10;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      box-sizing: content-box;
+      border: 4px solid rgba(76, 175, 80, 0.5);
+    }
+    
+    @keyframes rotate-circle {
+      0% { transform: rotate(-45deg); }
+      5% { transform: rotate(-45deg); }
+      12% { transform: rotate(-405deg); }
+      100% { transform: rotate(-405deg); }
+    }
+    
+    @keyframes icon-line-tip {
+      0% { width: 0; left: 1px; top: 19px; }
+      54% { width: 0; left: 1px; top: 19px; }
+      70% { width: 50px; left: -8px; top: 37px; }
+      84% { width: 17px; left: 21px; top: 48px; }
+      100% { width: 25px; left: 14px; top: 45px; }
+    }
+    
+    @keyframes icon-line-long {
+      0% { width: 0; right: 46px; top: 54px; }
+      65% { width: 0; right: 46px; top: 54px; }
+      84% { width: 55px; right: 0px; top: 35px; }
+      100% { width: 47px; right: 8px; top: 38px; }
+    }
+    
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    /* Address types */
+    .address-type-badge {
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .primary-badge {
+      background-color: #10B981;
+      color: white;
+    }
+    
+    .secondary-badge {
+      background-color: #3B82F6;
+      color: white;
+    }
+    
+    .set-primary-btn {
+      padding: 4px 12px;
+      background-color: #F3F4F6;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #4B5563;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .set-primary-btn:hover {
+      background-color: #E5E7EB;
+    }
+    
+    .address-selected {
+      border-color: #10B981 !important;
+      background-color: #F0FDF4 !important;
+    }
+
+    /* Login required overlay */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .login-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* UPI QR Modal Styles */
+    .upi-qr-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+    }
+    
+    .upi-details {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    
+    .upi-detail-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .upi-detail-label {
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .upi-detail-value {
+      color: #333;
+      font-weight: 600;
+    }
+    
+    /* Invoice Styles */
+    .invoice-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+    }
+    
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .invoice-table th {
+      background: #f8f9fa;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid #dee2e6;
+    }
+    
+    .invoice-table td {
+      padding: 12px;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .invoice-total {
+      background: #f8f9fa;
+      font-weight: bold;
+    }
+    
+    /* Loading Spinner */
+    .loading-spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #F875AA;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Add this to your existing CSS */
+.compact-upi-modal .upi-qr-container {
+  padding: 10px;
+}
+
+.compact-upi-modal .upi-details {
+  display: none; /* Hide the details section */
+}
+
+.compact-upi-modal #upi-transaction-id {
+  display: none; /* Hide the transaction ID input */
+}
+
+.compact-upi-modal .upi-transaction-section {
+  display: none; /* Hide the entire transaction section */
+}
+
+/* Add to your existing CSS */
+.place-order-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.place-order-loading .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+
+  </style>
+</head>
+<body class="bg-[#F0F0F0]">
+
+  <div id="header-placeholder"></div>
+
+  <!-- Login Required Overlay -->
+  <div id="login-overlay" class="login-overlay" style="display: none;">
+    <div class="login-modal">
+      <div class="mb-6">
+        <i class="fas fa-lock text-6xl text-pink-600 mb-4"></i>
+      </div>
+      <h2 class="text-3xl font-bold text-gray-800 mb-4">Login Required</h2>
+      <p class="text-gray-600 mb-6">Please login to view your cart and checkout your items.</p>
+      <div class="space-y-3">
+        <a href="../login.html" class="block w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-4 rounded-lg text-lg hover:from-pink-700 hover:to-purple-700 transition">
+          <i class="fas fa-sign-in-alt mr-2"></i> Login Now
+        </a>
+        <a href="../home.html" class="block w-full bg-gray-200 text-gray-800 font-bold py-4 rounded-lg text-lg hover:bg-gray-300 transition">
+          <i class="fas fa-home mr-2"></i> Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-4 py-6 max-w-6xl">
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+    <div class="grid lg:grid-cols-3 gap-6 mt-6">
+
+      <!-- Left Column -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Mobile Savings Banner -->
+        <div class="lg:hidden  bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 px-4 py-3 rounded-lg text-sm font-medium">
+          <div class="flex items-center">
+            <i class="fas fa-gift text-pink-600 mr-2"></i>
+            <span class="font-semibold">You're saving <span id="mobile-savings">₹0</span> on this order!</span>
+          </div>
+        </div>
+
+        <!-- Items Section -->
+        <div class="bg-white rounded-xl shadow-sm border">
+          <div class="p-5 flex justify-between items-center border-b">
+            <h3 class="font-semibold text-gray-800 flex items-center text-lg">
+              <i class="fas fa-shopping-bag mr-3 text-pink-600"></i>
+              Your Items (<span id="item-count">0</span>)
+            </h3>
+            <span class="text-xs text-gray-500 hidden lg:block">
+              <i class="fas fa-info-circle mr-1"></i> Scroll to see more items
+            </span>
+          </div>
+          <div id="order-items-container" class="p-4">
+            <div id="order-items" class="space-y-4"></div>
+          </div>
+        </div>
+
+        <!-- Delivery Address Section -->
+        <div class="bg-white rounded-xl shadow-sm border p-5">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-semibold text-gray-800 flex items-center text-lg">
+              <i class="fas fa-map-marker-alt text-pink-600 mr-2"></i> Delivery Address
+            </h3>
+            <button id="add-address-btn" class="text-pink-600 text-sm font-medium hover:underline flex items-center">
+              <i class="fas fa-plus mr-1"></i> Add New
+            </button>
+          </div>
+
+          <div id="addresses-container" class="space-y-3">
+            <div id="no-address-msg" class="text-center py-8 text-gray-400">
+              <i class="fas fa-home text-3xl mb-2 text-gray-300"></i>
+              <p class="text-sm italic">No address saved yet</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Terms and Conditions -->
+        <div class="bg-white rounded-xl shadow-sm border p-5">
+          
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-semibold text-gray-800 flex items-center text-lg">
+              <i class="fa-solid fa-triangle-exclamation text-pink-600 mr-2"></i>
+              Delivery Terms & Conditions
+            </h3>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-gray-50 rounded-lg p-6 border-l-4 border-pink-500">
+              <div class="grid gap-3 text-sm leading-relaxed">
+                <div class="flex items-start space-x-2">
+                  <i class="fa-solid fa-xmark text-red-500 mt-1 flex-shrink-0 w-4"></i>
+                  <p class="text-gray-700 text-sm">No Return for Any product</p>
+                </div>
+                
+                <div class="flex items-start space-x-2">
+                  <i class="fa-solid fa-exchange-alt text-blue-500 mt-1 flex-shrink-0 w-4"></i>
+                  <p class="text-gray-700 text-sm">Exchange policy applicable only for limited products</p>
+                </div>
+                
+                <div class="flex items-start space-x-2">
+                  <i class="fa-solid fa-clock text-yellow-500 mt-1 flex-shrink-0 w-4"></i>
+                  <p class="text-gray-700 text-sm">Cancellation of order is only within <span class="font-semibold text-pink-600">30 minutes</span></p>
+                </div>
+                
+                <div class="flex items-start space-x-2">
+                  <i class="fa-solid fa-shipping-fast text-green-500 mt-1 flex-shrink-0 w-4"></i>
+                  <p class="text-gray-700 text-sm">While exchanging the product, if the product is not available, it will be delivered within <span class="font-semibold text-pink-600">7-10 business days</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column - DESKTOP ONLY -->
+      <div class="hidden lg:block space-y-6 mt-6">
+
+        <!-- Desktop Order Summary -->
+        <!--<div class="bg-white rounded-xl shadow-sm border">-->
+        <!--  <div class="p-5 border-b">-->
+        <!--    <h3 class="font-semibold flex items-center text-gray-800">-->
+        <!--      <i class="fas fa-receipt mr-3 text-[#1581BF]"></i> Order Summary-->
+        <!--    </h3>-->
+        <!--  </div>-->
+        <!--  <div class="p-5 space-y-3 text-sm">-->
+        <!--    <div class="flex justify-between"><span>Subtotal</span><span id="subtotal">₹0</span></div>-->
+        <!--    <div class="flex justify-between"><span>Shipping</span><span id="shipping">₹49</span></div>-->
+        <!--    <div class="flex justify-between text-green-600 font-medium"><span>Discount</span><span id="discount">-₹0</span></div>-->
+        <!--    <hr class="my-3">-->
+        <!--    <div class="flex justify-between text-lg font-bold">-->
+        <!--      <span>Total</span><span class="text-[#1581BF]" id="total">₹0</span>-->
+        <!--    </div>-->
+        <!--  </div>-->
+        <!--</div>-->
+        
+        
+  <div class="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/30 shadow-2xl overflow-hidden">
+  <div class="p-6 border-b border-white/20 bg-gradient-to-br from-indigo-500/10 to-blue-600/10">
+    <h3 class="font-bold text-lg flex items-center text-gray-900 drop-shadow-sm">
+      <i class="fas fa-receipt mr-3 text-blue-600 text-xl"></i>
+      Order Summary
+    </h3>
+  </div>
+
+  <div class="p-6 space-y-4">
+    <!-- Free delivery pill -->
+    <div class="inline-flex items-center gap-2 bg-emerald-500/20 backdrop-blur-sm px-4 py-2 rounded-full border border-emerald-400/30 text-emerald-700 font-medium text-sm mx-auto">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      FREE Delivery above ₹799
+    </div>
+
+    <div class="space-y-3 text-gray-800">
+      <div class="flex justify-between"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+      <div class="flex justify-between"><span>Shipping</span><span id="shipping" class="text-amber-600">₹49</span></div>
+      <div class="flex justify-between text-emerald-600 font-medium"><span>You Save</span><span id="discount">-₹0</span></div>
+    </div>
+
+    <div class="pt-4 mt-2 border-t border-white/30">
+      <div class="flex justify-between items-baseline">
+        <span class="text-lg font-bold text-gray-900">Total</span>
+        <span id="total" class="text-2xl font-black text-indigo-700">₹0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+        <!-- Desktop Payment Options -->
+        <div class="bg-white rounded-xl shadow-sm border p-5">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#1581BF] flex items-center justify-center mr-3">
+              <i class="fas fa-credit-card text-white text-lg"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800">Payment Method</h3>
+              <p class="text-xs text-gray-600">Choose your preferred payment option</p>
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <!-- UPI QR Payment Option -->
+            <label class="payment-option flex items-center p-3 border-2 rounded-xl cursor-pointer border-gray-300 hover:border-[#70B2B2] transition-all">
+              <input type="radio" name="payment_method" value="qr" class="mr-4" checked>
+              <div class="flex-1">
+                <div class="font-semibold flex items-center text-gray-800">
+                  <i class="fas fa-qrcode mr-2 text-[#70B2B2]"></i> Scan & Pay (UPI QR)
+                </div>
+                <p class="text-xs text-gray-600 mt-1">Fast, secure & recommended</p>
+              </div>
+              <div class="w-12 h-12 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-qrcode text-[#70B2B2] text-xl"></i>
+              </div>
+            </label>
+
+            <!-- Cash on Delivery Option -->
+            <!--<label class="payment-option flex items-center p-3 border-2 rounded-xl cursor-pointer border-gray-300 hover:border-[#70B2B2] transition-all">-->
+            <!--  <input type="radio" name="payment_method" value="cod" class="mr-4">-->
+            <!--  <div class="flex-1">-->
+            <!--    <div class="font-semibold flex items-center text-gray-800">-->
+            <!--      <i class="fas fa-rupee-sign mr-2 text-[#70B2B2]"></i> Cash on Delivery (COD)-->
+            <!--    </div>-->
+            <!--    <p class="text-xs text-gray-600 mt-1">Pay when you receive the order</p>-->
+            <!--  </div>-->
+            <!--  <div class="w-12 h-12 bg-gradient-to-br from-green-50 to-green-100 rounded-lg flex items-center justify-center">-->
+            <!--    <i class="fas fa-money-bill-wave text-[#70B2B2] text-xl"></i>-->
+            <!--  </div>-->
+            <!--</label>-->
+          </div>
+          
+          <div class="mt-4 text-xs text-gray-500">
+            <i class="fas fa-shield-alt mr-1"></i> Your payment is secure with 256-bit SSL encryption
+          </div>
+        </div>
+
+        <!-- Desktop Place Order Button -->
+        <div class="bg-white rounded-xl shadow-sm border p-6">
+          <button id="desktop-place-order-btn" class="w-full bg-[#4996c3] hover:bg-[#1581BF] text-white font-semibold py-2 rounded-lg text-lg hover:from-pink-700 hover:to-purple-700 transition opacity-60 cursor-not-allowed" disabled>
+            PLACE ORDER • ₹<span id="desktop-pay-amount">0</span>
+          </button>
+          <div id="desktop-address-warning" class="text-center text-sm text-red-600 font-medium mt-3">
+            Please select a delivery address first
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Mobile Right Column - Combined Order Summary & Payment -->
+      <div class="lg:hidden space-y-6 mt-6">
+
+        <!-- Mobile Order Summary & Payment Combined Card -->
+        <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+          
+          <!-- Order Summary Section -->
+          <div class="p-5 border-b">
+            <h3 class="font-semibold text-gray-800 flex items-center text-lg">
+              <i class="fas fa-receipt mr-3 text-[#1581BF]"></i> Order Summary
+            </h3>
+          </div>
+          
+          <div class="p-5 space-y-3 text-sm">
+            <div class=" -mt-4 inline-flex items-center gap-2 bg-emerald-500/20 backdrop-blur-sm px-4 py-2 rounded-full border border-emerald-400/30 text-emerald-700 font-medium text-sm mx-auto">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              FREE Delivery above ₹799
+            </div>
+            
+            <div class="flex justify-between"><span>Subtotal</span><span id="mobile-subtotal">₹0</span></div>
+            <div class="flex justify-between"><span>Shipping</span><span id="mobile-shipping">₹49</span></div>
+            <div class="flex justify-between text-green-600 font-medium"><span>Discount</span><span id="mobile-discount">-₹0</span></div>
+            <hr class="my-3">
+            <div class="flex justify-between text-lg font-bold">
+              <span>Total</span>
+              <span class="text-pink-600" id="mobile-total-amount">₹0</span>
+            </div>
+          </div>
+          
+          <!-- Payment Section Divider -->
+          <div class="border-t">
+            <div class="p-5">
+              <div class="flex items-center mb-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 flex items-center justify-center mr-3">
+                  <i class="fas fa-credit-card text-white text-lg"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Payment Method</h3>
+                  <p class="text-xs text-gray-600">Select how you want to pay</p>
+                </div>
+              </div>
+              
+              <div class="space-y-3">
+                <!-- UPI QR Option -->
+                <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:border-pink-600 transition-all border-pink-600 bg-pink-50">
+                  <input type="radio" name="payment_method" value="qr" class="mr-4" checked>
+                  <div class="flex-1">
+                    <div class="font-semibold flex items-center text-gray-800">
+                      <i class="fas fa-qrcode mr-2 text-pink-600"></i> Scan & Pay (UPI QR)
+                    </div>
+                    <p class="text-xs text-gray-600 mt-1">Fastest • Recommended</p>
+                  </div>
+                  <div class="w-10 h-10 bg-gradient-to-r from-pink-100 to-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-qrcode text-pink-600"></i>
+                  </div>
+                </label>
+                
+                <!-- COD Option -->
+                <!--<label class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:border-green-600 transition-all border-gray-300">-->
+                <!--  <input type="radio" name="payment_method" value="cod" class="mr-4">-->
+                <!--  <div class="flex-1">-->
+                <!--    <div class="font-semibold flex items-center text-gray-800">-->
+                <!--      <i class="fas fa-rupee-sign mr-2 text-green-600"></i> Cash on Delivery-->
+                <!--    </div>-->
+                <!--    <p class="text-xs text-gray-600 mt-1">Pay when you receive</p>-->
+                <!--  </div>-->
+                <!--  <div class="w-10 h-10 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg flex items-center justify-center">-->
+                <!--    <i class="fas fa-money-bill-wave text-green-600"></i>-->
+                <!--  </div>-->
+                <!--</label>-->
+              </div>
+              
+              <div class="mt-4 text-xs text-gray-500 flex items-center">
+                <i class="fas fa-shield-alt mr-2 text-green-500"></i>
+                <span>Secure payment with 256-bit encryption</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Place Order Button -->
+          <div class="border-t p-5 bg-gray-50">
+            <button id="mobile-place-order-btn" class="w-full bg-[#1581BF] text-white font-bold py-4 rounded-lg text-lg opacity-60 cursor-not-allowed" disabled>
+              PLACE ORDER • ₹<span id="mobile-pay-amount">0</span>
+            </button>
+            <div id="no-address-warning" class="text-center text-sm text-red-600 font-medium mt-3">
+              Please select a delivery address first
+            </div>
+          </div>
+          
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Address Modal -->
+  <div id="address-modal" class="fixed items-center inset-0 bg-black bg-opacity-60 z-50 p-4">
+    <div id="address-overlay-margin" class="bg-gray-100 rounded-xl shadow-xl h-[80vh] mt-16 max-w-lg w-full max-h-screen overflow-y-auto">
+      <div class="p-6 border-b flex justify-between items-center">
+        <h2 class="text-xl font-bold" id="modal-title">Add New Address</h2>
+        <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times text-2xl"></i></button>
+      </div>
+      <form id="address-form" class="p-6 space-y-4">
+        <input type="hidden" id="edit-index" value="-1">
+        <input type="hidden" id="shipping-id" value="">
+        <div class="grid grid-cols-2 gap-4">
+          <input type="text" name="fullName" placeholder="Full Name *" required class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-600">
+          <input type="text" name="mobile" placeholder="Mobile Number *" required pattern="[0-9]{10}" class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-600">
+        </div>
+        <input type="text" name="flat" placeholder="Flat / House No / Floor *" required class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-600">
+        <input type="text" name="area" placeholder="Area / Street / Locality *" required class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-600">
+        <div class="grid grid-cols-2 gap-4">
+          <input type="text" name="city" placeholder="City *" required class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-600">
+          <input type="text" name="state" placeholder="State *" required class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-600">
+        </div>
+        <input type="text" name="pincode" placeholder="Pincode *" required pattern="[0-9]{6}" class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-600">
+        <div class="flex items-center space-x-2 py-2">
+          <input type="checkbox" id="is-primary" name="isPrimary" class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
+          <label for="is-primary" class="text-sm text-gray-700">Set as primary address</label>
+        </div>
+        <div class="flex gap-4 pt-4">
+          <button type="submit" class="flex-1 bg-pink-600 text-white font-bold py-3 rounded-lg hover:bg-pink-700">Save Address</button>
+          <button type="button" id="cancel-modal-btn" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-300">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div id="order-success-modal" class="fixed items-center justify-center inset-0 bg-black bg-opacity-70 z-[10000] p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all">
+      <div class="p-8 text-center">
+        <!-- Success Animation -->
+        <div class="success-checkmark mb-6">
+          <div class="check-icon">
+            <span class="icon-line line-tip"></span>
+            <span class="icon-line line-long"></span>
+            <div class="icon-circle"></div>
+            <div class="icon-fix"></div>
+          </div>
+        </div>
+        
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Yay! Order Placed Successfully!</h2>
+        <p class="text-gray-600 mb-6">Your order will be delivered soon. You'll receive a confirmation email shortly.</p>
+        
+        <div class="space-y-4">
+          <button id="success-ok-btn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-4 rounded-lg text-lg hover:from-green-600 hover:to-emerald-700 transition-all pulse">
+            <i class="fas fa-check-circle mr-2"></i> OK
+          </button>
+          
+          <div class="text-xs text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            You will be redirected to home page
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPI QR Modal -->
+<div id="upi-qr-modal" class="fixed items-center justify-center inset-0 bg-black bg-opacity-70 z-[10001] p-4 compact-upi-modal">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
+    <div class="p-5">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Scan to Pay</h2>
+        <button id="close-upi-modal" class="text-gray-500 hover:text-gray-800">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="text-center">
+        <p class="text-gray-600 mb-4 text-sm">Scan the QR code with any UPI app</p>
+        
+        <div class="upi-qr-container mb-4">
+          <div id="qr-code-container" class="p-3 bg-white border border-gray-200 rounded-lg inline-block">
+            <!-- QR code will be generated here -->
+          </div>
+        </div>
+        
+        <!-- Hidden UPI details (kept for JS functionality) -->
+        <div class="upi-details" style="display: none;">
+          <div class="upi-detail-item">
+            <span class="upi-detail-label">Payee Name:</span>
+            <span id="upi-payee-name" class="upi-detail-value">Good Neews</span>
+          </div>
+          <div class="upi-detail-item">
+            <span class="upi-detail-label">UPI ID:</span>
+            <span id="upi-id" class="upi-detail-value">0792054A0252948.bqr@kotak</span>
+          </div>
+          <div class="upi-detail-item">
+            <span class="upi-detail-label">Amount:</span>
+            <span id="upi-amount" class="upi-detail-value font-bold text-lg text-green-600">₹0</span>
+          </div>
+        </div>
+        
+        <!-- Hidden transaction ID input (kept for JS functionality) -->
+        <div class="mb-4 upi-transaction-section" style="display: none;">
+          <label class="block text-sm font-medium text-gray-700 mb-2">UPI Transaction ID (Optional)</label>
+          <input type="text" id="upi-transaction-id" placeholder="Enter UPI Transaction ID if any" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 text-sm">
+        </div>
+        
+        <div class="space-y-2">
+          <button id="confirm-payment-btn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 rounded-lg hover:from-green-600 hover:to-emerald-700 transition text-sm">
+            <i class="fas fa-check-circle mr-2"></i> I Have Completed Payment
+          </button>
+          <button id="cancel-upi-payment" class="w-full bg-gray-200 text-gray-800 font-bold py-3 rounded-lg text-sm hover:bg-gray-300 transition">
+            <i class="fas fa-times mr-2"></i> Cancel
+          </button>
+        </div>
+        
+        <div class="mt-3 text-xs text-gray-500 text-center">
+          <i class="fas fa-shield-alt mr-1 text-green-500"></i>
+          Secure UPI Payment
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Payment Confirmation Modal -->
+  <div id="payment-confirm-modal" class="fixed items-center justify-center inset-0 bg-black bg-opacity-70 z-[10002] p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+      <div class="p-8 text-center">
+        <div class="mb-6">
+          <i class="fas fa-question-circle text-6xl text-yellow-500 mb-4"></i>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Confirm Payment</h2>
+          <p class="text-gray-600">Have you completed the payment via your UPI app?</p>
+          <p class="text-gray-600 text-sm mt-2">Clicking "Confirm" will proceed with order processing.</p>
+        </div>
+        
+        <div class="space-y-3">
+          <button id="proceed-confirm-payment" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-4 rounded-lg text-lg hover:from-green-600 hover:to-emerald-700 transition">
+            <i class="fas fa-check mr-2"></i> Yes, I've Paid
+          </button>
+          <button id="cancel-confirm-payment" class="w-full bg-red-500 text-white font-bold py-4 rounded-lg text-lg hover:bg-red-600 transition">
+            <i class="fas fa-times mr-2"></i> No, Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoice Modal -->
+  <div id="invoice-modal" class="fixed items-center justify-center inset-0 bg-black bg-opacity-70 z-[10003] p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full my-8">
+      <!-- Invoice Header -->
+      <div class="invoice-header">
+        <div class="flex justify-between items-start">
+          <div>
+            <h1 class="text-3xl font-bold mb-2">INVOICE</h1>
+            <p class="text-white/90">Thank you for your purchase!</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm">Invoice #: <span id="invoice-number" class="font-bold">INV-001</span></p>
+            <p class="text-sm">Date: <span id="invoice-date"></span></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Invoice Body -->
+      <div class="p-8">
+        <!-- Company & Customer Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">MediCart Pharmacy</h3>
+            <p class="text-gray-600">123 Medical Street</p>
+            <p class="text-gray-600">Health City, HC 123456</p>
+            <p class="text-gray-600">Phone: +91 9876543210</p>
+            <p class="text-gray-600">Email: support@medicart.com</p>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Bill To</h3>
+            <p id="invoice-customer-name" class="text-gray-600 font-semibold"></p>
+            <p id="invoice-customer-address" class="text-gray-600"></p>
+            <p id="invoice-customer-phone" class="text-gray-600"></p>
+            <p id="invoice-customer-email" class="text-gray-600"></p>
+          </div>
+        </div>
+        
+        <!-- Order Details -->
+        <div class="mb-8">
+          <h3 class="text-lg font-bold text-gray-800 mb-4">Order Details</h3>
+          <div class="overflow-x-auto">
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Size</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="invoice-items">
+                <!-- Items will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Payment & Shipping -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Payment Information</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Payment Method:</span>
+                <span id="invoice-payment-method" class="font-semibold"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Payment Status:</span>
+                <span id="invoice-payment-status" class="font-semibold text-green-600"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Transaction ID:</span>
+                <span id="invoice-transaction-id" class="font-semibold"></span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Shipping Information</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Shipping Method:</span>
+                <span class="font-semibold">Standard Delivery</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Estimated Delivery:</span>
+                <span class="font-semibold">3-5 Business Days</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Order Status:</span>
+                <span id="invoice-order-status" class="font-semibold text-blue-600">Processing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Totals -->
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subtotal:</span>
+              <span id="invoice-subtotal" class="font-semibold"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Shipping:</span>
+              <span id="invoice-shipping" class="font-semibold"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Discount:</span>
+              <span id="invoice-discount" class="font-semibold text-green-600"></span>
+            </div>
+            <hr class="my-2">
+            <div class="flex justify-between text-xl font-bold">
+              <span>Total Amount:</span>
+              <span id="invoice-total" class="text-blue-600"></span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <div class="text-center text-gray-500 text-sm">
+            <p>Thank you for shopping with MediCart Pharmacy!</p>
+            <p class="mt-1">If you have any questions, please contact our customer support.</p>
+          </div>
+          <div class="flex justify-center mt-6 space-x-4">
+            <button id="print-invoice" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
+              <i class="fas fa-print mr-2"></i> Print Invoice
+            </button>
+            <button id="close-invoice" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
+              <i class="fas fa-times mr-2"></i> Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    function loadHeader() {
+        fetch('/Header/header.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('header-placeholder').innerHTML = html;
+                const script = document.createElement('script');
+                 script.src = '/Header/header.js?v=1.1.3';
+                script.onload = () => console.log('Header JS loaded');
+                document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+        fetch('/Footer/footer.html')
+            .then(r => { if (!r.ok) throw r; return r.text(); })
+            .then(html => {
+                document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHeader();
+        loadFooter();
+    });
+  </script>
+
+<!-- Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<!-- JavaScript -->
+<script>
+  // USE THE SAME KEY AS CART.HTML
+  const STORAGE = {
+    CART: 'medcare_cart',
+    ADDRESSES: 'user_addresses',
+    SELECTED: 'selected_address_index',
+    USER: 'current_user'
+  };
+  // Backend API configuration
+  const API_CONFIG = {
+    BASE_URL: 'http://localhost:8083',
+    ENDPOINTS: {
+      CART: {
+        GET: '/api/cart/get-cart-items',
+        ADD: '/api/cart/add-cart-items',
+        UPDATE: '/api/cart/update-cart-items',
+        REMOVE: '/api/cart/remove-cart-items',
+        CLEAR: '/api/cart/clear-cart',
+        MERGE: '/api/cart/merge-cart-items'
+      },
+      ORDER: {
+        CREATE: '/api/orders/create-order' // Corrected to match backend
+      },
+      ADDRESS: {
+        CREATE: '/api/addresses/create-address',
+        GET_BY_USER: '/api/addresses/get-address-by-userId',
+        GET_ALL: '/api/addresses/get-all-address',
+        UPDATE: '/api/addresses/patch-address',
+        DELETE: '/api/addresses/delete-address'
+      },
+      USER: {
+        GET_BY_ID: '/api/users/get-by-user-id',
+        CREATE: '/api/users/create-user',
+        LOGIN: '/api/users/login',
+        GET_ALL: '/api/users/get-all-users',
+        UPDATE: '/api/users/update-user-by-id',
+        PATCH: '/api/users/patch-user-by-id',
+        DELETE: '/api/users/delete-by-user-id'
+      },
+      PRODUCT_IMAGE: '/api/products',
+      MBP_IMAGE: '/api/mb/products'
+    }
+  };
+  // UPI Configuration
+  const UPI_CONFIG = {
+    PAYEE_NAME: 'Good Neews',
+    UPI_ID: '0792054A0252948.bqr@kotak'
+  };
+  class CheckoutApp {
+    constructor() {
+      this.cart = [];
+      this.addresses = [];
+      this.selectedIdx = -1;
+      this.userId = null;
+      this.isSyncing = false;
+      this.primaryAddressId = null;
+      this.isLoggedIn = false;
+      this.selectedPaymentMethod = null;
+      this.totalAmount = 0;
+      this.currentOrderId = null;
+      this.qrCodeInstance = null;
+      this.init();
+    }
+    async init() {
+      console.log('[CheckoutApp] Initializing checkout application...');
+ 
+      // Check if user is logged in
+      this.isLoggedIn = await this.checkUserLogin();
+ 
+      if (!this.isLoggedIn) {
+        console.log('[CheckoutApp] User not logged in, showing login overlay');
+        this.showLoginOverlay();
+        return;
+      }
+ 
+      await this.loadUser();
+      await this.loadFromStorage();
+      this.setupEventListeners();
+      await this.syncCartWithBackend();
+      await this.fetchUserAddresses();
+      this.render();
+      console.log('[CheckoutApp] Initialization completed successfully');
+    }
+    async checkUserLogin() {
+      try {
+        console.log('[CheckoutApp] Checking user login status...');
+   
+        // Check multiple possible storage locations
+        const possibleKeys = [STORAGE.USER, 'user', 'loggedInUser', 'currentUser'];
+   
+        for (const key of possibleKeys) {
+          const userData = JSON.parse(localStorage.getItem(key) || 'null');
+          if (userData && (userData.userId || userData.id)) {
+            console.log(`[CheckoutApp] User found in localStorage with key: ${key}`);
+            return true;
+          }
+        }
+   
+        // Check sessionStorage as fallback
+        for (const key of possibleKeys) {
+          const userData = JSON.parse(sessionStorage.getItem(key) || 'null');
+          if (userData && (userData.userId || userData.id)) {
+            console.log(`[CheckoutApp] User found in sessionStorage with key: ${key}`);
+            return true;
+          }
+        }
+   
+        console.log('[CheckoutApp] No user login data found');
+        return false;
+      } catch (error) {
+        console.error('[CheckoutApp] Error checking user login:', error);
+        return false;
+      }
+    }
+    showLoginOverlay() {
+      document.getElementById('login-overlay').style.display = 'flex';
+    }
+    async loadUser() {
+      try {
+        console.log('[CheckoutApp] Loading user from localStorage...');
+   
+        const possibleKeys = [STORAGE.USER, 'user', 'loggedInUser', 'currentUser'];
+        let userData = null;
+   
+        for (const key of possibleKeys) {
+          userData = JSON.parse(localStorage.getItem(key) || 'null');
+          if (userData && (userData.userId || userData.id)) {
+            console.log(`[CheckoutApp] User data found in key: ${key}`, userData);
+            break;
+          }
+        }
+   
+        if (!userData) {
+          for (const key of possibleKeys) {
+            userData = JSON.parse(sessionStorage.getItem(key) || 'null');
+            if (userData && (userData.userId || userData.id)) {
+              console.log(`[CheckoutApp] User data found in sessionStorage key: ${key}`, userData);
+              break;
+            }
+          }
+        }
+   
+        if (userData) {
+          if (userData.userId) {
+            this.userId = parseInt(userData.userId);
+          } else if (userData.id) {
+            this.userId = parseInt(userData.id);
+          } else if (userData._id) {
+            this.userId = parseInt(userData._id);
+          } else if (userData.userID) {
+            this.userId = parseInt(userData.userID);
+          } else if (userData.user_id) {
+            this.userId = parseInt(userData.user_id);
+          }
+     
+          if (this.userId && !isNaN(this.userId)) {
+            console.log(`[CheckoutApp] User loaded. UserId: ${this.userId}`);
+            localStorage.setItem(STORAGE.USER, JSON.stringify({ userId: this.userId, ...userData }));
+          } else {
+            console.log('[CheckoutApp] User data found but no valid userId detected:', userData);
+            this.isLoggedIn = false;
+            this.showLoginOverlay();
+          }
+        } else {
+          console.log('[CheckoutApp] No user logged in');
+          this.isLoggedIn = false;
+          this.showLoginOverlay();
+        }
+      } catch (error) {
+        console.error('[CheckoutApp] Error loading user:', error);
+        this.isLoggedIn = false;
+        this.showLoginOverlay();
+      }
+    }
+    
+    
+    async loadFromStorage() {
+      try {
+        console.log('[CheckoutApp] Loading data from localStorage...');
+        this.cart = JSON.parse(localStorage.getItem(STORAGE.CART)) || [];
+        this.addresses = JSON.parse(localStorage.getItem(STORAGE.ADDRESSES)) || [];
+        this.selectedIdx = parseInt(localStorage.getItem(STORAGE.SELECTED), 10) || -1;
+        if (isNaN(this.selectedIdx)) this.selectedIdx = -1;
+   
+        console.log(`[CheckoutApp] Loaded ${this.cart.length} cart items, ${this.addresses.length} addresses, selected index: ${this.selectedIdx}`);
+      } catch (e) {
+        console.error('[CheckoutApp] Error loading from storage:', e);
+        this.cart = [];
+        this.addresses = [];
+        this.selectedIdx = -1;
+      }
+    }
+    async syncCartWithBackend() {
+      if (!this.userId) {
+        console.log('[CheckoutApp] No user ID, skipping cart sync');
+        return;
+      }
+      if (this.isSyncing) {
+        console.log('[CheckoutApp] Sync already in progress');
+        return;
+      }
+      this.isSyncing = true;
+      try {
+        console.log(`[CheckoutApp] Starting cart sync with backend for userId: ${this.userId}`);
+   
+        await this.fetchCartFromBackend();
+   
+        console.log('[CheckoutApp] Cart sync completed successfully');
+      } catch (error) {
+        console.error('[CheckoutApp] Error syncing cart with backend:', error);
+      } finally {
+        this.isSyncing = false;
+      }
+    }
+
+
+
+async fetchCartFromBackend() {
+  if (!this.userId) return;
+  try {
+    console.log(`[CheckoutApp] Fetching cart from backend for userId: ${this.userId}`);
+
+    const response = await fetch(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CART.GET}?userId=${this.userId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`[CheckoutApp] Failed to fetch cart: ${response.status}`);
+      throw new Error(`Failed to fetch cart: ${response.status}`);
+    }
+    
+    const backendCart = await response.json();
+    console.log(`[CheckoutApp] Fetched ${backendCart.length} items from backend cart:`, backendCart);
+
+    if (Array.isArray(backendCart) && backendCart.length > 0) {
+      this.cart = backendCart.map(item => {
+        const itemId = item.itemId || item.cartItemId;
+
+        // Build image URL
+        let imageUrl = item.imageUrl;
+        if (!imageUrl) {
+          if (item.type === 'PRODUCT') {
+            imageUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PRODUCT_IMAGE}/${itemId}/image`;
+          } else if (item.type === 'MBP') {
+            imageUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.MBP_IMAGE}/${itemId}/image`;
+          }
+        } else if (imageUrl.startsWith('/')) {
+          imageUrl = `${API_CONFIG.BASE_URL}${imageUrl}`;
+        }
+
+        // === SIZE-BASED PRICE SELECTION ===
+        const selectedSize = (item.selectedSize || '').trim();
+        let priceIndex = 0; // default to first
+
+        if (Array.isArray(item.productSizes) && selectedSize) {
+          priceIndex = item.productSizes.findIndex(size =>
+            size.trim().toLowerCase() === selectedSize.toLowerCase()
+          );
+          if (priceIndex === -1) priceIndex = 0; // fallback
+        }
+
+        // === EXTRACT PRICES ===
+        let sellingPrice = 0;
+        let mrpPrice = 0;
+
+        if (Array.isArray(item.price) && item.price.length > 0) {
+          // Selling price based on selected size
+          if (item.price.length > priceIndex) {
+            sellingPrice = Number(item.price[priceIndex]) || 0;
+          } else {
+            sellingPrice = Number(item.price[0]) || 0; // fallback
+          }
+
+          // MRP = highest price in the list (most reliable)
+          if (item.price.length > 1) {
+            mrpPrice = Math.max(...item.price.map(p => Number(p) || 0));
+          } else {
+            // If only one price, assume it's selling price → derive MRP
+            mrpPrice = Math.round(sellingPrice * 1.2 * 100) / 100;
+          }
+        } else {
+          // Legacy fallback
+          sellingPrice = Number(item.price || 0);
+          mrpPrice = Number(item.mrp || Math.round(sellingPrice * 1.2 * 100) / 100);
+        }
+
+        // === ROUND TO 2 DECIMAL PLACES TO AVOID FLOATING POINT ISSUES ===
+        sellingPrice = Number(sellingPrice.toFixed(2));
+        mrpPrice = Number(mrpPrice.toFixed(2));
+
+        // === CALCULATE DISCOUNT PERCENTAGE ===
+        const discountPercent = mrpPrice > sellingPrice
+          ? Math.round(((mrpPrice - sellingPrice) / mrpPrice) * 100)
+          : 0;
+
+        // === RETURN CLEAN ITEM FOR FRONTEND ===
+        return {
+          id: itemId,
+          itemId: itemId,
+          cartItemId: item.cartItemId,
+          name: item.title,
+          title: item.title,
+          price: sellingPrice,          
+          originalPrice: mrpPrice,       
+          image: imageUrl,
+          quantity: item.quantity || 1,
+          size: selectedSize,
+          selectedSize: selectedSize,
+          type: item.type,
+          productType: item.productType,
+          discount: discountPercent,
+          // ────────────── ADD THESE LINES ──────────────
+          productSizes: item.productSizes || [],           // ← critical for fallback
+          rawPrice: item.price || [],                      // safety
+          rawOriginalPrice: item.originalPrice || []       // safety
+        };
+      });
+
+      console.log(`[CheckoutApp] Transformed ${this.cart.length} items for frontend display`);
+      this.saveCart();
+    } else {
+      console.log('[CheckoutApp] Backend cart is empty');
+      this.cart = [];
+      this.saveCart();
+    }
+  } catch (error) {
+    console.error('[CheckoutApp] Error fetching cart from backend:', error);
+    this.cart = [];
+    this.saveCart();
+  }
+}
+    
+    
+    
+    
+    async fetchUserAddresses() {
+      if (!this.userId) {
+        console.log('[CheckoutApp] No user ID, cannot fetch addresses');
+        this.addresses = [];
+        this.renderAddresses();
+        return;
+      }
+      try {
+        console.log(`[CheckoutApp] Fetching user addresses from backend for userId: ${this.userId}`);
+        console.log(`[CheckoutApp] Full URL: ${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADDRESS.GET_BY_USER}/${this.userId}`);
+   
+        const response = await fetch(
+          `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADDRESS.GET_BY_USER}/${this.userId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          }
+        );
+        console.log(`[CheckoutApp] Response status: ${response.status}`);
+        console.log(`[CheckoutApp] Response headers:`, response.headers);
+        // Handle 404 as "no addresses found" rather than error
+        if (response.status === 404) {
+          console.log('[CheckoutApp] No addresses found (404), setting empty array');
+          this.addresses = [];
+          this.showNoAddressMessage();
+          this.renderAddresses();
+          return;
+        }
+        // Check if the response is OK (status 200-299)
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`[CheckoutApp] Server Error: ${response.status} - ${errorText}`);
+     
+          // Try to parse error as JSON for better debugging
+          try {
+            const errorJson = JSON.parse(errorText);
+            console.error('[CheckoutApp] Error details:', errorJson);
+          } catch (e) {
+            console.error('[CheckoutApp] Error text:', errorText);
+          }
+     
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        const responseText = await response.text();
+        console.log('[CheckoutApp] Raw response:', responseText);
+        // Parse the response
+        let backendAddresses;
+        try {
+          backendAddresses = JSON.parse(responseText);
+        } catch (e) {
+          console.error('[CheckoutApp] Failed to parse response as JSON:', e);
+          throw new Error('Invalid JSON response from server');
+        }
+        console.log('[CheckoutApp] Parsed addresses:', backendAddresses);
+        console.log(`[CheckoutApp] Number of addresses: ${Array.isArray(backendAddresses) ? backendAddresses.length : 'Not an array'}`);
+   
+        // Process addresses
+        if (Array.isArray(backendAddresses) && backendAddresses.length > 0) {
+          console.log('[CheckoutApp] Mapping backend addresses to frontend format');
+     
+          const shippingAddresses = backendAddresses.map((addr, index) => {
+            console.log(`[CheckoutApp] Processing address ${index}:`, addr);
+            return {
+              shippingId: addr.shippingId,
+              fullName: addr.customerName || 'Customer',
+              mobile: addr.customerPhone || '',
+              flat: addr.flat_no || '',
+              area: addr.shippingAddress || '',
+              city: addr.shippingCity || '',
+              state: addr.shippingState || '',
+              pincode: addr.shippingPincode || '',
+              isPrimary: addr.isPrimary || false,
+              isProfileAddress: false
+            };
+          });
+     
+          // Add shipping addresses
+          this.addresses = shippingAddresses;
+     
+          // Auto-select first address if available
+          if (this.addresses.length > 0) {
+            this.selectedIdx = 0;
+          }
+     
+          console.log('[CheckoutApp] Total addresses:', this.addresses);
+          localStorage.setItem(STORAGE.ADDRESSES, JSON.stringify(this.addresses));
+          localStorage.setItem(STORAGE.SELECTED, this.selectedIdx);
+          console.log('[CheckoutApp] Addresses saved to localStorage');
+        } else {
+          console.log('═══════════════════════════════════════════════════');
+          console.log('⚠️ NO ADDRESSES FOUND IN DATABASE');
+          console.log('═══════════════════════════════════════════════════');
+          console.log(`User ID: ${this.userId}`);
+          console.log(`Backend returned: ${responseText}`);
+          console.log('');
+          console.log('POSSIBLE REASONS:');
+          console.log('1. User has not created any address yet');
+          console.log('2. Addresses exist but linked to different userId');
+          console.log('3. Database is empty for this user');
+          console.log('');
+          console.log('SOLUTION:');
+          console.log('• Click "Add New" button to create an address');
+          console.log('• Or verify userId in database matches frontend userId');
+          console.log('═══════════════════════════════════════════════════');
+     
+          this.addresses = [];
+          this.showNoAddressMessage();
+        }
+      } catch (error) {
+        console.error('[CheckoutApp] Error fetching user addresses:', error);
+        console.error('[CheckoutApp] Error stack:', error.stack);
+   
+        // Don't show alert for network errors - just log them
+        console.warn('[CheckoutApp] Could not load addresses from backend, using local storage');
+   
+        // Try to load from localStorage as fallback
+        const localAddresses = localStorage.getItem(STORAGE.ADDRESSES);
+        if (localAddresses) {
+          try {
+            this.addresses = JSON.parse(localAddresses);
+            console.log(`[CheckoutApp] Loaded ${this.addresses.length} addresses from localStorage as fallback`);
+          } catch (e) {
+            console.error('[CheckoutApp] Failed to parse localStorage addresses:', e);
+            this.addresses = [];
+          }
+        } else {
+          this.addresses = [];
+        }
+      }
+ 
+      console.log(`[CheckoutApp] Final address count: ${this.addresses.length}`);
+      this.renderAddresses();
+    }
+    showNoAddressMessage() {
+      // Show a friendly notification that no address exists
+      console.log('%c💡 TIP: Click "Add New" to create your delivery address',
+        'background: #4CAF50; color: white; padding: 8px 12px; border-radius: 4px; font-weight: bold;');
+    }
+    async createAddressInBackend(addressData) {
+      if (!this.userId) {
+        console.error('[CheckoutApp] User ID is required to create address');
+        throw new Error('User ID is required to create address');
+      }
+      try {
+        console.log(`[CheckoutApp] Creating address in backend for userId: ${this.userId}`, addressData);
+      const requestBody = {
+        shippingId: addressData.shippingId || null,
+        customerName: addressData.fullName || 'Customer',
+        customerPhone: addressData.mobile,
+        shippingAddress: addressData.area,
+        flat_no: addressData.flat,
+        shippingCity: addressData.city,
+        shippingState: addressData.state,
+        shippingPincode: addressData.pincode,
+        isPrimary: addressData.isPrimary || false
+      };
+   
+        const response = await fetch(
+          `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADDRESS.CREATE}/${this.userId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          }
+        );
+        if (!response.ok) {
+          console.error(`[CheckoutApp] Failed to create address: ${response.status}`);
+          throw new Error(`Failed to create address: ${response.status}`);
+        }
+        const createdAddress = await response.json();
+        console.log('[CheckoutApp] Address created in backend:', createdAddress);
+   
+        return {
+          shippingId: createdAddress.shippingId || createdAddress.id || createdAddress._id,
+          fullName: createdAddress.customerName || addressData.fullName || 'Customer',
+          mobile: createdAddress.customerPhone || addressData.mobile,
+          flat: createdAddress.flat_no || addressData.flat,
+          area: createdAddress.shippingAddress || addressData.area,
+          city: createdAddress.shippingCity || addressData.city,
+          state: createdAddress.shippingState || addressData.state,
+          pincode: createdAddress.shippingPincode || addressData.pincode,
+          isPrimary: createdAddress.isPrimary || false
+        };
+      } catch (error) {
+        console.error('[CheckoutApp] Error creating address in backend:', error);
+        throw error;
+      }
+    }
+    async updateAddressInBackend(shippingId, addressData) {
+      if (!this.userId || !shippingId) {
+        console.error('[CheckoutApp] User ID and Shipping ID are required to update address');
+        throw new Error('User ID and Shipping ID are required to update address');
+      }
+      try {
+        console.log(`[CheckoutApp] Updating address in backend for userId: ${this.userId}, shippingId: ${shippingId}`, addressData);
+   
+        const shippingIdLong = parseInt(shippingId);
+   
+        const requestBody = {
+          customerName: addressData.fullName || addressData.customerName || 'Customer',
+          customerPhone: addressData.mobile || addressData.customerPhone,
+          shippingAddress: addressData.area || addressData.shippingAddress,
+          flat_no: addressData.flat || addressData.flat_no,
+          shippingCity: addressData.city || addressData.shippingCity,
+          shippingState: addressData.state || addressData.shippingState,
+          shippingPincode: addressData.pincode || addressData.shippingPincode,
+          isPrimary: addressData.isPrimary || false
+        };
+   
+        const response = await fetch(
+          `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADDRESS.UPDATE}/${this.userId}/${shippingIdLong}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          }
+        );
+        if (!response.ok) {
+          console.error(`[CheckoutApp] Failed to update address: ${response.status}`);
+          throw new Error(`Failed to update address: ${response.status}`);
+        }
+        const updatedAddress = await response.json();
+        console.log('[CheckoutApp] Address updated in backend:', updatedAddress);
+   
+        // Return a properly formatted address object for frontend
+        return {
+          shippingId: updatedAddress.shippingId || shippingIdLong,
+          fullName: updatedAddress.customerName || updatedAddress.fullName || 'Customer',
+          mobile: updatedAddress.customerPhone || updatedAddress.mobile,
+          flat: updatedAddress.flat_no || updatedAddress.flat,
+          area: updatedAddress.shippingAddress || updatedAddress.area,
+          city: updatedAddress.shippingCity || updatedAddress.city,
+          state: updatedAddress.shippingState || updatedAddress.state,
+          pincode: updatedAddress.shippingPincode || updatedAddress.pincode,
+          isPrimary: updatedAddress.isPrimary || false
+        };
+      } catch (error) {
+        console.error('[CheckoutApp] Error updating address in backend:', error);
+        throw error;
+      }
+    }
+    async deleteAddressFromBackend(shippingId) {
+      if (!this.userId || !shippingId) {
+        console.error('[CheckoutApp] User ID and Shipping ID are required to delete address');
+        throw new Error('User ID and Shipping ID are required to delete address');
+      }
+      try {
+        console.log(`[CheckoutApp] Deleting address from backend for userId: ${this.userId}, shippingId: ${shippingId}`);
+   
+        const shippingIdLong = parseInt(shippingId);
+   
+        const response = await fetch(
+          `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADDRESS.DELETE}/${this.userId}/${shippingIdLong}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        if (!response.ok) {
+          console.error(`[CheckoutApp] Failed to delete address: ${response.status}`);
+          throw new Error(`Failed to delete address: ${response.status}`);
+        }
+        console.log('[CheckoutApp] Address deleted from backend:', shippingId);
+        return true;
+      } catch (error) {
+        console.error('[CheckoutApp] Error deleting address from backend:', error);
+        throw error;
+      }
+    }
+    getImageUrl(item) {
+      if (item.image && item.image !== 'https://via.placeholder.com/80') {
+        return item.image;
+      }
+ 
+      if (item.imageUrl) {
+        if (item.imageUrl.startsWith('http')) {
+          return item.imageUrl;
+        }
+        if (item.imageUrl.startsWith('/')) {
+          return `${API_CONFIG.BASE_URL}${item.imageUrl}`;
+        }
+        return item.imageUrl;
+      }
+ 
+      if (item.type === 'PRODUCT' && item.itemId) {
+        return `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PRODUCT_IMAGE}/${item.itemId}/image`;
+      }
+ 
+      if (item.type === 'MBP' && item.itemId) {
+        return `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.MBP_IMAGE}/${item.itemId}/image`;
+      }
+ 
+      if (item.type === 'PRODUCT' && item.id) {
+        return `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PRODUCT_IMAGE}/${item.id}/image`;
+      }
+ 
+      if (item.type === 'MBP' && item.id) {
+        return `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.MBP_IMAGE}/${item.id}/image`;
+      }
+ 
+      if (item.id && !item.type) {
+        if (item.productType === 'MEDICINE' || item.category === 'MEDICINE') {
+          return `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PRODUCT_IMAGE}/${item.id}/image`;
+        } else if (item.productType === 'MOTHER' || item.productType === 'BABY') {
+          return `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.MBP_IMAGE}/${item.id}/image`;
+        }
+      }
+ 
+      return '';
+    }
+    saveCart() {
+      localStorage.setItem(STORAGE.CART, JSON.stringify(this.cart));
+      console.log(`[CheckoutApp] Saved ${this.cart.length} cart items to localStorage`);
+      this.renderCart();
+      this.updateCartCount();
+    }
+    updateCartCount() {
+      const totalItems = this.cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+ 
+      document.querySelectorAll('#desktop-cart-count, #mobile-cart-count, #cart-count, #cartItemsCount, .cart-count').forEach(el => {
+        if (el) {
+          el.textContent = totalItems;
+          el.style.display = totalItems > 0 ? 'inline-flex' : 'none';
+        }
+      });
+ 
+      window.dispatchEvent(new Event('storage'));
+    }
+    saveAddresses() {
+      localStorage.setItem(STORAGE.ADDRESSES, JSON.stringify(this.addresses));
+      console.log(`[CheckoutApp] Saved ${this.addresses.length} addresses to localStorage`);
+      this.renderAddresses();
+      this.updatePaymentSection();
+    }
+    saveSelected() {
+      localStorage.setItem(STORAGE.SELECTED, this.selectedIdx);
+      console.log(`[CheckoutApp] Saved selected address index: ${this.selectedIdx}`);
+    }
+    
+        isDuplicateAddress(newAddr) {
+      // Helper to safely trim strings (handles null/undefined)
+      const safeTrim = (str) => (str ?? '').toString().trim();
+
+      const normalizedNew = {
+        fullName: safeTrim(newAddr.fullName),
+        mobile: safeTrim(newAddr.mobile),
+        flat: safeTrim(newAddr.flat),
+        area: safeTrim(newAddr.area),
+        city: safeTrim(newAddr.city),
+        state: safeTrim(newAddr.state),
+        pincode: safeTrim(newAddr.pincode)
+      };
+
+      const isDuplicate = this.addresses.some(addr => {
+        const a = {
+          fullName: safeTrim(addr.fullName),
+          mobile: safeTrim(addr.mobile),
+          flat: safeTrim(addr.flat),
+          area: safeTrim(addr.area),
+          city: safeTrim(addr.city),
+          state: safeTrim(addr.state),
+          pincode: safeTrim(addr.pincode)
+        };
+
+        return a.fullName === normalizedNew.fullName &&
+               a.mobile === normalizedNew.mobile &&
+               a.flat === normalizedNew.flat &&
+               a.area === normalizedNew.area &&
+               a.city === normalizedNew.city &&
+               a.state === normalizedNew.state &&
+               a.pincode === normalizedNew.pincode;
+      });
+
+      if (isDuplicate) {
+        console.log('[CheckoutApp] Duplicate address detected:', newAddr);
+      }
+      return isDuplicate;
+    }
+  
+    
+    
+    
+    selectAddress(index) {
+      console.log(`[CheckoutApp] Selecting address at index: ${index}`);
+      this.selectedIdx = (index >= 0 && index < this.addresses.length) ? index : -1;
+      this.saveSelected();
+      this.renderAddresses();
+      this.updatePaymentSection();
+    }
+    async addAddress(addr) {
+      console.log('[CheckoutApp] Adding new address:', addr);
+ 
+      if (this.isDuplicateAddress(addr)) {
+        alert("This address is already saved");
+        return;
+      }
+ 
+      try {
+        if (this.userId) {
+          const createdAddress = await this.createAddressInBackend(addr);
+          this.addresses.push(createdAddress);
+     
+          if (addr.isPrimary) {
+            this.primaryAddressId = createdAddress.shippingId;
+            this.addresses.forEach((a, idx) => {
+              if (idx !== this.addresses.length - 1) {
+                a.isPrimary = false;
+              }
+            });
+          }
+     
+          console.log('[CheckoutApp] Address added to backend successfully');
+        } else {
+          console.log('[CheckoutApp] User not logged in, saving address only');
+          this.addresses.push(addr);
+        }
+   
+        this.selectedIdx = this.addresses.length - 1;
+        this.saveAddresses();
+        this.saveSelected();
+        this.updatePaymentSection();
+        console.log('[CheckoutApp] Address added successfully');
+        alert("Address saved successfully!");
+      } catch (error) {
+        console.error('[CheckoutApp] Error adding address:', error);
+        this.addresses.push(addr);
+        this.selectedIdx = this.addresses.length - 1;
+        this.saveAddresses();
+        this.saveSelected();
+        this.updatePaymentSection();
+        alert("Address saved successfully!");
+      }
+    }
+    
+   
+    
+    
+    
+        async updateAddress(index, addr) {
+      console.log(`[CheckoutApp] Updating address at index: ${index}`, addr);
+      if (index < 0 || index >= this.addresses.length) return;
+      const currentAddr = this.addresses[index];
+      const isSame = JSON.stringify(currentAddr) === JSON.stringify(addr);
+      if (!isSame && this.isDuplicateAddress(addr)) {
+        alert("This address is already saved");
+        return;
+      }
+      try {
+        if (this.userId && currentAddr.shippingId) {
+          const updatedAddress = await this.updateAddressInBackend(currentAddr.shippingId, addr);
+          this.addresses[index] = updatedAddress;
+    
+          if (addr.isPrimary) {
+            this.primaryAddressId = updatedAddress.shippingId;
+            this.addresses.forEach((a, idx) => {
+              if (idx !== index) {
+                a.isPrimary = false;
+              }
+            });
+          }
+    
+          console.log('[CheckoutApp] Address updated in backend successfully');
+        } else {
+          this.addresses[index] = addr;
+          console.log('[CheckoutApp] Address updated');
+        }
+  
+        this.saveAddresses();
+        this.updatePaymentSection();
+        console.log('[CheckoutApp] Address updated successfully');
+        alert("Address updated successfully!");
+        location.reload();  // ← ADD THIS LINE: Refresh page after OK clicked
+      } catch (error) {
+        console.error('[CheckoutApp] Error updating address:', error);
+        this.addresses[index] = addr;
+        this.saveAddresses();
+        this.updatePaymentSection();
+        alert("Address updated successfully!");
+        location.reload();  // ← ADD THIS LINE: Also refresh on fallback save
+      }
+    }
+    
+    
+    async deleteAddress(index) {
+      console.log(`[CheckoutApp] Deleting address at index: ${index}`);
+ 
+      if (!confirm('Delete this address?')) return;
+ 
+      const addressToDelete = this.addresses[index];
+ 
+      try {
+        if (this.userId && addressToDelete.shippingId) {
+          await this.deleteAddressFromBackend(addressToDelete.shippingId);
+          console.log('[CheckoutApp] Address deleted from backend successfully');
+        }
+   
+        this.addresses.splice(index, 1);
+   
+        if (addressToDelete.isPrimary && this.addresses.length > 0) {
+          this.addresses[0].isPrimary = true;
+          this.primaryAddressId = this.addresses[0].shippingId;
+        }
+   
+        if (this.selectedIdx >= this.addresses.length) this.selectedIdx = this.addresses.length > 0 ? 0 : -1;
+        this.saveAddresses();
+        this.saveSelected();
+        this.updatePaymentSection();
+        console.log('[CheckoutApp] Address deleted successfully');
+        alert("Address deleted successfully!");
+      } catch (error) {
+        console.error('[CheckoutApp] Error deleting address:', error);
+        this.addresses.splice(index, 1);
+        if (this.selectedIdx >= this.addresses.length) this.selectedIdx = this.addresses.length > 0 ? 0 : -1;
+        this.saveAddresses();
+        this.saveSelected();
+        this.updatePaymentSection();
+        alert("Address deleted successfully!");
+      }
+    }
+    async setAsPrimaryAddress(index) {
+      console.log(`[CheckoutApp] Setting address at index ${index} as primary`);
+ 
+      if (index < 0 || index >= this.addresses.length) return;
+ 
+      const addressToSetPrimary = this.addresses[index];
+ 
+      if (addressToSetPrimary.isPrimary) {
+        console.log('[CheckoutApp] Address is already primary');
+        return;
+      }
+ 
+      try {
+        // First, set all other addresses to non-primary in backend
+        for (const addr of this.addresses) {
+          if (addr.isPrimary && addr.shippingId) {
+            // Send backend-compatible format
+            const backendUpdateData = {
+              customerName: addr.fullName || 'Customer',
+              customerPhone: addr.mobile,
+              shippingAddress: addr.area,
+              flat_no: addr.flat,
+              shippingCity: addr.city,
+              shippingState: addr.state,
+              shippingPincode: addr.pincode,
+              isPrimary: false
+            };
+       
+            await this.updateAddressInBackend(addr.shippingId, backendUpdateData);
+          }
+        }
+   
+        // Now set the selected address as primary in backend
+        const backendUpdateData = {
+          customerName: addressToSetPrimary.fullName || 'Customer',
+          customerPhone: addressToSetPrimary.mobile,
+          shippingAddress: addressToSetPrimary.area,
+          flat_no: addressToSetPrimary.flat,
+          shippingCity: addressToSetPrimary.city,
+          shippingState: addressToSetPrimary.state,
+          shippingPincode: addressToSetPrimary.pincode,
+          isPrimary: true
+        };
+   
+        const updatedAddress = await this.updateAddressInBackend(addressToSetPrimary.shippingId, backendUpdateData);
+   
+        // Update local addresses
+        this.addresses.forEach((addr, idx) => {
+          if (addr.shippingId === addressToSetPrimary.shippingId) {
+            // Update with backend response if available
+            if (updatedAddress && typeof updatedAddress === 'object') {
+              this.addresses[idx] = {
+                ...this.addresses[idx],
+                ...updatedAddress,
+                shippingId: updatedAddress.shippingId || addressToSetPrimary.shippingId,
+                isPrimary: true
+              };
+            } else {
+              this.addresses[idx].isPrimary = true;
+            }
+          } else {
+            addr.isPrimary = false;
+          }
+        });
+   
+        this.primaryAddressId = addressToSetPrimary.shippingId;
+        this.saveAddresses();
+        this.renderAddresses();
+        console.log('[CheckoutApp] Primary address updated successfully');
+        alert("Primary address updated successfully!");
+      } catch (error) {
+        console.error('[CheckoutApp] Error setting primary address:', error);
+        // Fallback: update locally only
+        this.addresses.forEach((addr, idx) => {
+          addr.isPrimary = (idx === index);
+        });
+        this.saveAddresses();
+        this.renderAddresses();
+        alert("Primary address updated successfully!");
+      }
+    }
+    async updateItemQuantity(index, newQuantity) {
+      console.log(`[CheckoutApp] Updating item quantity at index: ${index} to ${newQuantity}`);
+ 
+      if (index < 0 || index >= this.cart.length) return;
+ 
+      newQuantity = Math.max(1, Math.min(10, parseInt(newQuantity) || 1));
+ 
+      const item = this.cart[index];
+      item.quantity = newQuantity;
+ 
+      if (this.userId && item.cartItemId) {
+        await this.updateCartItemInBackend(item, newQuantity);
+      }
+ 
+      this.saveCart();
+    }
+    async updateCartItemInBackend(item, newQuantity) {
+      try {
+        console.log(`[CheckoutApp] Updating cart item in backend. CartItemId: ${item.cartItemId}, New Quantity: ${newQuantity}`);
+   
+        const requestBody = {
+          userId: this.userId,
+          type: item.type || 'PRODUCT',
+          quantity: newQuantity,
+          selectedSize: item.selectedSize || item.size || ''
+        };
+        if (item.type === 'PRODUCT') {
+          requestBody.productId = item.itemId;
+        } else if (item.type === 'MBP') {
+          requestBody.mbpId = item.itemId;
+        }
+        if (item.productType) {
+          requestBody.productType = item.productType;
+        }
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CART.UPDATE}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        if (!response.ok) {
+          console.error(`[CheckoutApp] Update failed: ${response.status}`);
+          throw new Error(`Update failed: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log('[CheckoutApp] Backend update result:', result);
+      } catch (error) {
+        console.error('[CheckoutApp] Error updating item in backend:', error);
+      }
+    }
+    async deleteCartItem(index) {
+      console.log(`[CheckoutApp] Deleting cart item at index: ${index}`);
+ 
+      if (!confirm('Remove this item from cart?')) return;
+ 
+      const item = this.cart[index];
+ 
+      if (this.userId && item.cartItemId) {
+        await this.deleteCartItemFromBackend(item);
+      }
+ 
+      this.cart.splice(index, 1);
+      this.saveCart();
+    }
+    async deleteCartItemFromBackend(item) {
+      try {
+        console.log(`[CheckoutApp] Deleting cart item from backend. CartItemId: ${item.cartItemId}`);
+   
+        const requestBody = {
+          userId: this.userId,
+          type: item.type || 'PRODUCT',
+          selectedSize: item.selectedSize || item.size || ''
+        };
+        if (item.type === 'PRODUCT') {
+          requestBody.productId = item.itemId;
+        } else if (item.type === 'MBP') {
+          requestBody.mbpId = item.itemId;
+        }
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CART.REMOVE}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        if (!response.ok) {
+          console.error(`[CheckoutApp] Delete failed: ${response.status}`);
+          throw new Error(`Delete failed: ${response.status}`);
+        }
+        const result = await response.text();
+        console.log('[CheckoutApp] Backend delete result:', result);
+      } catch (error) {
+        console.error('[CheckoutApp] Error deleting item from backend:', error);
+      }
+    }
+    render() {
+      console.log('[CheckoutApp] Rendering checkout page');
+      this.renderCart();
+      this.renderAddresses();
+      this.updatePaymentSection();
+    }
+    
+// renderCart() {
+//   const container = document.getElementById('order-items');
+//   const itemsContainer = document.getElementById('order-items-container');
+
+//   if (!this.cart.length) {
+//     container.innerHTML = `<div class="text-center text-gray-500 py-10">Your cart is empty.</div>`;
+//     itemsContainer.classList.remove('no-scroll');
+//     this.updateTotals(0, 0, 0, 0, 0);
+//     console.log('[CheckoutApp] Cart is empty');
+//     return;
+//   }
+
+//   console.log(`[CheckoutApp] Rendering ${this.cart.length} cart items`);
+
+//   let subtotal = 0;
+//   let totalItems = 0;
+//   let totalSavings = 0;
+
+//   container.innerHTML = '';
+
+//   this.cart.forEach((item, i) => {
+//     const qty = item.quantity || 1;
+
+//     // Use already-clean prices from fetchCartFromBackend (which we fixed earlier)
+//     const price = Number(item.price || 0);                    // e.g., 10.50
+//     const original = Number(item.originalPrice || 0);         // e.g., 18.90
+
+//     // Calculate line-item values with proper rounding
+//     const itemTotal = Number((price * qty).toFixed(2));
+//     const itemSavings = Number((original - price).toFixed(2)) * qty;
+//     const itemSavingsRounded = Number(itemSavings.toFixed(2));
+
+//     // Accumulate totals safely
+//     subtotal = Number((subtotal + itemTotal).toFixed(2));
+//     totalSavings = Number((totalSavings + itemSavingsRounded).toFixed(2));
+//     totalItems += qty;
+
+//     const imageUrl = this.getImageUrl(item);
+
+//     const div = document.createElement('div');
+//     div.className = "flex gap-4 p-4 bg-gray-50 rounded-lg transition-all hover:bg-gray-100 relative";
+//     div.innerHTML = `
+//       <img src="${imageUrl}"
+//           alt="${item.name || item.title || 'Product'}"
+//           class="w-20 h-20 rounded-lg object-cover border border-gray-200"
+//           onerror="this.onerror=null; this.src=''">
+
+//       <div class="flex-1">
+//         <p class="font-medium text-sm text-gray-800">${item.name || item.title || 'Product'}</p>
+//         <p class="text-xs text-gray-600 mt-1">Size: ${item.size || item.selectedSize}</p>
+//         <div class="flex items-center gap-3 mt-2">
+//           <span class="font-bold text-pink-600">₹${price.toFixed(2)}</span>
+//          <!-- <span class="text-xs text-gray-500 line-through">₹${original.toFixed(2)}</span> -->
+//           <!-- <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">${item.discount || 0}% OFF</span> -->
+//         </div>
+
+//         <div class="mt-4 flex items-center justify-between">
+//           <div class="flex items-center gap-4">
+//             <!-- Quantity Selector -->
+//             <div class="quantity-selector">
+//               <button class="qty-btn decrease" data-index="${i}">-</button>
+//               <input type="text" class="qty-value" value="${qty}" data-index="${i}" readonly>
+//               <button class="qty-btn increase" data-index="${i}">+</button>
+//             </div>
+
+//             <!-- Delete Button -->
+//             <button class="delete-btn item-delete-btn" data-index="${i}" title="Remove item">
+//               <i class="fas fa-trash text-sm"></i>
+//             </button>
+//           </div>
+
+//           <div class="text-right">
+//             <div class="text-sm text-gray-500 mb-1">
+//               <span class="font-medium">${qty} × ₹${price.toFixed(2)}</span>
+//             </div>
+//             <div>
+//               <span class="text-lg font-bold text-gray-900">₹${itemTotal.toFixed(2)}</span>
+//             </div>
+//           </div>
+//         </div>
+//       </div>`;
+
+//     container.appendChild(div);
+//   });
+
+//   // Handle scrolling
+//   if (this.cart.length > 3) {
+//     itemsContainer.classList.remove('no-scroll');
+//   } else {
+//     itemsContainer.classList.add('no-scroll');
+//   }
+
+//   // Final calculations with clean rounding
+//   const shipping = subtotal >= 799 ? 0 : 49;
+//   const total = Number((subtotal + shipping).toFixed(2));
+
+//   // Store clean total for UPI QR
+//   this.totalAmount = total;
+
+//   // Pass clean values to updateTotals
+//   this.updateTotals(totalItems, subtotal, totalSavings, total, shipping);
+
+//   console.log(`[CheckoutApp] Cart rendered. Subtotal: ₹${subtotal.toFixed(2)}, Savings: ₹${totalSavings.toFixed(2)}, Total: ₹${total.toFixed(2)}, Items: ${totalItems}`);
+// }
+
+
+
+
+renderCart() {
+  const container = document.getElementById('order-items');
+  const itemsContainer = document.getElementById('order-items-container');
+
+  if (!this.cart.length) {
+    container.innerHTML = `<div class="text-center text-gray-500 py-10">Your cart is empty.</div>`;
+    itemsContainer.classList.remove('no-scroll');
+    this.updateTotals(0, 0, 0, 0, 0);
+    console.log('[CheckoutApp] Cart is empty');
+    return;
+  }
+
+  console.log(`[CheckoutApp] Rendering ${this.cart.length} cart items`);
+
+  let subtotal = 0;
+  let totalItems = 0;
+  // We are NOT calculating savings anymore until backend sends real MRP
+
+  container.innerHTML = '';
+
+  this.cart.forEach((item, i) => {
+    const qty = item.quantity || 1;
+
+    // Use the real selling price coming from backend
+    const price = Number(item.price?.[0] ?? item.price ?? 0);
+
+    // Line total = price × quantity
+    const itemTotal = Number((price * qty).toFixed(2));
+
+    subtotal = Number((subtotal + itemTotal).toFixed(2));
+    totalItems += qty;
+
+    const imageUrl = this.getImageUrl(item);
+
+    const div = document.createElement('div');
+    div.className = "flex gap-4 p-4 bg-gray-50 rounded-lg transition-all hover:bg-gray-100 relative";
+    div.innerHTML = `
+      <img src="${imageUrl}"
+           alt="${item.name || item.title || 'Product'}"
+           class="w-20 h-20 rounded-lg object-cover border border-gray-200"
+           onerror="this.onerror=null; this.src=''">
+
+      <div class="flex-1">
+        <p class="font-medium text-sm text-gray-800">${item.name || item.title || 'Product'}</p>
+        <p class="text-xs text-gray-600 mt-1">Size: ${item.size || item.selectedSize || item.productSizes?.[0] || 'N/A'}</p>
+
+        <div class="flex items-center gap-3 mt-2">
+          <span class="font-bold text-pink-600">₹${price.toFixed(2)}</span>
+          <!-- No strikethrough MRP, no % off – backend doesn't send it yet -->
+        </div>
+
+        <div class="mt-4 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <!-- Quantity Selector -->
+            <div class="quantity-selector">
+              <button class="qty-btn decrease" data-index="${i}">-</button>
+              <input type="text" class="qty-value" value="${qty}" data-index="${i}" readonly>
+              <button class="qty-btn increase" data-index="${i}">+</button>
+            </div>
+
+            <!-- Delete Button -->
+            <button class="delete-btn item-delete-btn" data-index="${i}" title="Remove item">
+              <i class="fas fa-trash text-sm"></i>
+            </button>
+          </div>
+
+          <div class="text-right">
+            <div class="text-sm text-gray-500 mb-1">
+              <span class="font-medium">${qty} × ₹${price.toFixed(2)}</span>
+            </div>
+            <div>
+              <span class="text-lg font-bold text-gray-900">₹${itemTotal.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    container.appendChild(div);
+  });
+
+  // Handle scrolling
+  if (this.cart.length > 3) {
+    itemsContainer.classList.remove('no-scroll');
+  } else {
+    itemsContainer.classList.add('no-scroll');
+  }
+
+  const shipping = subtotal >= 799 ? 0 : 49;
+  const total = Number((subtotal + shipping).toFixed(2));
+
+  this.totalAmount = total;
+
+  // Important: pass 0 for savings until we have real MRP
+  this.updateTotals(totalItems, subtotal, 0, total, shipping);
+
+  console.log(`[CheckoutApp] Cart rendered. Subtotal: ₹${subtotal.toFixed(2)}, Total: ₹${total.toFixed(2)}, Items: ${totalItems}`);
+}
+
+
+
+
+    // FIXED updateTotals with null-safety
+    updateTotals(items, subtotal, savings, total, shipping) {
+      console.log(`[CheckoutApp] Updating totals: Items: ${items}, Subtotal: ₹${subtotal}, Savings: ₹${savings}, Total: ₹${total}, Shipping: ₹${shipping}`);
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+
+      setText('item-count', items || 0);
+      setText('mobile-savings', savings >= 0 ? `₹${savings}` : '₹0');
+
+      setText('subtotal', `₹${subtotal || 0}`);
+      setText('shipping', (shipping === 0 || (subtotal || 0) >= 799) ? 'FREE' : `₹${shipping || 49}`);
+      setText('discount', savings > 0 ? `-₹${savings}` : '₹0');
+      setText('total', `₹${total || 0}`);
+      setText('desktop-pay-amount', total || 0);
+
+      setText('mobile-subtotal', `₹${subtotal || 0}`);
+      setText('mobile-shipping', (shipping === 0 || (subtotal || 0) >= 799) ? 'FREE' : `₹${shipping || 49}`);
+      setText('mobile-discount', savings > 0 ? `-₹${savings}` : '₹0');
+      setText('mobile-total-amount', `₹${total || 0}`);
+      setText('mobile-pay-amount', total || 0);
+    }
+    renderAddresses() {
+      const container = document.getElementById('addresses-container');
+      const noMsg = document.getElementById('no-address-msg');
+      Array.from(container.children).forEach(child => {
+        if (child.id !== 'no-address-msg') child.remove();
+      });
+      if (this.addresses.length === 0) {
+        noMsg.style.display = 'block';
+        console.log('[CheckoutApp] No addresses to display');
+        return;
+      }
+      noMsg.style.display = 'none';
+      console.log(`[CheckoutApp] Rendering ${this.addresses.length} addresses`);
+      this.addresses.forEach((addr, i) => {
+        const isSelected = this.selectedIdx === i;
+        const isPrimary = addr.isPrimary;
+        const card = document.createElement('div');
+        card.className = `address-card border-2 rounded-xl p-4 cursor-pointer transition-all duration-200
+          ${isSelected ? 'border-pink-600 bg-pink-50 shadow-lg address-selected' : 'border-gray-200 hover:border-pink-300'}`;
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full ${isSelected ? 'bg-pink-600' : 'bg-gray-200'} flex items-center justify-center text-white">
+              <i class="fas fa-map-marker-alt text-lg"></i>
+            </div>
+            <div class="flex-1 min-w-0 select-address" data-index="${i}">
+              <div class="flex items-center gap-2 flex-wrap">
+                <p class="font-semibold text-gray-900">${addr.fullName || 'Customer'}</p>
+                <span class="address-type-badge ${isPrimary ? 'primary-badge' : 'secondary-badge'}">
+                  ${isPrimary ? 'Primary' : 'Secondary'}
+                </span>
+              </div>
+              <p class="text-xs text-gray-600 mt-1">
+                ${addr.flat || ''}${addr.flat && addr.area ? ', ' : ''}${addr.area || ''}${(addr.flat || addr.area) && addr.city ? ', ' : ''}${addr.city || ''}${(addr.flat || addr.area || addr.city) && addr.pincode ? ' - ' : ''}${addr.pincode || ''}
+              </p>
+              <p class="text-xs text-gray-500"><i class="fas fa-phone-alt"></i> ${addr.mobile || ''}</p>
+ 
+              <div class="flex items-center gap-3 mt-2">
+                ${isSelected ? `
+                  <div class="text-green-600 font-semibold text-sm flex items-center">
+                    <i class="fas fa-check-circle mr-1.5"></i>
+                    Delivering Here
+                  </div>
+                ` : ''}
+   
+                ${!isPrimary ? `
+                  <button type="button" class="set-primary-btn set-primary-address-btn" data-index="${i}">
+                    <i class="fas fa-star mr-1 text-yellow-500"></i> Set as Primary
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+            <div class="flex gap-1">
+              <button type="button" class="edit-btn p-2 hover:bg-gray-100 rounded-lg" data-index="${i}">
+                <i class="fas fa-edit text-gray-600 text-sm"></i>
+              </button>
+              <button type="button" class="delete-btn p-2 hover:bg-red-50 rounded-lg" data-index="${i}">
+                <i class="fas fa-trash-alt text-red-500 text-sm"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+
+    showPaymentSuccessMessage() {
+      console.log('[CheckoutApp] Showing payment success message');
+      const successModal = document.getElementById('order-success-modal');
+      const successTitle = successModal.querySelector('h2');
+      const successMessage = successModal.querySelector('.text-gray-600');
+      const redirectMessage = successModal.querySelector('.text-xs.text-gray-500');
+      // Update the message for payment success
+      successTitle.textContent = 'Payment Successful! Order Placed';
+      successMessage.textContent = 'Your payment has been confirmed and order is placed successfully. You will receive a confirmation email shortly.';
+      if (redirectMessage) {
+        redirectMessage.innerHTML = '<i class="fas fa-info-circle mr-1"></i> You will be redirected to your orders page';
+      }
+      // Launch confetti
+      this.launchConfetti();
+      // Show modal
+      successModal.classList.add('show');
+    }
+    showOrderSuccess(type = 'cod') {
+      console.log(`[CheckoutApp] Showing order success for ${type}`);
+      const successModal = document.getElementById('order-success-modal');
+      const successTitle = successModal.querySelector('h2');
+      const successMessage = successModal.querySelector('.text-gray-600');
+      if (type === 'cod') {
+        successTitle.textContent = 'Order Placed Successfully!';
+        successMessage.textContent = 'Your COD order has been placed. You will receive a confirmation email shortly. Payment to be collected on delivery.';
+      } else {
+        successTitle.textContent = 'Payment Successful! Order Placed';
+        successMessage.textContent = 'Your payment has been confirmed and order is placed successfully. You will receive a confirmation email shortly.';
+      }
+      this.launchConfetti();
+      setTimeout(() => {
+        successModal.classList.add('show');
+      }, 500);
+    }
+    
+    
+   
+    
+    
+         updatePaymentSection() {
+      const hasAddr = this.selectedIdx !== -1 && this.addresses[this.selectedIdx];
+      const mobileBtn = document.getElementById('mobile-place-order-btn');
+      const desktopBtn = document.getElementById('desktop-place-order-btn');
+      const mobileWarn = document.getElementById('no-address-warning');
+      const desktopWarn = document.getElementById('desktop-address-warning');
+      const codInputs = document.querySelectorAll('input[value="cod"]');
+      const qrInputs = document.querySelectorAll('input[value="qr"]');
+
+      const allowedPincodes = ['415521', '415522', '415523', '415528'];
+
+      // Always start fresh: reset warnings to default or empty
+      if (mobileWarn) {
+        mobileWarn.style.display = 'block';
+        mobileWarn.textContent = 'Please select a delivery address to continue.';
+      }
+      if (desktopWarn) {
+        desktopWarn.style.display = 'block';
+        desktopWarn.textContent = 'Please select a delivery address.';
+      }
+
+      if (!hasAddr) {
+        // No address selected → disable everything
+        if (mobileBtn) { mobileBtn.disabled = true; mobileBtn.classList.add('opacity-60', 'cursor-not-allowed'); }
+        if (desktopBtn) { desktopBtn.disabled = true; desktopBtn.classList.add('opacity-60', 'cursor-not-allowed'); }
+
+        codInputs.forEach(input => { input.disabled = true; input.closest('label').classList.add('opacity-60', 'cursor-not-allowed'); });
+        qrInputs.forEach(input => { input.disabled = true; input.closest('label').classList.add('opacity-60', 'cursor-not-allowed'); });
+
+        return;
+      }
+
+      // Address IS selected → check pincode
+      const selectedPincode = this.addresses[this.selectedIdx].pincode?.trim() || '';
+
+      if (allowedPincodes.includes(selectedPincode)) {
+        // Valid pincode → enable everything, hide warnings
+        if (mobileBtn) { mobileBtn.disabled = false; mobileBtn.classList.remove('opacity-60', 'cursor-not-allowed'); }
+        if (desktopBtn) { desktopBtn.disabled = false; desktopBtn.classList.remove('opacity-60', 'cursor-not-allowed'); }
+
+        if (mobileWarn) mobileWarn.style.display = 'none';
+        if (desktopWarn) desktopWarn.style.display = 'none';
+
+        codInputs.forEach(input => { input.disabled = false; input.closest('label').classList.remove('opacity-60', 'cursor-not-allowed'); });
+        qrInputs.forEach(input => { input.disabled = false; input.closest('label').classList.remove('opacity-60', 'cursor-not-allowed'); });
+      } else {
+        // Invalid pincode → disable order button, show pincode warning
+        if (mobileBtn) { mobileBtn.disabled = true; mobileBtn.classList.add('opacity-60', 'cursor-not-allowed'); }
+        if (desktopBtn) { desktopBtn.disabled = true; desktopBtn.classList.add('opacity-60', 'cursor-not-allowed'); }
+
+        if (mobileWarn) {
+          mobileWarn.textContent = 'Delivery not available to this pincode. Please check delivery pincode.';
+          mobileWarn.style.display = 'block';
+        }
+        if (desktopWarn) {
+          desktopWarn.textContent = 'Delivery not available to this pincode. Please check delivery pincode.';
+          desktopWarn.style.display = 'block';
+        }
+
+        codInputs.forEach(input => { input.disabled = true; input.closest('label').classList.add('opacity-60', 'cursor-not-allowed'); });
+        qrInputs.forEach(input => { input.disabled = true; input.closest('label').classList.add('opacity-60', 'cursor-not-allowed'); });
+      }
+    }
+    
+    
+    
+    
+    
+    
+    
+    openModal(editIndex = -1) {
+      console.log(`[CheckoutApp] Opening address modal for editIndex: ${editIndex}`);
+      document.getElementById('edit-index').value = editIndex;
+      document.getElementById('modal-title').textContent = editIndex === -1 ? 'Add New Address' : 'Edit Address';
+      const form = document.getElementById('address-form');
+      if (editIndex === -1) {
+        form.reset();
+        document.getElementById('shipping-id').value = '';
+        document.getElementById('is-primary').checked = false;
+      } else {
+        const addr = this.addresses[editIndex];
+        if (addr) {
+          Object.keys(addr).forEach(k => {
+            if (form[k]) form[k].value = addr[k];
+          });
+          document.getElementById('shipping-id').value = addr.shippingId || '';
+          document.getElementById('is-primary').checked = addr.isPrimary || false;
+        }
+      }
+      document.getElementById('address-modal').classList.add('show');
+    }
+    closeModal() {
+      console.log('[CheckoutApp] Closing address modal');
+      document.getElementById('address-modal').classList.remove('show');
+    }
+    setupEventListeners() {
+      console.log('[CheckoutApp] Setting up event listeners');
+ 
+      document.getElementById('add-address-btn').addEventListener('click', () => this.openModal(-1));
+      document.getElementById('close-modal-btn').addEventListener('click', () => this.closeModal());
+      document.getElementById('cancel-modal-btn').addEventListener('click', () => this.closeModal());
+      document.getElementById('address-modal').addEventListener('click', e => {
+        if (e.target.id === 'address-modal') this.closeModal();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') this.closeModal();
+      });
+      document.getElementById('address-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log('[CheckoutApp] Address form submitted');
+   
+        const fd = new FormData(e.target);
+        const addr = {
+          fullName: fd.get('fullName').trim(),
+          mobile: fd.get('mobile').trim(),
+          flat: fd.get('flat').trim(),
+          area: fd.get('area').trim(),
+          city: fd.get('city').trim(),
+          state: fd.get('state').trim(),
+          pincode: fd.get('pincode').trim(),
+          isPrimary: fd.get('isPrimary') === 'on'
+        };
+   
+        const editIdx = parseInt(document.getElementById('edit-index').value, 10);
+        const shippingId = document.getElementById('shipping-id').value;
+   
+        if (shippingId && editIdx >= 0) {
+          addr.shippingId = shippingId;
+        }
+   
+        console.log(`[CheckoutApp] Processing address form. Edit index: ${editIdx}, Shipping ID: ${shippingId}, User ID: ${this.userId}, Is Primary: ${addr.isPrimary}`);
+   
+        if (editIdx >= 0) {
+          await this.updateAddress(editIdx, addr);
+        } else {
+          await this.addAddress(addr);
+        }
+        this.closeModal();
+      });
+      document.getElementById('mobile-place-order-btn').addEventListener('click', () => this.placeOrder());
+      document.getElementById('desktop-place-order-btn').addEventListener('click', () => this.placeOrder());
+ 
+      document.getElementById('success-ok-btn').addEventListener('click', async () => {
+        console.log('[CheckoutApp] Order success OK button clicked');
+        // Close modal
+        document.getElementById('order-success-modal').classList.remove('show');
+        // Redirect to myorders.html immediately
+        window.location.href = './MY ORDERS/myorders.html';
+      });
+      document.getElementById('order-items').addEventListener('click', async (e) => {
+        if (e.target.classList.contains('decrease') || e.target.closest('.decrease')) {
+          const btn = e.target.classList.contains('decrease') ? e.target : e.target.closest('.decrease');
+          const index = parseInt(btn.dataset.index, 10);
+          const currentQty = this.cart[index].quantity || 1;
+          if (currentQty > 1) {
+            await this.updateItemQuantity(index, currentQty - 1);
+          }
+        }
+   
+        if (e.target.classList.contains('increase') || e.target.closest('.increase')) {
+          const btn = e.target.classList.contains('increase') ? e.target : e.target.closest('.increase');
+          const index = parseInt(btn.dataset.index, 10);
+          const currentQty = this.cart[index].quantity || 1;
+          if (currentQty < 10) {
+            await this.updateItemQuantity(index, currentQty + 1);
+          }
+        }
+   
+        if (e.target.classList.contains('item-delete-btn') || e.target.closest('.item-delete-btn')) {
+          const btn = e.target.classList.contains('item-delete-btn') ? e.target : e.target.closest('.item-delete-btn');
+          const index = parseInt(btn.dataset.index, 10);
+          await this.deleteCartItem(index);
+        }
+      });
+      document.getElementById('order-items').addEventListener('change', async (e) => {
+        if (e.target.classList.contains('qty-value')) {
+          const index = parseInt(e.target.dataset.index, 10);
+          const newQty = parseInt(e.target.value, 10) || 1;
+          await this.updateItemQuantity(index, newQty);
+        }
+      });
+      document.getElementById('order-items').addEventListener('input', (e) => {
+        if (e.target.classList.contains('qty-value')) {
+          e.target.value = e.target.value.replace(/[^0-9]/g, '');
+          const value = parseInt(e.target.value, 10);
+          if (value > 10) e.target.value = '10';
+          if (value < 1) e.target.value = '1';
+        }
+      });
+      document.getElementById('addresses-container').addEventListener('click', (e) => {
+        const editBtn = e.target.closest('.edit-btn');
+        const deleteBtn = e.target.closest('.delete-btn');
+        const selectArea = e.target.closest('.select-address');
+        const setPrimaryBtn = e.target.closest('.set-primary-address-btn');
+   
+        if (editBtn) {
+          const index = parseInt(editBtn.dataset.index, 10);
+          console.log(`[CheckoutApp] Edit address clicked at index: ${index}`);
+          this.openModal(index);
+          return;
+        }
+        if (deleteBtn) {
+          const index = parseInt(deleteBtn.dataset.index, 10);
+          console.log(`[CheckoutApp] Delete address clicked at index: ${index}`);
+          this.deleteAddress(index);
+          return;
+        }
+        if (setPrimaryBtn) {
+          const index = parseInt(setPrimaryBtn.dataset.index, 10);
+          console.log(`[CheckoutApp] Set primary address clicked at index: ${index}`);
+          this.setAsPrimaryAddress(index);
+          return;
+        }
+        if (selectArea) {
+          const index = parseInt(selectArea.dataset.index, 10);
+          console.log(`[CheckoutApp] Select address clicked at index: ${index}`);
+          this.selectAddress(index);
+        }
+      });
+      document.querySelectorAll('input[name="payment_method"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+          console.log(`[CheckoutApp] Payment method changed to: ${e.target.value}`);
+          this.selectedPaymentMethod = e.target.value;
+          document.querySelectorAll('.payment-option').forEach(label => {
+            label.classList.remove('selected', 'border-[#70B2B2]', 'bg-[#f0f9f9]');
+            label.classList.add('border-gray-300');
+          });
+     
+          if (e.target.checked) {
+            const label = e.target.closest('.payment-option');
+            if (label) {
+              label.classList.add('selected', 'border-[#70B2B2]', 'bg-[#f0f9f9]');
+              label.classList.remove('border-gray-300');
+            }
+          }
+        });
+      });
+      const initialSelected = document.querySelector('input[name="payment_method"]:checked');
+      if (initialSelected) {
+        this.selectedPaymentMethod = initialSelected.value;
+        const label = initialSelected.closest('.payment-option');
+        if (label) {
+          label.classList.add('selected', 'border-[#70B2B2]', 'bg-[#f0f9f9]');
+          label.classList.remove('border-gray-300');
+        }
+      }
+ 
+      // UPI QR Modal Event Listeners
+      document.getElementById('close-upi-modal').addEventListener('click', () => this.closeUpiModal());
+      document.getElementById('upi-qr-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'upi-qr-modal') this.closeUpiModal();
+      });
+      document.getElementById('cancel-upi-payment').addEventListener('click', () => this.closeUpiModal());
+      document.getElementById('confirm-payment-btn').addEventListener('click', () => this.showPaymentConfirmation());
+      document.getElementById('proceed-confirm-payment').addEventListener('click', () => this.processUpiPayment());
+      document.getElementById('cancel-confirm-payment').addEventListener('click', () => this.closePaymentConfirmation());
+ 
+      // Invoice Modal Event Listeners
+      document.getElementById('close-invoice').addEventListener('click', () => this.closeInvoice());
+      document.getElementById('print-invoice').addEventListener('click', () => this.printInvoice());
+      document.getElementById('invoice-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'invoice-modal') this.closeInvoice();
+      });
+ 
+      console.log('[CheckoutApp] Event listeners setup completed');
+    }
+
+
+    async placeOrder() {
+      console.log('[CheckoutApp] Place order button clicked');
+ 
+      // Validation
+      if (this.selectedIdx === -1) {
+        console.warn('[CheckoutApp] No address selected, cannot place order');
+        return alert('Please select a delivery address!');
+      }
+ 
+      if (this.cart.length === 0) {
+        console.warn('[CheckoutApp] Cart is empty, cannot place order');
+        return alert('Your cart is empty!');
+      }
+ 
+      if (!this.selectedPaymentMethod) {
+        console.warn('[CheckoutApp] No payment method selected');
+        return alert('Please select a payment method!');
+      }
+ 
+      if (this.selectedPaymentMethod === 'qr') {
+        console.log('[CheckoutApp] UPI QR payment selected, showing QR code');
+        this.showUpiQrModal();
+      } else if (this.selectedPaymentMethod === 'cod') {
+        console.log('[CheckoutApp] COD payment selected, creating order');
+        // Show loading state
+        const placeOrderBtn = document.activeElement.id === 'mobile-place-order-btn'
+          ? document.getElementById('mobile-place-order-btn')
+          : document.getElementById('desktop-place-order-btn');
+        if (placeOrderBtn) {
+          const originalText = placeOrderBtn.innerHTML;
+          placeOrderBtn.innerHTML = '<div class="loading-spinner"></div>';
+          placeOrderBtn.disabled = true;
+     
+          try {
+            const success = await this.createOrderInBackend('cod');
+       
+            if (success) {
+              // Show COD success message
+              this.showOrderSuccess('cod');
+         
+              // Redirect to myorders.html after 3 seconds
+              setTimeout(() => {
+                window.location.href = './MY ORDERS/myorders.html';
+              }, 3000);
+            } else {
+              alert('Failed to create order. Please try again.');
+            }
+          } catch (error) {
+            console.error('[CheckoutApp] Error creating COD order:', error);
+            alert('An error occurred while placing your order. Please try again.');
+          } finally {
+            // Restore button state
+            placeOrderBtn.innerHTML = originalText;
+            placeOrderBtn.disabled = false;
+          }
+        } else {
+          // Fallback if button not found
+          const success = await this.createOrderInBackend('cod');
+          if (success) {
+            this.showOrderSuccess('cod');
+            setTimeout(() => {
+              window.location.href = './MY ORDERS/myorders.html';
+            }, 3000);
+          } else {
+            alert('Failed to create order. Please try again.');
+          }
+        }
+      }
+    }
+
+
+    showUpiQrModal() {
+      console.log('[CheckoutApp] Showing UPI QR modal');
+      // Validate total amount
+      if (this.totalAmount <= 0) {
+        alert('Invalid order amount. Please check your cart.');
+        return;
+      }
+      // Clear previous QR code
+      const qrContainer = document.getElementById('qr-code-container');
+      qrContainer.innerHTML = '';
+      // Generate UPI URI with exact amount
+      const upiUri = `upi://pay?pa=${encodeURIComponent(UPI_CONFIG.UPI_ID)}&pn=${encodeURIComponent(UPI_CONFIG.PAYEE_NAME)}&am=${this.totalAmount}&cu=INR`;
+      console.log(`[CheckoutApp] UPI URI: ${upiUri}`);
+      console.log(`[CheckoutApp] Amount: ₹${this.totalAmount}`);
+      console.log(`[CheckoutApp] Payee: ${UPI_CONFIG.PAYEE_NAME}`);
+      console.log(`[CheckoutApp] UPI ID: ${UPI_CONFIG.UPI_ID}`);
+      try {
+        // Generate QR code with smaller size for compact modal
+        this.qrCodeInstance = new QRCode(qrContainer, {
+          text: upiUri,
+          width: 160,
+          height: 160,
+          colorDark: '#000000',
+          colorLight: '#FFFFFF',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+   
+        // Update hidden UPI details (functionality remains)
+        document.getElementById('upi-payee-name').textContent = UPI_CONFIG.PAYEE_NAME;
+        document.getElementById('upi-id').textContent = UPI_CONFIG.UPI_ID;
+        document.getElementById('upi-amount').textContent = `₹${this.totalAmount.toFixed(2)}`;
+   
+        // Show modal
+        document.getElementById('upi-qr-modal').classList.add('show');
+      } catch (error) {
+        console.error('[CheckoutApp] Error generating QR code:', error);
+        alert('Failed to generate QR code. Please try again.');
+      }
+    }
+    closeUpiModal() {
+      console.log('[CheckoutApp] Closing UPI QR modal');
+      document.getElementById('upi-qr-modal').classList.remove('show');
+      // Clear QR code
+      if (this.qrCodeInstance) {
+        this.qrCodeInstance.clear();
+        this.qrCodeInstance = null;
+      }
+    }
+    showPaymentConfirmation() {
+      console.log('[CheckoutApp] Showing payment confirmation modal');
+      document.getElementById('payment-confirm-modal').classList.add('show');
+    }
+    closePaymentConfirmation() {
+      console.log('[CheckoutApp] Closing payment confirmation modal');
+      document.getElementById('payment-confirm-modal').classList.remove('show');
+    }
+    async processUpiPayment() {
+      console.log('[CheckoutApp] Processing UPI payment');
+      // Generate a mock transaction ID for demo
+      const transactionId = 'TXN' + Date.now() + Math.floor(Math.random() * 1000);
+      // Show loading state
+      const confirmBtn = document.getElementById('proceed-confirm-payment');
+      const originalText = confirmBtn.innerHTML;
+      confirmBtn.innerHTML = '<div class="loading-spinner"></div>';
+      confirmBtn.disabled = true;
+      try {
+        // Create order in backend
+        const success = await this.createOrderInBackend('qr', transactionId);
+   
+        if (success) {
+          console.log('[CheckoutApp] UPI payment successful, order created');
+     
+          // Close UPI modal and confirmation modal
+          this.closeUpiModal();
+          this.closePaymentConfirmation();
+     
+          // Show payment success message
+          this.showPaymentSuccessMessage();
+     
+          // Redirect to myorders.html after 3 seconds
+          setTimeout(() => {
+            window.location.href = './MY ORDERS/myorders.html';
+          }, 3000);
+        } else {
+          alert('Failed to create order. Please try again.');
+        }
+      } catch (error) {
+        console.error('[CheckoutApp] Error processing UPI payment:', error);
+        alert('An error occurred. Please try again.');
+      } finally {
+        // Restore button state
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
+      }
+    }
+    
+
+    
+async createOrderInBackend(paymentMethod, transactionId = '') {
+  try {
+    if (this.selectedIdx === -1 || this.addresses.length === 0) {
+      alert('No delivery address selected!');
+      return false;
+    }
+
+    const selectedAddress = this.addresses[this.selectedIdx];
+    console.log('[CheckoutApp] Starting order creation...');
+    console.log('Cart items:', this.cart);
+    console.log('Selected address:', selectedAddress);
+
+    // Recalculate subtotal accurately
+    let subtotal = 0;
+    this.cart.forEach(item => {
+      const qty = item.quantity || 1;
+      const price = Number(item.price || 0);
+      subtotal += price * qty;
+    });
+
+    const shippingCharges = subtotal >= 799 ? 0 : 49;
+    const totalAmount = subtotal + shippingCharges;
+
+    // Build full shipping address string
+    const shippingAddressString = [
+      selectedAddress.flat || '',
+      selectedAddress.area || '',
+      selectedAddress.city || '',
+      selectedAddress.state || '',
+      selectedAddress.pincode || ''
+    ].filter(Boolean).join(', ').replace(/,\s*$/, '');
+
+    // === CRITICAL: Map cart items to backend-expected orderItems format ===
+  // === CRITICAL: Map cart items to backend-expected orderItems format ===
+const orderItems = this.cart.map(item => {
+    // ────────────────────────────────────────────────
+    // SUPER AGGRESSIVE DEBUG + FALLBACK
+    // ────────────────────────────────────────────────
+    console.log('[ORDER ITEM DEBUG - RAW]', {
+        title: item.title || item.name || 'N/A',
+        itemId: item.itemId || item.id || item.productId || 'unknown',
+        size: item.size,
+        selectedSize: item.selectedSize,
+        hasProductSizes: Array.isArray(item.productSizes),
+        productSizesLength: item.productSizes?.length || 0,
+        productSizesContent: item.productSizes || 'MISSING',
+        type: item.type
+    });
+
+    // Try every possible place size could be
+    let finalSize = (
+        item.size?.trim() ||
+        item.selectedSize?.trim() ||
+        (Array.isArray(item.productSizes) && item.productSizes[0]?.trim()) ||
+        ''
+    );
+
+    // Force fallback if we have productSizes but finalSize is still empty
+    if (!finalSize && Array.isArray(item.productSizes) && item.productSizes.length > 0) {
+        finalSize = item.productSizes[0].trim();
+        console.log(
+            `[ORDER SIZE FORCED] Item "${item.title || item.itemId || 'unknown'}" ` +
+            `had no size → using first from productSizes: "${finalSize}"`
+        );
+    }
+
+    // If STILL empty → last warning
+    if (!finalSize) {
+        console.warn(
+            `[ORDER SIZE CRITICAL WARNING] Item "${item.title || item.itemId || 'unknown'}" ` +
+            `is being sent with EMPTY size to backend!`
+        );
+    }
+
+    const isMbp = item.type === 'MBP' || item.mbpId || (item.itemId && item.title);
+
+    return {
+        productId: item.type === 'PRODUCT' ? (item.itemId || item.id || item.productId) : null,
+        mbpId: item.type === 'MBP' ? (item.itemId || item.id || item.mbpId) : null,
+        quantity: item.quantity || 1,
+        itemPrice: Array.isArray(item.price) ? item.price[0] : Number(item.price || 0),
+        itemOldPrice: Array.isArray(item.price) && item.price.length > 1 ? item.price[1] : null,
+        subtotal: Number((Number(item.price?.[0] || item.price || 0) * (item.quantity || 1)).toFixed(2)),
+        itemName: item.name || item.title || 'Unknown Product',
+        size: finalSize
+    };
+});
+
+
+    const orderRequest = {
+      userId: this.userId,
+
+      // Shipping Details
+      shippingAddress: shippingAddressString,
+      shippingAddress2: selectedAddress.flat || '',
+      shippingCity: selectedAddress.city || '',
+      shippingState: selectedAddress.state || '',
+      shippingPincode: selectedAddress.pincode || '',
+      shippingCountry: "India",
+      shippingFirstName: (selectedAddress.fullName || 'Customer').split(' ')[0],
+      shippingLastName: (selectedAddress.fullName || 'Customer').split(' ').slice(1).join(' ') || 'Customer',
+      shippingEmail: null,
+      shippingPhone: selectedAddress.mobile || '',
+
+      // Billing = Shipping (common for COD/UPI)
+      billingCustomerName: selectedAddress.fullName || 'Customer',
+      billingLastName: 'Customer',
+      billingAddress: shippingAddressString,
+      billingAddress2: selectedAddress.flat || '',
+      billingCity: selectedAddress.city || '',
+      billingState: selectedAddress.state || '',
+      billingPincode: selectedAddress.pincode || '',
+      billingCountry: "India",
+      billingEmail: null,
+      billingPhone: selectedAddress.mobile || '',
+      shippingIsBilling: true,
+
+      // Customer Info
+      customerFirstName: (selectedAddress.fullName || 'Customer').split(' ')[0],
+      customerLastName: (selectedAddress.fullName || 'Customer').split(' ').slice(1).join(' ') || 'Customer',
+      customerPhone: selectedAddress.mobile || '',
+      customerEmail: null,
+
+      // Payment
+      paymentMethod: paymentMethod === 'qr' ? 'UPI' : 'COD',
+
+      // Amounts
+      totalAmount: Number(totalAmount.toFixed(2)),
+      convenienceFee: shippingCharges, // ← THIS IS THE KEY CHANGE: Send shipping as convenienceFee
+      // Status
+      orderStatus: "PLACED",
+      paymentStatus: paymentMethod === 'COD' ? 'PLACED' : 'COD',
+
+      // === MOST IMPORTANT: Correct key name ===
+      orderItems: orderItems   // ← WAS "items" before → now "orderItems"!
+    };
+
+    console.log('[CheckoutApp] FINAL order request body:', JSON.stringify(orderRequest, null, 2));
+
+    const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ORDER.CREATE}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderRequest)
+    });
+
+    const responseText = await response.text();
+    console.log('[CheckoutApp] Raw backend response:', responseText);
+
+    if (!response.ok) {
+      let errorMsg = `Order creation failed: ${response.status}`;
+      try {
+        const errorJson = JSON.parse(responseText);
+        errorMsg += ` - ${errorJson.message || JSON.stringify(errorJson)}`;
+      } catch (e) {
+        errorMsg += ` - ${responseText}`;
+      }
+      console.error('[CheckoutApp] Backend error:', errorMsg);
+      alert('Order failed: ' + (errorMsg.split('-')[1]?.trim() || 'Please try again'));
+      throw new Error(errorMsg);
+    }
+
+    const result = JSON.parse(responseText);
+    console.log('[CheckoutApp] Order created successfully:', result);
+
+    if (result.success && result.data && result.data.orderId) {
+      this.currentOrderId = result.data.orderId;
+    }
+
+    // Clear cart after success
+    if (this.userId) await this.clearBackendCart();
+    localStorage.removeItem(STORAGE.CART);
+    this.cart = [];
+    this.saveCart();
+
+    return true;
+
+  } catch (error) {
+    console.error('[CheckoutApp] Exception in createOrderInBackend:', error);
+    alert('Network or server error. Please try again.');
+    return false;
+  }
+}
+
+
+    
+    async clearBackendCart() {
+      try {
+        console.log(`[CheckoutApp] Clearing backend cart for userId: ${this.userId}`);
+   
+        // Store cart data for invoice before clearing
+        localStorage.setItem('last_order_cart', JSON.stringify(this.cart));
+   
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CART.CLEAR}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userId: this.userId })
+        });
+   
+        if (!response.ok) {
+          console.error(`[CheckoutApp] Clear cart failed: ${response.status}`);
+          throw new Error(`Clear cart failed: ${response.status}`);
+        }
+   
+        const result = await response.text();
+        console.log('[CheckoutApp] Backend cart cleared:', result);
+      } catch (error) {
+        console.error('[CheckoutApp] Error clearing backend cart:', error);
+      }
+    }
+    showOrderSuccess() {
+      console.log('[CheckoutApp] Showing order success animation');
+      this.launchConfetti();
+ 
+      setTimeout(() => {
+        document.getElementById('order-success-modal').classList.add('show');
+      }, 500);
+    }
+    
+    launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  
+  if (typeof confetti === 'undefined') {
+    console.warn('[CheckoutApp] Confetti library not loaded, using fallback animation');
+    this.fallbackConfetti();
+    return;
+  }
+
+  const myConfetti = confetti.create(canvas, {
+    resize: true,
+    useWorker: true
+  });
+
+  // Reduced duration from 3000ms to 1500ms
+  const end = Date.now() + 1500;
+
+  (function frame() {
+    // Reduced particle count from 5 to 3
+    myConfetti({
+      particleCount: 3,
+      angle: 60,
+      spread: 45,
+      origin: { x: 0 },
+      colors: ['#F875AA', '#70B2B2', '#FFD166']
+    });
+
+    myConfetti({
+      particleCount: 3,
+      angle: 120,
+      spread: 45,
+      origin: { x: 1 },
+      colors: ['#F875AA', '#70B2B2', '#FFD166']
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  }());
+
+  // Single burst instead of multiple
+  setTimeout(() => {
+    myConfetti({
+      particleCount: 80, // Reduced from 150
+      spread: 80, // Reduced from 100
+      origin: { y: 0.6 }
+    });
+  }, 200);
+}
+
+fallbackConfetti() {
+  const modal = document.getElementById('order-success-modal');
+  modal.style.animation = 'none';
+  setTimeout(() => {
+    modal.style.animation = 'pulse 0.3s 2'; // Reduced from 0.5s 3
+  }, 10);
+}
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('[CheckoutApp] DOM loaded, initializing checkout app');
+    new CheckoutApp();
+  });
+</script>
+
+
+<script>
+// ===== SCROLL TO TOP ON PAGE REFRESH =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
+    // Handle browser back/forward navigation
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.scrollTo(0, 0);
+        }
+    };
+    
+    // Also scroll to top on page load (redundancy for safety)
+    window.onload = function() {
+        setTimeout(function() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }, 0);
+    };
+});
+
+// Force scroll to top even before DOM is fully loaded
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+} else {
+    window.onbeforeunload = function() {
+        window.scrollTo(0, 0);
+    };
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+/* Banner Carousel Styles */
+.slide {
+  transition: opacity 1s ease-in-out !important;
+}
+
+#bannerWrapper {
+  position: relative;
+}
+
+.absolute.bottom-4 button {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.absolute.bottom-4 button:hover {
+  transform: scale(1.2);
+}
+
+/* Ensure banner images cover properly */
+.slide {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Smooth transitions for all interactive elements */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Custom scrollbar for mobile filter sidebar */
+.filter-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filter-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.filter-sidebar::-webkit-scrollbar-thumb {
+  background: #ec4899;
+  border-radius: 2px;
+}
+
+.filter-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #db2777;
+}
+
+/* Loading animation for images */
+img {
+  transition: opacity 0.3s ease;
+}
+
+img:not([src]) {
+  opacity: 0;
+}
+
+/* Responsive grid improvements */
+@media (max-width: 640px) {
+  .product-card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Enhanced hover effects */
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Button hover effects */
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Added modal styles */
+/* Modal animations */
+.modal-enter {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-exit {
+  animation: modalFadeOut 0.3s ease-in;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Cart and wishlist item animations */
+.cart-item,
+.wishlist-item {
+  transition: all 0.3s ease;
+}
+
+.cart-item:hover,
+.wishlist-item:hover {
+  background-color: #f9fafb;
+}
+
+/* Quantity controls */
+.quantity-btn {
+  transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Custom scrollbar for modals */
+#cartContent::-webkit-scrollbar,
+#wishlistContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+#cartContent::-webkit-scrollbar-track,
+#wishlistContent::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+#cartContent::-webkit-scrollbar-thumb,
+#wishlistContent::-webkit-scrollbar-thumb {
+  background: #ec4899;
+  border-radius: 3px;
+}
+
+#cartContent::-webkit-scrollbar-thumb:hover,
+#wishlistContent::-webkit-scrollbar-thumb:hover {
+  background: #db2777;
+}

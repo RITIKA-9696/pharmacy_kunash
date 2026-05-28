@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dr. Alok Gandhi - Obstetrician & Gynecologist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=DM+Serif+Text:ital@0;1&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./Footer/footer.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <style>
+  /* Optional: Add some custom styles */
+  .gallery-item {
+    transition: transform 0.2s ease;
+  }
+  
+  .gallery-item:hover {
+    transform: translateY(-5px);
+  }
+</style>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary-pink: #ec4899;
+        --primary-blue: #3b82f6;
+        --light-pink: #fdf2f8;
+        --light-blue: #eff6ff;
+        --dark-pink: #db2777;
+        --dark-blue: #1d4ed8;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        scroll-behavior: smooth;
+      }
+
+      .gradient-bg {
+        background: linear-gradient(
+          135deg,
+          var(--primary-pink) 0%,
+          var(--primary-blue) 100%
+        );
+      }
+
+      .gradient-text {
+        background: linear-gradient(
+          135deg,
+          var(--primary-pink) 0%,
+          var(--primary-blue) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .pink-gradient-bg {
+        background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+      }
+
+      .blue-gradient-bg {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      }
+
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--dark-pink) 0%,
+          var(--dark-blue) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Floating animation for background icons */
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.8;
+        }
+        50% {
+          transform: translateY(-15px) rotate(10deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.8;
+        }
+      }
+
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      /* Custom animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .pulse-animation {
+        animation: pulse 2s infinite;
+      }
+
+      /* Loading animation */
+      .loading-bar {
+        height: 4px;
+        width: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--primary-pink),
+          var(--primary-blue)
+        );
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+      }
+
+      /* Navigation */
+      .nav-scrolled {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-divider {
+        height: 4px;
+        width: 80px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-pink),
+          var(--primary-blue)
+        );
+        border-radius: 2px;
+        margin: 0 auto;
+      }
+
+      .curved-section {
+        border-radius: 0 0 50% 50% / 0 0 30px 30px;
+      }
+
+      .blob {
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      }
+
+      .testimonial-card {
+        background: linear-gradient(145deg, #ffffff, #f0f0f0);
+        box-shadow: 10px 10px 20px #d9d9d9, -10px -10px 20px #ffffff;
+      }
+
+      /* Gallery Styles */
+      .gallery-img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+        transition: transform 0.5s ease;
+      }
+
+      .gallery-item:hover .gallery-img {
+        transform: scale(1.05);
+      }
+
+      .blue-gradient-bg {
+        background: linear-gradient(135deg, #f0f9ff 0%, #fdf2f8 100%);
+      }
+      
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #db2777 0%, #1d4ed8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .group:hover .stat-number {
+        background: linear-gradient(135deg, #ec4899 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Floating animation for bubbles */
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .stat-number {
+          font-size: 2rem;
+        }
+        
+        .gallery-img {
+          height: 220px;
+        }
+        
+        .curved-section {
+          border-radius: 0 0 30% 30% / 0 0 20px 20px;
+        }
+        
+        body {
+          margin-top: 100px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .stat-number {
+          font-size: 1.75rem;
+        }
+        
+        .gallery-img {
+          height: 220px;
+        }
+        
+        /* Hide floating SVGs on very small screens */
+        .absolute.animate-float {
+          display: none;
+        }
+      }
+
+      /* Responsive typography */
+      h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+      }
+      
+      h2 {
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+      }
+      
+      p {
+        font-size: clamp(0.875rem, 2vw, 1rem);
+      }
+
+      /* Gallery Modal Styles */
+      .gallery-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        padding: 20px;
+      }
+
+      .gallery-modal-overlay.active {
+        display: flex;
+      }
+
+      .gallery-modal-content {
+        max-width: 90%;
+        max-height: 90vh;
+        position: relative;
+      }
+
+      .gallery-modal-image {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+        border-radius: 8px;
+      }
+
+      .gallery-modal-caption {
+        color: white;
+        text-align: center;
+        margin-top: 15px;
+        font-size: 1.2rem;
+      }
+
+      .gallery-modal-close {
+        position: absolute;
+        top: -40px;
+        right: 0;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 5px;
+      }
+
+      .gallery-modal-close:hover {
+        color: #ec4899;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <div id="header-placeholder"></div>
+    <!-- Loading Bar -->
+    <div class="loading-bar" id="loadingBar"></div>
+
+    <!-- Back Arrow - Hidden on mobile, visible on tablet and up -->
+    <a href="home.html" class="hidden md:flex fixed top-36 left-4 md:left-10 z-50 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-pink-50 transition-all duration-300 hover:scale-110 group">
+      <i class="fas fa-arrow-left text-pink-500 text-lg md:text-xl group-hover:text-pink-600"></i>
+    </a>
+
+    <!-- Mobile Back Button -->
+    <a href="home.html" class="md:hidden fixed top-64 left-4 z-50 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition-all duration-300">
+      <i class="fas fa-arrow-left text-pink-500"></i>
+    </a>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-16 md:pt-24 pb-12 md:pb-16 lg:pt-32 lg:pb-24 pink-gradient-bg curved-section relative overflow-hidden">
+      <!-- Floating SVG Elements - Hidden on mobile -->
+      <div class="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
+        <svg class="absolute animate-float" style="top:10%; left:5%; width:40px; height:40px; animation-delay: 0s;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="#ec4899" fill-opacity="0.3"/>
+        </svg>
+        <svg class="absolute animate-float" style="top:80%; left:10%; width:30px; height:30px; animation-delay: 1s;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C15.87 2 19 5.13 19 9C19 14.25 12 22 12 22C12 22 5 14.25 5 9C5 5.13 8.13 2 12 2ZM12 11.5C13.38 11.5 14.5 10.38 14.5 9C14.5 7.62 13.38 6.5 12 6.5C10.62 6.5 9.5 7.62 9.5 9C9.5 10.38 10.62 11.5 12 11.5Z" fill="#3b82f6" fill-opacity="0.3"/>
+        </svg>
+        <svg class="absolute animate-float" style="top:20%; right:15%; width:50px; height:50px; animation-delay: 2s;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 11H7V13H9V11ZM13 11H11V13H13V11ZM17 11H15V13H17V11ZM19 4H18V2H16V4H8V2H6V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V9H19V20Z" fill="#ec4899" fill-opacity="0.3"/>
+        </svg>
+      </div>
+
+      <div class="container mx-auto px-4 md:px-6 relative z-10">
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2 mb-8 md:mb-0" data-aos="fade-right">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif font-semibold mb-4 md:mb-6 text-center md:text-left">
+              <span class="text-gray-800">Expert Care for</span>
+              <span class="block gradient-text">Women's Health</span>
+            </h1>
+            <p class="text-base md:text-lg lg:text-xl text-gray-600 font-serif mb-6 md:mb-8 leading-relaxed text-center md:text-left">
+              Dr. Alok Gandhi specializes in maternal healthcare, infertility,
+              and high-risk pregnancies with over 8 years of dedicated practice.
+            </p>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
+              <a href="#gallery" class="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-6 py-3 md:px-8 md:py-3 rounded-full shadow-lg transition-all transform hover:-translate-y-1 text-center text-sm md:text-base">
+                View Gallery
+              </a>
+              <a href="#about" class="border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white font-semibold px-6 py-3 md:px-8 md:py-3 rounded-full transition-all transform hover:-translate-y-1 text-center text-sm md:text-base">
+                Learn More
+              </a>
+            </div>
+          </div>
+          <div class="md:w-1/2 flex justify-center mt-8 md:mt-0" data-aos="fade-left" data-aos-delay="200">
+            <!-- Image placeholder -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-8 md:py-12 relative overflow-hidden" data-aos="fade-up">
+      <div class="absolute inset-0">
+        <!-- Background elements -->
+        <div class="absolute top-5 left-5 w-8 h-8 md:w-12 md:h-12 bg-pink-500 rounded-full blur-lg opacity-20"></div>
+        <div class="absolute bottom-5 right-5 w-10 h-10 md:w-14 md:h-14 bg-blue-500 rounded-full blur-lg opacity-20"></div>
+      </div>
+
+      <div class="container mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-8 md:mb-10" data-aos="fade-down">
+          <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold font-serif text-gray-800 mb-2 md:mb-3">Our Achievements</h2>
+          <p class="text-gray-600 text-base md:text-lg">Providing expert care and building happy families over the years</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <!-- Years Experience Card -->
+          <div class="group p-4 md:p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-white/50 transform transition-all duration-500 hover:scale-105 hover:shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-blue-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+            <div class="absolute inset-[1px] bg-white rounded-xl -z-10"></div>
+            
+            <div class="w-12 h-12 md:w-16 md:h-16 gradient-bg rounded-xl flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:scale-110 transition-transform duration-500 shadow-md">
+              <i class="fas fa-calendar-alt text-white text-base md:text-xl"></i>
+            </div>
+            
+            <div class="text-center">
+              <div class="stat-number text-2xl md:text-3xl font-bold mb-1 md:mb-2 group-hover:scale-110 transition-transform duration-300">8+</div>
+              <p class="text-gray-600 font-medium text-xs md:text-sm">Years Experience</p>
+            </div>
+          </div>
+
+          <!-- Successful Deliveries Card -->
+          <div class="group p-4 md:p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-white/50 transform transition-all duration-500 hover:scale-105 hover:shadow-lg relative overflow-hidden" data-aos-delay="100">
+            <div class="w-12 h-12 md:w-16 md:h-16 gradient-bg rounded-xl flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:scale-110 transition-transform duration-500 shadow-md">
+              <i class="fas fa-baby text-white text-base md:text-xl"></i>
+            </div>
+            
+            <div class="text-center">
+              <div class="stat-number text-2xl md:text-3xl font-bold mb-1 md:mb-2 group-hover:scale-110 transition-transform duration-300">10,000+</div>
+              <p class="text-gray-600 font-medium text-xs md:text-sm">Successful Deliveries</p>
+            </div>
+          </div>
+
+          <!-- Happy Families Card -->
+          <div class="group p-4 md:p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-white/50 transform transition-all duration-500 hover:scale-105 hover:shadow-lg relative overflow-hidden" data-aos-delay="200">
+            <div class="w-12 h-12 md:w-16 md:h-16 gradient-bg rounded-xl flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:scale-110 transition-transform duration-500 shadow-md">
+              <i class="fas fa-smile text-white text-base md:text-xl"></i>
+            </div>
+            
+            <div class="text-center">
+              <div class="stat-number text-2xl md:text-3xl font-bold mb-1 md:mb-2 group-hover:scale-110 transition-transform duration-300">1000+</div>
+              <p class="text-gray-600 font-medium text-xs md:text-sm">Happy Families</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+<section id="about" class="py-12 md:py-16 bg-white">
+  <div class="container mx-auto px-4 md:px-6">
+    <h2 class="text-2xl md:text-3xl font-bold font-serif text-center mb-4 text-gray-800" data-aos="fade-down">
+      About Dr. Gandhi
+    </h2>
+    <div class="section-divider mb-8 md:mb-12"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+      <!-- Left Column - Dr. Alok Gandhi -->
+      <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+        <div class="relative inline-block">
+          <div class="w-48 h-48 md:w-64 md:h-64 mx-auto rounded-full overflow-hidden border-4 md:border-8 border-blue-100 shadow-xl">
+            <img src="./Images/IMG/AK.jpg" alt="Dr. Alok Gandhi" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -bottom-2 md:-bottom-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-1 md:px-6 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-lg whitespace-nowrap">
+            Dr. Alok Gandhi
+          </div>
+        </div>
+        <div class="mt-6 md:mt-10">
+          <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-4">Specialization – Infertility | High-Risk Pregnancies | Complicated Deliveries | Laparoscopy | Sonography</h3>
+          <p class="text-gray-600 leading-relaxed max-w-md mx-auto text-sm md:text-base">
+            Dr. Alok Gandhi is committed to delivering compassionate, patient-centered care combined with clinical excellence. He specializes in advanced obstetric and gynecological procedures, including laparoscopy and sonography, ensuring accurate diagnosis and optimal outcomes.
+          </p>
+          
+          <!-- See More Button for Dr. Alok -->
+          <button onclick="openOverlay('alok')" class="mt-4 md:mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition duration-300 ease-in-out transform hover:scale-105 text-sm md:text-base">
+            See More
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column - Dr. Shilpa Ghodke Gandhi -->
+      <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+        <div class="relative inline-block">
+          <div class="w-48 h-48 md:w-64 md:h-64 mx-auto rounded-full overflow-hidden border-4 md:border-8 border-blue-100 shadow-xl">
+            <img src="./Images/IMG/AK2.jpg" alt="Dr. Shilpa Ghodke Gandhi" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -bottom-2 md:-bottom-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-1 md:px-6 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-lg whitespace-nowrap">
+            Dr. Shilpa Ghodke Gandhi
+          </div>
+        </div>
+        <div class="mt-6 md:mt-10">
+          <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-4">Consultant Surgeon – Kanakvandana Maternity & Surgical Hospital</h3>
+          <p class="text-gray-600 leading-relaxed max-w-md mx-auto text-sm md:text-base">
+            Dr. Shilpa Ghodke Gandhi is a highly skilled and compassionate Consultant Surgeon at Kanakvandana Maternity & Surgical Hospital, Phaltan. With over 9 years of surgical experience, including 5 years in government service and 4 years at Kanakvandana Hospital, she has built a reputation for delivering precise, patient-centered, and ethical medical care.
+          </p>
+          
+          <!-- See More Button for Dr. Shilpa -->
+          <button onclick="openOverlay('shilpa')" class="mt-4 md:mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition duration-300 ease-in-out transform hover:scale-105 text-sm md:text-base">
+            See More
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Overlay for Dr. Alok Gandhi -->
+<div id="alokOverlay" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden justify-center items-center p-4 mt-16">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto relative">
+    <!-- Close Button -->
+    <button onclick="closeOverlay('alok')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl z-10">
+      &times;
+    </button>
+    
+    <!-- Overlay Content -->
+    <div class="p-6 md:p-8">
+      <!-- Doctor Image -->
+      <div class="w-40 h-40 md:w-48 md:h-48 mx-auto rounded-full overflow-hidden border-4 border-blue-100 shadow-xl mb-6">
+        <img src="./Images/IMG/AK.jpg" alt="Dr. Alok Gandhi" class="w-full h-full object-cover">
+      </div>
+      
+      <!-- Doctor Name -->
+      <div class="mb-6 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Dr. Alok Gandhi</h2>
+        <p class="text-lg md:text-xl text-blue-600 font-semibold">Specialization – Infertility | High-Risk Pregnancies | Complicated Deliveries | Laparoscopy | Sonography</p>
+      </div>
+
+      <div class="mb-6 text-start">
+        <h2 class="text-xl md:text-xl font-semibold text-gray-800 mb-2">Qualifications:</h2>
+        <p class="text-md md:text-md text-blue-600 font-semibold">MBBS | DGO (Obstetrics & Gynecology)</p>
+        <p class="text-md md:text-md text-blue-600 font-semibold">world's association of laproscopic surgeon</p>
+      </div>
+
+      <div class="mb-6 text-start">
+        <h2 class="text-xl md:text-xl font-semibold text-gray-800 mb-2">Experience:</h2>
+        <p class="text-md md:text-md text-blue-600 font-semibold">Over 8 years of dedicated practice in maternal and reproductive healthcare.</p>
+        <p class="text-md md:text-md text-blue-600 font-semibold">Extensive expertise in managing high-risk pregnancies and complicated deliveries.</p>
+      </div>
+      
+      <!-- Additional Content for Dr. Alok -->
+      <div class="space-y-4 text-gray-700">
+        <h2 class="text-xl md:text-xl font-semibold text-gray-800 mb-2">About Dr. Gandhi:</h2>
+        <p class="leading-relaxed">
+          Dr. Alok Gandhi is committed to delivering compassionate, patient-centered care combined with clinical excellence. He specializes in advanced obstetric and gynecological procedures, including laparoscopy and sonography, ensuring accurate diagnosis and optimal outcomes.
+        </p>
+
+        <p class="leading-relaxed">
+          He actively participates in seminars, workshops, and medical conferences to stay updated with the latest advancements in reproductive medicine. Dr. Gandhi's approach emphasizes evidence-based practice, personalized care, and holistic support, helping patients navigate even the most complex pregnancies with confidence and safety.
+        </p>
+        
+        <h4 class="text-xl font-bold text-gray-800 mt-6 mb-3">Key Achievements:</h4>
+        <ul class="list-disc pl-5 space-y-2">
+          <li>Performed over 10,000+ deliveries, including high-risk, complicated, cesarean, vaginal, forceps, vacuum-assisted, preterm, and post-date deliveries.</li>
+          <li>Recipient of MyFm Sangli's Award for exceptional contributions in infertility management.</li>
+        </ul>
+        
+       <h4 class="text-xl font-bold text-gray-800 mt-6 mb-3">Professional Membership:</h4>
+        <p class="leading-relaxed">Indian Medical Association (IMA)</p>
+         <p class="leading-relaxed">Robotic and FRAT</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay for Dr. Shilpa Ghodke Gandhi -->
+<div id="shilpaOverlay" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden justify-center items-center p-4 mt-16">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto relative">
+    <!-- Close Button -->
+    <button onclick="closeOverlay('shilpa')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl z-10">
+      &times;
+    </button>
+    
+    <!-- Overlay Content -->
+    <div class="p-6 md:p-8">
+      <!-- Doctor Image -->
+      <div class="w-40 h-40 md:w-48 md:h-48 mx-auto rounded-full overflow-hidden border-4 border-blue-100 shadow-xl mb-6">
+        <img src="./Images/IMG/AK2.jpg" alt="Dr. Shilpa Ghodke Gandhi" class="w-full h-full object-cover">
+      </div>
+      
+      <!-- Doctor Name -->
+      <div class="mb-6 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Dr. Shilpa Ghodke Gandhi</h2>
+        <p class="text-lg md:text-xl text-blue-600 font-semibold">Consultant Surgeon</p>
+        <p class="text-gray-600">Kanakvandana Maternity & Surgical Hospital, Phaltan</p>
+      </div>
+      
+      <!-- Additional Content for Dr. Shilpa -->
+      <div class="space-y-4 text-gray-700">
+        <p class="leading-relaxed">
+          As the only female surgeon in the Phaltan area, Dr. Shilpa stands as an inspiring example of dedication and excellence in a field often dominated by men. Her empathetic nature and evidence-based approach have earned her the trust of countless patients and families.
+        </p>
+        
+        <h4 class="text-xl font-bold text-gray-800 mt-6 mb-3">Specializations:</h4>
+        <ul class="list-disc pl-5 space-y-2">
+          <li>Anorectal Diseases (Fistula-in-ano, Piles, Fissures)</li>
+          <li>Non-surgical Treatment of Kidney Stones</li>
+          <li>Laser and Cosmetic Surgery</li>
+          <li>Garbhsanskar Coaching for Expecting Parents</li>
+          <li>Therapeutic Yoga for PCOS, Infertility, and Pregnancy</li>
+        </ul>
+        
+        <p class="leading-relaxed">
+          Dr. Shilpa is best known for treating the root cause of ailments rather than rushing into surgical interventions. She has extensive experience in managing anorectal diseases such as fistula-in-ano, piles, and fissures, with a strong focus on avoiding unnecessary surgeries. She also specializes in non-surgical treatment of kidney stones and is trained in laser and cosmetic surgery, offering modern, minimally invasive options to her patients.
+        </p>
+        
+        <p class="leading-relaxed">
+          A believer in integrated medicine, Dr. Shilpa combines medical science with holistic healing. As a certified Garbhsanskar Coach, she guides expecting parents on prenatal practices that support the baby's mental and physical development in the womb. Her expertise in therapeutic yoga for PCOS, infertility, and pregnancy helps women achieve balance, strength, and wellness naturally. She also conducts personal yoga sessions for couples facing infertility, promoting physical and emotional harmony.
+        </p>
+        
+        <h4 class="text-xl font-bold text-gray-800 mt-6 mb-3">Vision:</h4>
+        <p class="leading-relaxed">
+          To avoid unnecessary surgeries by focusing on holistic and preventive care, to treat every patient with empathy, and to spread awareness that surgery is not something to fear—but a solution only when truly needed.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-12 md:py-16">
+      <div class="container mx-auto px-4 md:px-6">
+        <!-- Award Ceremony Section -->
+        <div class="mb-12 md:mb-16">
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-center mb-4 text-gray-800" data-aos="fade-down">
+            Award Ceremony
+          </h2>
+          <div class="section-divider mb-8 md:mb-12"></div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+            <!-- Gallery Items - Responsive grid -->
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/IMG-20251223-WA0006.jpg', 'Award Ceremony')">
+              <img src="./Images/GoodNeews/IMG-20251223-WA0006.jpg" alt="Ultrasound Scan" class="gallery-img w-full h-64 md:h-64 lg:h-56 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/awards11.jpeg', 'Award Ceremony')">
+              <img src="./Images/GoodNeews/awards11.jpeg" alt="Laparoscopy Procedure" class="gallery-img w-full h-64 md:h-64 lg:h-56 rounded-lg shadow-md object-contain">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/IMG-20251223-WA0010.jpg', 'Award Ceremony')">
+              <img src="./Images/GoodNeews/IMG-20251223-WA0010.jpg" alt="Delivery Room" class="gallery-img w-full h-64 md:h-64 lg:h-56 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/IMG-20251223-WA0011.jpg', 'Award Ceremony')">
+              <img src="./Images/GoodNeews/IMG-20251223-WA0011.jpg" alt="Infertility Consultation" class="gallery-img w-full h-64 md:h-64 lg:h-56 rounded-lg shadow-md">
+            </div>
+          </div>
+        </div>
+
+        <!-- Happy Families Section -->
+        <div class="mb-12 md:mb-16">
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-center mb-4 text-gray-800" data-aos="fade-down">
+            Happy Families after Delivery
+          </h2>
+          <div class="section-divider mb-8 md:mb-12"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/happy2.jpeg', 'Happy Family')">
+              <img src="./Images/GoodNeews/happy2.jpeg" alt="Happy Family 1" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/happy3.jpeg', 'Happy Family')">
+              <img src="./Images/GoodNeews/happy3.jpeg" alt="Happy Family 2" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/happy1.jpeg', 'Happy Family')">
+              <img src="./Images/GoodNeews/happy1.jpeg" alt="Happy Family 3" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/happ4.jpeg', 'Happy Family')">
+              <img src="./Images/GoodNeews/happ4.jpeg" alt="Happy Family 4" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+          </div>
+        </div>
+
+        <!-- Camp Section -->
+        <div class="mb-12 md:mb-16">
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-center mb-4 text-gray-800" data-aos="fade-down">
+            Camp
+          </h2>
+          <div class="section-divider mb-8 md:mb-12"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/IMG-20251223-WA0013.jpg', 'Medical Camp')">
+              <img src="./Images/GoodNeews/IMG-20251223-WA0013.jpg" alt="Camp 1" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/IMG-20251223-WA0014.jpg', 'Medical Camp')">
+              <img src="./Images/GoodNeews/IMG-20251223-WA0014.jpg" alt="Camp 2" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/IMG-20251223-WA0017.jpg', 'Medical Camp')">
+              <img src="./Images/GoodNeews/IMG-20251223-WA0017.jpg" alt="Camp 3" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/IMG-20251223-WA0022.jpg', 'Medical Camp')">
+              <img src="./Images/GoodNeews/IMG-20251223-WA0022.jpg" alt="Camp 4" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+          </div>
+        </div>
+
+        <!-- Onco/Cancer Surgeries -->
+        <div class="mb-12 md:mb-16">
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-center mb-4 text-gray-800" data-aos="fade-down">
+            Onco/Cancer Surgeries
+          </h2>
+          <div class="section-divider mb-8 md:mb-12"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/onco1.jpeg', 'Onco/Cancer Surgery')">
+              <img src="./Images/GoodNeews/onco1.jpeg" alt="Onco Surgery 1" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/onco11.jpeg', 'Onco/Cancer Surgery')">
+              <img src="./Images/GoodNeews/onco11.jpeg" alt="Onco Surgery 2" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/onco3.jpeg', 'Onco/Cancer Surgery')">
+              <img src="./Images/GoodNeews/onco3.jpeg" alt="Onco Surgery 3" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+            <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/onco4.jpeg', 'Onco/Cancer Surgery')">
+              <img src="./Images/GoodNeews/onco4.jpeg" alt="Onco Surgery 4" class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md">
+            </div>
+          </div>
+        </div>
+
+        <!-- High Risk Deliveries -->
+<div class="mb-12 md:mb-16">
+  <h2 class="text-2xl md:text-3xl font-serif font-bold text-center mb-4 text-gray-800" data-aos="fade-down">
+    High Risk and Complicated Deliveries
+  </h2>
+  <div class="section-divider mb-8 md:mb-12"></div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+    <!-- Image 1 -->
+    <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/risk1.jpeg', 'High Risk Delivery')">
+      <div class="relative">
+        <img 
+          src="./Images/GoodNeews/risk1.jpeg" 
+          alt="High Risk 1" 
+          class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md blur-lg"
+          loading="lazy"
+        >
+        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+          <span class="text-white font-semibold bg-blue-600 bg-opacity-80 px-4 py-2 rounded-lg">
+            Click to View
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image 2 -->
+    <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/risk2.jpeg', 'High Risk Delivery')">
+      <div class="relative">
+        <img 
+          src="./Images/GoodNeews/risk2.jpeg" 
+          alt="High Risk 2" 
+          class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md blur-lg"
+          loading="lazy"
+        >
+        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+          <span class="text-white font-semibold bg-blue-600 bg-opacity-80 px-4 py-2 rounded-lg">
+            Click to View
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image 3 -->
+    <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/risk3.jpeg', 'High Risk Delivery')">
+      <div class="relative">
+        <img 
+          src="./Images/GoodNeews/risk3.jpeg" 
+          alt="High Risk 3" 
+          class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md blur-lg"
+          loading="lazy"
+        >
+        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+          <span class="text-white font-semibold bg-blue-600 bg-opacity-80 px-4 py-2 rounded-lg">
+            Click to View
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image 4 -->
+    <div class="gallery-item cursor-pointer" onclick="openGalleryModal('./Images/GoodNeews/risk4.jpeg', 'High Risk Delivery')">
+      <div class="relative">
+        <img 
+          src="./Images/GoodNeews/risk4.jpeg" 
+          alt="High Risk 4" 
+          class="gallery-img w-full h-64 md:h-64 rounded-lg shadow-md blur-lg"
+          loading="lazy"
+        >
+        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+          <span class="text-white font-semibold bg-blue-600 bg-opacity-80 px-4 py-2 rounded-lg">
+            Click to View
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gallery Modal -->
+<div id="galleryModal" class="gallery-modal-overlay">
+  <div class="gallery-modal-content">
+    <button class="gallery-modal-close" onclick="closeGalleryModal()">&times;</button>
+    <img id="galleryModalImage" src="" alt="" class="gallery-modal-image">
+    <div id="galleryModalCaption" class="gallery-modal-caption"></div>
+  </div>
+</div>
+      </div>
+    </section>
+
+    <!-- Qualifications Section -->
+    <section id="qualifications" class="py-12 md:py-16 blue-gradient-bg">
+      <div class="container mx-auto px-4 md:px-6">
+        <h2 class="text-2xl md:text-3xl font-serif font-bold text-center mb-4 text-gray-800" data-aos="fade-down">
+          Qualifications & Credentials
+        </h2>
+        <div class="section-divider mb-8 md:mb-12"></div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 text-center transform transition-all duration-300 hover:scale-105" data-aos="flip-left">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <i class="fas fa-graduation-cap text-pink-600 text-xl md:text-2xl"></i>
+            </div>
+            <p class="text-lg md:text-xl font-bold text-gray-800">MBBS</p>
+            <p class="text-gray-600 text-xs md:text-sm mt-1">
+              Bachelor of Medicine, Bachelor of Surgery.
+            </p>
+          </div>
+          <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 text-center transform transition-all duration-300 hover:scale-105" data-aos="flip-left" data-aos-delay="100">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <i class="fas fa-user-md text-blue-600 text-xl md:text-2xl"></i>
+            </div>
+            <p class="text-lg md:text-xl font-bold text-gray-800">DGO</p>
+            <p class="text-gray-600 text-xs md:text-sm mt-1">
+              Diploma in Obstetrics & Gynecology.
+            </p>
+          </div>
+          <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 text-center transform transition-all duration-300 hover:scale-105" data-aos="flip-left" data-aos-delay="200">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <i class="fas fa-hand-holding-medical text-pink-600 text-xl md:text-2xl"></i>
+            </div>
+            <p class="text-lg md:text-xl font-bold text-gray-800">IMA</p>
+            <p class="text-gray-600 text-xs md:text-sm mt-1">
+              Indian Medical Association Membership.
+            </p>
+          </div>
+          <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 text-center transform transition-all duration-300 hover:scale-105" data-aos="flip-left" data-aos-delay="300">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <i class="fas fa-trophy text-yellow-600 text-xl md:text-2xl"></i>
+            </div>
+            <p class="text-lg md:text-xl font-bold text-gray-800">Award</p>
+            <p class="text-gray-600 text-xs md:text-sm mt-1">
+              MyFm Sangli Excellence Award in Infertility Management.
+            </p>
+          </div>
+          
+          
+          <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 text-center transform transition-all duration-300 hover:scale-105" data-aos="flip-left" data-aos-delay="300">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+             <i class="fas fa-syringe text-yellow-600 text-xl md:text-2xl"></i>
+ 
+            </div>
+            <p class="text-lg md:text-xl font-bold text-gray-800">DMAS</p>
+            <p class="text-gray-600 text-xs md:text-sm mt-1">
+              Diploma in minimal access surgery.
+            </p>
+          </div>
+          
+          
+          <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 text-center transform transition-all duration-300 hover:scale-105" data-aos="flip-left" data-aos-delay="300">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-pink-100  rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+               <i class="fas fa-hospital-alt text-pink-600 text-xl md:text-2xl"></i>
+            </div>
+            <p class="text-lg md:text-xl font-bold text-gray-800">FMAS</p>
+            <p class="text-gray-600 text-xs md:text-sm mt-1">
+              Fellowship in minimal access surgery.
+            </p>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- Placeholder for Footer -->
+    <div id="footer-placeholder"></div>
+
+    <script>
+      // Initialize AOS
+      document.addEventListener("DOMContentLoaded", function () {
+        AOS.init({
+          duration: 800,
+          easing: "ease-in-out",
+          once: true,
+          mirror: false,
+          offset: 100,
+          delay: 100
+        });
+
+        // Loading bar animation
+        const loadingBar = document.getElementById("loadingBar");
+        window.addEventListener("load", () => {
+          loadingBar.style.transform = "scaleX(1)";
+          setTimeout(() => {
+            loadingBar.style.opacity = "0";
+          }, 500);
+        });
+
+        // Load header and footer
+        function loadHeader() {
+          fetch('/Header/header.html')
+            .then(r => {
+              if (!r.ok) throw r;
+              return r.text();
+            })
+            .then(html => {
+              document.getElementById('header-placeholder').innerHTML = html;
+              const script = document.createElement('script');
+              script.src = '/Header/header.js?v=1.1.3';
+              document.body.appendChild(script);
+            })
+            .catch(err => console.error('Header load failed:', err));
+        }
+
+        function loadFooter() {
+          fetch('/Footer/footer.html')
+            .then(r => {
+              if (!r.ok) throw r;
+              return r.text();
+            })
+            .then(html => {
+              document.getElementById('footer-placeholder').innerHTML = html;
+            })
+            .catch(err => console.error('Footer load failed:', err));
+        }
+
+        loadHeader();
+        loadFooter();
+      });
+
+      // Responsive font size adjustment
+      function adjustFontSizes() {
+        const screenWidth = window.innerWidth;
+        const html = document.documentElement;
+        
+        if (screenWidth < 640) {
+          html.style.fontSize = '14px';
+        } else if (screenWidth < 768) {
+          html.style.fontSize = '15px';
+        } else {
+          html.style.fontSize = '16px';
+        }
+      }
+
+      // Run on load and resize
+      window.addEventListener('load', adjustFontSizes);
+      window.addEventListener('resize', adjustFontSizes);
+    </script>
+    
+    <script>
+      // ===== SCROLL TO TOP ON PAGE REFRESH =====
+      document.addEventListener('DOMContentLoaded', function() {
+          // Scroll to top immediately when page loads
+          window.scrollTo(0, 0);
+          
+          // Handle browser back/forward navigation
+          window.onpageshow = function(event) {
+              if (event.persisted) {
+                  window.scrollTo(0, 0);
+              }
+          };
+          
+          // Also scroll to top on page load (redundancy for safety)
+          window.onload = function() {
+              setTimeout(function() {
+                  window.scrollTo({
+                      top: 0,
+                      left: 0,
+                      behavior: 'instant'
+                  });
+              }, 0);
+          };
+      });
+
+      // Force scroll to top even before DOM is fully loaded
+      if (history.scrollRestoration) {
+          history.scrollRestoration = 'manual';
+      } else {
+          window.onbeforeunload = function() {
+              window.scrollTo(0, 0);
+          };
+      }
+    </script>
+    
+    <!-- JavaScript for Overlay -->
+    <script>
+      function openOverlay(doctor) {
+        if (doctor === 'alok') {
+          document.getElementById('alokOverlay').classList.remove('hidden');
+          document.getElementById('alokOverlay').classList.add('flex');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+        } else if (doctor === 'shilpa') {
+          document.getElementById('shilpaOverlay').classList.remove('hidden');
+          document.getElementById('shilpaOverlay').classList.add('flex');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+      }
+
+      function closeOverlay(doctor) {
+        if (doctor === 'alok') {
+          document.getElementById('alokOverlay').classList.add('hidden');
+          document.getElementById('alokOverlay').classList.remove('flex');
+        } else if (doctor === 'shilpa') {
+          document.getElementById('shilpaOverlay').classList.add('hidden');
+          document.getElementById('shilpaOverlay').classList.remove('flex');
+        }
+        document.body.style.overflow = 'auto'; // Re-enable scrolling
+      }
+
+      // Close overlay when clicking outside content
+      document.addEventListener('DOMContentLoaded', function() {
+        const overlays = ['alokOverlay', 'shilpaOverlay'];
+        
+        overlays.forEach(overlayId => {
+          const overlay = document.getElementById(overlayId);
+          if (overlay) {
+            overlay.addEventListener('click', function(e) {
+              if (e.target === overlay) {
+                const doctor = overlayId === 'alokOverlay' ? 'alok' : 'shilpa';
+                closeOverlay(doctor);
+              }
+            });
+          }
+        });
+      });
+
+      // Gallery Modal Functions
+      function openGalleryModal(imageSrc, caption) {
+        const modal = document.getElementById('galleryModal');
+        const modalImage = document.getElementById('galleryModalImage');
+        const modalCaption = document.getElementById('galleryModalCaption');
+        
+        modalImage.src = imageSrc;
+        modalImage.alt = caption;
+        modalCaption.textContent = caption;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+      }
+
+      function closeGalleryModal() {
+        const modal = document.getElementById('galleryModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto'; // Restore scrolling
+      }
+
+      // Close gallery modal when clicking outside the image
+      document.getElementById('galleryModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeGalleryModal();
+        }
+      });
+
+      // Close gallery modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeGalleryModal();
+        }
+      });
+    </script>
+  </body>
+</html>

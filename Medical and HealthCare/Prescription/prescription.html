@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prescription Medicines - Pharmacy Kunash</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../Header/header.css">
+  <link rel="stylesheet" href="../../Footer/footer.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+    /* Price Slider Styling */
+    .slider-wrapper {
+      position: relative;
+      height: 6px;
+      border-radius: 4px;
+      margin: 40px 10px 30px;
+    }
+
+    .slider-fill {
+      position: absolute;
+      height: 100%;
+      background: #715A5A;
+      border-radius: 2px;
+      top: 0;
+    } 
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      margin: 0;
+      pointer-events: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #715A5A;
+      border: 4px solid white;
+      cursor: pointer;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(190, 190, 190, 0.4);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #715A5A;
+      border: 4px solid white;
+      cursor: pointer;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(236, 211, 72, 0.4);
+    }
+
+    .price-values {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #C2A68C;
+      font-size: 14px;
+      padding: 0 10px;
+    }
+
+    @media (max-width: 1023px) {
+      body { padding-bottom: 90px !important; }
+    }
+
+    /* Product Card Styling */
+    .product-card {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .out-of-stock {
+      opacity: 0.7;
+      filter: grayscale(30%);
+    }
+    
+    .stock-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 10;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .in-stock-badge {
+      background: #10b981;
+      color: white;
+    }
+    
+    .out-of-stock-badge {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* Wishlist Icon Styling (same as ref code) */
+    .wishlist-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 20;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .wishlist-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .wishlist-btn i {
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+
+    .wishlist-btn.active i {
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body class="bg-[#F3F2EC]">
+
+  <div id="header-placeholder"></div>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Banner Section -->
+<section class="relative w-full 
+  h-[180px] md:h-[420px]
+  mt-[14px] md:mt-12                   
+  mb-[2px] md:mb-8                     
+  mx-auto
+  max-w-[calc(90%+16px)] md:max-w-6xl
+  rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-r from-blue-200 to-pink-200">
+  
+  <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 sm:px-6 md:px-8">
+    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">Prescription Medicines</h2>
+    <p class="mt-2 text-sm sm:text-base md:text-lg text-gray-700">Upload your prescription for safe medication</p>
+  </div>
+</section>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-8 mt-1 max-w-7xl mx-auto px-4 mb-8">
+    <!-- Desktop Sidebar Filters -->
+    <aside id="filterSidebar" class="hidden lg:block lg:w-70 bg-[#DCDCDC] rounded-lg shadow-xl border-pink-500 p-6 sticky top-24 h-fit">
+      <form id="desktopFilterForm" class="space-y-6">
+        <!-- Categories -->
+        <div class="border-b border-pink-100 pb-7">
+          <div class="flex items-center justify-between cursor-pointer select-none">
+            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Categories</h3>
+          </div>
+          <div id="desktopCategoryContainer" class="mt-3 space-y-3">
+            <!-- Categories will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Price Range Slider -->
+        <div class="price-slider-container">
+          <h4 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Price Range</h4>
+          <div class="slider-wrapper">
+            <div class="slider-fill" id="desktopFill"></div>
+            <input type="range" min="0" max="10000" value="0" id="desktopMin">
+            <input type="range" min="0" max="10000" value="10000" id="desktopMax">
+          </div>
+          <div class="price-values">
+            <span id="desktopMinVal">₹0</span>
+            <span id="desktopMaxVal">₹10,000</span>
+          </div>
+        </div>
+
+        <!-- Brands -->
+        <div class="border-b border-gray-200 pb-5">
+          <div class="flex items-center justify-between cursor-pointer select-none"
+               onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Brands</h3>
+            <i class="fas fa-chevron-down text-gray-500 transition-transform duration-200"></i>
+          </div>
+          <div id="desktopBrandContainer" class="mt-3 space-y-3 hidden">
+            <!-- Brands will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Discount -->
+        <div class="border-b border-gray-200 pb-5">
+          <div class="flex items-center justify-between cursor-pointer select-none"
+               onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Discount</h3>
+            <i class="fas fa-chevron-down text-gray-500 transition-transform duration-200"></i>
+          </div>
+          <div id="desktopDiscountContainer" class="mt-5 space-y-3 hidden">
+            <!-- Discount options will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <button type="button" id="applyDesktopFilters" class="w-full bg-[#C2A68C] hover:bg-[#C1856D] text-white font-semibold py-3.5 rounded-md transition">
+          Apply Filters
+        </button>
+         <button type="button" id="resetDesktopFilters" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3.5 rounded-md transition">
+        Reset Filters
+      </button>
+      </form>
+    </aside>
+
+    <!-- Main Products Area -->
+    <main class="flex-1">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+          <h2 id="categoryTitle" class="text-2xl font-bold text-gray-900">All Products</h2>
+          <p id="resultsCount" class="text-gray-600 mt-1">Loading products...</p>
+        </div>
+        <select id="sortSelect" class="hidden sm:block border border-gray-300 rounded-lg px-5 py-3 text-sm focus:ring-2 focus:ring-pink-500 focus:outline-none cursor-pointer">
+          <option value="default">Sort by: Featured</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Customer Rating</option>
+          <option value="newest">Newest First</option>
+        </select>
+      </div>
+
+      <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 relative">
+        <!-- Products loaded via JS -->
+        <div class="col-span-full text-center py-16">
+          <div class="inline-block w-8 h-8 border-4 border-[#715A5A] border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-gray-500 mt-2">Loading products from database...</p>
+        </div>
+      </div>
+      
+      <!-- Show More Button -->
+      <div id="showMoreContainer" class="flex justify-center mt-12">
+        <button id="showMoreBtn" class="bg-[#C2A68C] hover:bg-[#C1856D] text-white font-bold py-3 px-10 rounded-xl transition hidden">
+          Show More Products
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Bar -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex gap-3 z-50 lg:hidden shadow-2xl">
+    <button id="openSortSheet" class="flex-1 bg-blue-400 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg transition">
+      Sort
+    </button>
+    <button id="openFilterSheet" class="flex-1 bg-blue-400 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg transition">
+      Filters
+    </button>
+  </div>
+
+  <!-- Mobile Filter Sheet -->
+  <div id="filterSheet" class="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto z-50 transform translate-y-full transition-transform duration-300">
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center z-10">
+      <h3 class="text-lg font-bold">Filters</h3>
+      <button id="closeFilterSheet" class="text-2xl">&times;</button>
+    </div>
+
+    <div class="p-6 space-y-8">
+      <!-- CATEGORIES (Mobile) -->
+      <div class="border-b border-gray-200 pb-6">
+        <div class="flex items-center justify-between cursor-pointer" >
+          <h4 class="font-bold text-gray-800">Categories</h4>
+          <!--<i class="fas fa-chevron-down text-gray-500 transition-transform duration-200"></i>-->
+        </div>
+        <div id="mobileCategoryContainer" class="mt-4 space-y-3">
+          <!-- Categories will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- PRICE RANGE (Mobile) -->
+      <div class="price-slider-container">
+        <h4 class="font-semibold mb-4">Price Range</h4>
+        <div class="slider-wrapper">
+          <div class="slider-fill" id="mobileFill"></div>
+          <input type="range" min="0" max="10000" value="0" id="mobileMin">
+          <input type="range" min="0" max="10000" value="10000" id="mobileMax">
+        </div>
+        <div class="price-values">
+          <span id="mobileMinVal">₹0</span>
+          <span id="mobileMaxVal">₹10,000</span>
+        </div>
+      </div>
+
+      <!-- BRANDS (Mobile) -->
+      <div class="border-b border-gray-200 pb-6">
+        <div class="flex items-center justify-between cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+          <h4 class="font-bold text-gray-800">Brands</h4>
+          <i class="fas fa-chevron-down text-gray-500 transition-transform duration-200"></i>
+        </div>
+        <div id="mobileBrandContainer" class="mt-4 space-y-3 hidden">
+          <!-- Brands will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- DISCOUNT (Mobile) -->
+      <div class="border-b border-gray-200 pb-6">
+        <div class="flex items-center justify-between cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+          <h4 class="font-bold text-gray-800">Discount</h4>
+          <i class="fas fa-chevron-down text-gray-500 transition-transform duration-200"></i>
+        </div>
+        <div id="mobileDiscountContainer" class="mt-4 space-y-3 hidden">
+          <!-- Discount options will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Apply & Clear Buttons -->
+      <div class="flex gap-3 pt-6 border-t">
+        <button id="clearMobileFilters" class="flex-1 border border-pink-600 text-pink-600 py-3 rounded-lg font-bold">Clear All</button>
+        <button id="applyMobileFilters" class="flex-1 bg-pink-600 text-white py-3 rounded-lg font-bold">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdrop -->
+  <div id="mobileSheetBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+
+  <!-- Mobile Sort Sheet -->
+  <div id="sortSheet" class="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto z-50 transform translate-y-full transition-transform duration-300">
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+      <h3 class="text-lg font-bold">Sort By</h3>
+      <button id="closeSortSheet" class="text-2xl">&times;</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <label class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+        <input type="radio" name="mobileSort" value="default" checked class="w-5 h-5 text-pink-600">
+        <span class="ml-4 font-medium">Featured</span>
+      </label>
+      <label class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+        <input type="radio" name="mobileSort" value="price-low" class="w-5 h-5 text-pink-600">
+        <span class="ml-4 font-medium">Price: Low to High</span>
+      </label>
+      <label class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+        <input type="radio" name="mobileSort" value="price-high" class="w-5 h-5 text-pink-600">
+        <span class="ml-4 font-medium">Price: High to Low</span>
+      </label>
+      <label class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+        <input type="radio" name="mobileSort" value="rating" class="w-5 h-5 text-pink-600">
+        <span class="ml-4 font-medium">Customer Rating</span>
+      </label>
+      <label class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+        <input type="radio" name="mobileSort" value="newest" class="w-5 h-5 text-pink-600">
+        <span class="ml-4 font-medium">Newest First</span>
+      </label>
+    </div>
+    <div class="p-4 border-t bg-white sticky bottom-0">
+      <button id="applySortBtn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-lg">
+        Apply Sort
+      </button>
+    </div>
+  </div>
+
+  <!-- Upload Prescription Modal -->
+  <!--<div id="uploadModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-2">-->
+  <!--  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">-->
+  <!--    <div class="p-6 md:p-8">-->
+  <!--      <button onclick="document.getElementById('uploadModal').classList.add('hidden')" class="float-right text-2xl">&times;</button>-->
+  <!--      <div class="grid md:grid-cols-2 gap-8">-->
+  <!--        <div>-->
+  <!--          <h2 class="text-2xl font-bold mb-4">Upload Prescription</h2>-->
+  <!--          <p class="font-semibold text-red-600 mb-4" id="modalProductName"></p>-->
+  <!--          <div class="mb-4">-->
+  <!--            <label class="block text-sm font-medium text-gray-700 mb-2">-->
+  <!--              Doctor's Name <span class="text-red-500">*</span>-->
+  <!--            </label>-->
+  <!--            <input type="text" id="doctorName" placeholder="Enter doctor's name"-->
+  <!--                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">-->
+  <!--          </div>-->
+  <!--          <label class="block border-2 border-dashed border-red-300 rounded-xl p-6 text-center cursor-pointer hover:border-pink-500 transition">-->
+  <!--            <input type="file" id="prescriptionFile" accept="image/*,.pdf" class="hidden">-->
+  <!--            <svg class="w-12 h-12 mx-auto text-red-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+  <!--              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3v-11"/>-->
+  <!--            </svg>-->
+  <!--            <p class="font-medium">Click to upload prescription</p>-->
+  <!--            <p class="text-sm text-gray-500 mt-2">Supports JPG, PNG, PDF</p>-->
+  <!--          </label>-->
+  <!--          <img id="prescriptionPreviewImg" class="hidden w-full mt-4 rounded-lg border" alt="Preview">-->
+  <!--          <button id="submitPrescription" class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition">-->
+  <!--            Submit Prescription-->
+  <!--          </button>-->
+  <!--        </div>-->
+  <!--        <div class="bg-gray-50 rounded-xl p-6">-->
+  <!--          <h3 class="font-bold text-lg mb-4">How it works?</h3>-->
+  <!--          <ol class="space-y-4 text-gray-700">-->
+  <!--            <li>✓ Pharmacist verifies your prescription</li>-->
+  <!--            <li>✓ Items added to cart automatically</li>-->
+  <!--            <li>✓ Get maximum discount applied</li>-->
+  <!--            <li>✓ Choose fastest delivery slot</li>-->
+  <!--            <li>✓ Complete payment securely</li>-->
+  <!--          </ol>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--</div>-->
+  
+  
+  
+  <!-- Upload Prescription Modal -->
+<div id="uploadModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-2">
+  <div class="mt-16 bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6 md:p-8">
+      <button onclick="document.getElementById('uploadModal').classList.add('hidden')" class="float-right text-2xl">&times;</button>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h2 class="text-2xl font-bold mb-4">Upload Prescription</h2>
+          <p class="font-semibold text-red-600 mb-4" id="modalProductName"></p>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Doctor's Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="doctorName" placeholder="Enter doctor's name" required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+          </div>
+
+          <label class="block border-2 border-dashed border-red-300 rounded-xl p-6 text-center cursor-pointer hover:border-pink-500 transition">
+            <input type="file" id="prescriptionFile" accept="image/*" class="hidden">
+            <svg class="w-12 h-12 mx-auto text-red-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3v-11"/>
+            </svg>
+            <p class="font-medium">Click to upload prescription</p>
+            <p class="text-sm text-gray-500 mt-2">Only Image File Supported</p>
+          </label>
+
+
+          <img id="prescriptionPreviewImg" class="hidden w-full mt-4 rounded-lg border" alt="Preview">
+
+          <button id="submitPrescription" class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition">
+            Submit Prescription
+          </button>
+        </div>
+
+        <div class="bg-gray-50 rounded-xl p-6">
+          <h3 class="font-bold text-lg mb-4">How it works?</h3>
+          <ol class="space-y-4 text-gray-700">
+            <li>✓ Pharmacist verifies your prescription</li>
+            <li>✓ Items added to cart automatically</li>
+            <li>✓ Get maximum discount applied</li>
+            <li>✓ Choose fastest delivery slot</li>
+            <li>✓ Complete payment securely</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-black bg-opacity-70"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300 scale-95 opacity-0" id="successModalContent">
+      <div class="text-center">
+        <!-- Animated Green Tick -->
+        <div class="w-24 h-24 mx-auto mb-6">
+          <svg class="checkmark animate-draw-tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" stroke="#4CAF50" stroke-width="3"/>
+            <path class="checkmark__check" fill="none" stroke="#4CAF50" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+        </div>
+        <!-- Success Message -->
+        <h3 class="text-2xl font-bold text-gray-800 mb-3">Success!</h3>
+        <p class="text-gray-600 mb-6">Your prescription has been uploaded successfully. We will review it and contact you shortly.</p>
+        <!-- Close Button -->
+        <button id="successCloseBtn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105">
+          OK, Got It
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer placeholder -->
+  <div id="footer-placeholder"></div>
+  
+  
+  
+  <script>
+// Function to check login status and update modal accordingly
+function updatePrescriptionModalForLoginStatus() {
+    const doctorNameInput = document.getElementById('doctorName');
+    const submitBtn = document.getElementById('submitPrescription');
+    const fileInput = document.getElementById('prescriptionFile');
+
+    // Check both sessionStorage and localStorage for currentUser
+    const userDataString = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser');
+
+    if (!userDataString) {
+        // User NOT logged in
+        doctorNameInput.disabled = true;
+        doctorNameInput.placeholder = "Login required to enter doctor's name";
+        doctorNameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+
+        fileInput.disabled = true; // Optional: also disable file upload
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Login Required For Submit";
+        submitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+        submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+    } else {
+        // User IS logged in → enable everything
+        doctorNameInput.disabled = false;
+        doctorNameInput.placeholder = "Enter doctor's name";
+        doctorNameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+
+        fileInput.disabled = false;
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Prescription";
+        submitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+        submitBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+    }
+}
+
+// Run when modal is opened
+function openUploadModal() {
+    document.getElementById('uploadModal').classList.remove('hidden');
+    updatePrescriptionModalForLoginStatus(); // Update state every time modal opens
+}
+
+// Optional: Also update when storage changes (e.g., login/logout in another tab)
+window.addEventListener('storage', updatePrescriptionModalForLoginStatus);
+
+// Initial check in case modal is already open or for dynamic updates
+document.addEventListener('DOMContentLoaded', () => {
+    // If your modal is opened via some function, hook into it
+    // Or just call periodically if needed
+    updatePrescriptionModalForLoginStatus();
+});
+</script>
+  
+          <!-- // ==================== HEADER/FOOTER LOADING ====================-->
+  <script>
+    function loadHeader() {
+      fetch('/Header/header.html')
+        .then(r => { if (!r.ok) throw r; return r.text(); })
+        .then(html => {
+          document.getElementById('header-placeholder').innerHTML = html;
+          const script = document.createElement('script');
+        //  script.src = '/Header/header.js?v=1.0.9';
+        script.src = '/Header/header.js?v=1.1.3';  // ← Absolute + cache bust
+          script.onload = () => console.log('Header JS loaded');
+          document.body.appendChild(script);
+        })
+        .catch(err => console.error('Header load failed:', err));
+    }
+
+    function loadFooter() {
+      fetch('/Footer/footer.html')
+        .then(r => { if (!r.ok) throw r; return r.text(); })
+        .then(html => {
+          document.getElementById('footer-placeholder').innerHTML = html;
+        })
+        .catch(err => console.error('Footer load failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHeader();
+      loadFooter();
+    });
+  </script>
+
+ <script>
+    // ==================== BACKEND CONFIGURATION ====================
+    const API_BASE_URL = 'http://localhost:8083/api/products';
+    const WISHLIST_API_BASE = "http://localhost:8083/api/wishlist";
+    const DEBUG_MODE = true;
+
+    // ==================== PRESCRIPTION CATEGORIES ====================
+    const PRESCRIPTION_CATEGORIES = [
+      {
+        id: 'all',
+        name: 'All Categories',
+        backendSubcategories: []
+      },
+      {
+        id: 'Allergy and Fever',
+        name: 'Allergy and Fever',
+        backendSubcategories: [
+          'Allergy',
+          'Fever',
+          'Antihistamine',
+          'Antipyretic',
+          'Cold',
+          'Cough',
+          'Decongestant'
+        ]
+      },
+      {
+        id: 'Antibiotics',
+        name: 'Antibiotics',
+        backendSubcategories: [
+          'Antibiotic',
+          'Antimicrobial',
+          'Bacterial Infection',
+          'Antibacterial',
+          'Penicillin',
+          'Cephalosporin',
+          'Macrolide'
+        ]
+      },
+      {
+        id: 'Liver & Kidney Care',
+        name: 'Liver & Kidney Care',
+        backendSubcategories: [
+          'Liver',
+          'Kidney',
+          'Hepatoprotective',
+          'Renal Care',
+          'Liver Tonic',
+          'Kidney Stone',
+          'Detox'
+        ]
+      },
+      {
+        id: 'Stomach Care & Digestion',
+        name: 'Stomach Care & Digestion',
+        backendSubcategories: [
+          'Stomach',
+          'Digestion',
+          'Antacid',
+          'Antiemetic',
+          'Laxative',
+          'Antiulcer',
+          'Probiotic',
+          'Gastrointestinal'
+        ]
+      },
+      {
+        id: 'Skin Medicines',
+        name: 'Skin Medicines',
+        backendSubcategories: [
+          'Skin',
+          'Dermatological',
+          'Antifungal',
+          'Antibacterial Cream',
+          'Ointment',
+          'Cream',
+          'Lotion',
+          'Psoriasis',
+          'Eczema'
+        ]
+      }
+    ];
+
+    // ==================== GLOBAL VARIABLES ====================
+    let allProducts = [];
+    let filteredProducts = [];
+    let wishlist = []; // Now only stores { id: productId } – synced with backend
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    let currentPage = 1;
+    const pageSize = 12;
+
+    // Filter State
+    let filterState = {
+      category: 'all',
+      brand: 'all',
+      discount: 0,
+      minPrice: 0,
+      maxPrice: 10000,
+      sort: 'default'
+    };
+    
+    // ==================== RESET FILTERS FUNCTION ====================
+// ==================== RESET FILTERS FUNCTION ====================
+function resetAllFilters() {
+    console.log('Resetting all filters...');
+    
+    // Reset filter state to default values
+    filterState = {
+        category: 'all',
+        brand: 'all',
+        discount: 0,
+        minPrice: 0,
+        maxPrice: 10000,
+        sort: 'default'
+    };
+    
+    // Reset desktop category radio buttons
+    const desktopCategoryAll = document.querySelector('#desktopCategoryContainer input[value="all"]');
+    if (desktopCategoryAll) desktopCategoryAll.checked = true;
+    
+    // Reset mobile category radio buttons
+    const mobileCategoryAll = document.querySelector('#mobileCategoryContainer input[value="all"]');
+    if (mobileCategoryAll) mobileCategoryAll.checked = true;
+    
+    // Reset desktop brand radio buttons
+    const desktopBrandAll = document.querySelector('#desktopBrandContainer input[value="all"]');
+    if (desktopBrandAll) desktopBrandAll.checked = true;
+    
+    // Reset mobile brand radio buttons
+    const mobileBrandAll = document.querySelector('#mobileBrandContainer input[value="all"]');
+    if (mobileBrandAll) mobileBrandAll.checked = true;
+    
+    // Reset mobile sort radio
+    const mobileSortDefault = document.querySelector('input[name="mobileSort"][value="default"]');
+    if (mobileSortDefault) mobileSortDefault.checked = true;
+    
+    // Reset sort dropdown
+    const sortSelect = document.getElementById("sortSelect");
+    if (sortSelect) {
+        sortSelect.value = 'default';
+    }
+    
+    // Reset price sliders - use actual min/max from products or default to 0-10000
+    let minPrice = 0;
+    let maxPrice = 10000;
+    
+    if (allProducts.length > 0) {
+        const prices = allProducts.map(p => p.price).filter(p => p > 0);
+        if (prices.length > 0) {
+            minPrice = Math.min(...prices);
+            maxPrice = Math.max(...prices);
+        }
+    }
+    
+    const desktopMin = document.getElementById('desktopMin');
+    const desktopMax = document.getElementById('desktopMax');
+    const mobileMin = document.getElementById('mobileMin');
+    const mobileMax = document.getElementById('mobileMax');
+    
+    // Update min/max values for sliders
+    if (desktopMin && desktopMax) {
+        desktopMin.value = 0;
+        desktopMax.value = 10000;
+    }
+    if (mobileMin && mobileMax) {
+        mobileMin.value = 0;
+        mobileMax.value = 10000;
+    }
+    
+    // Update filter state with reset values
+    filterState.minPrice = 0;
+    filterState.maxPrice = 10000;
+    
+    // Update price display values
+    const desktopMinVal = document.getElementById('desktopMinVal');
+    const desktopMaxVal = document.getElementById('desktopMaxVal');
+    const mobileMinVal = document.getElementById('mobileMinVal');
+    const mobileMaxVal = document.getElementById('mobileMaxVal');
+    
+    if (desktopMinVal) desktopMinVal.textContent = '₹0';
+    if (desktopMaxVal) desktopMaxVal.textContent = '₹10,000';
+    if (mobileMinVal) mobileMinVal.textContent = '₹0';
+    if (mobileMaxVal) mobileMaxVal.textContent = '₹10,000';
+    
+    // Update slider fill visuals
+    const desktopFill = document.getElementById('desktopFill');
+    const mobileFill = document.getElementById('mobileFill');
+    
+    if (desktopFill) {
+        desktopFill.style.left = '0%';
+        desktopFill.style.width = '100%';
+    }
+    if (mobileFill) {
+        mobileFill.style.left = '0%';
+        mobileFill.style.width = '100%';
+    }
+    
+    // Close expanded sections
+    const desktopBrandSection = document.getElementById('desktopBrandContainer');
+    if (desktopBrandSection && !desktopBrandSection.classList.contains('hidden')) {
+        desktopBrandSection.classList.add('hidden');
+        const brandHeader = desktopBrandSection.previousElementSibling;
+        if (brandHeader) {
+            const chevron = brandHeader.querySelector('i');
+            if (chevron) chevron.classList.remove('rotate-180');
+        }
+    }
+    
+    // Update UI with reset values
+    updateCategoriesDropdown();
+    updateBrandsDropdown();
+    
+    // Apply the reset filters
+    applyFilters();
+    
+    // Show toast notification
+    showToast('All filters have been reset', 'success');
+    
+    console.log('Filters reset to default values');
+}
+
+// Update the clearFilters function to call resetAllFilters properly
+function clearFilters() {
+    console.log('Clear filters called');
+    resetAllFilters();
+    
+    // Also close mobile sheet if open
+    const filterSheet = document.getElementById('filterSheet');
+    const backdrop = document.getElementById('mobileSheetBackdrop');
+    if (filterSheet && backdrop) {
+        filterSheet.classList.add('translate-y-full');
+        backdrop.classList.add('hidden');
+    }
+}
+
+    // ==================== USER ID (EXACTLY LIKE REF) ====================
+    function getCurrentUserId() {
+      try {
+        const userData = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser');
+        if (!userData) return null;
+        const user = JSON.parse(userData);
+        const id = user.userId || user.id || user.userID;
+        return id ? Number(id) : null;
+      } catch (error) {
+        console.error('Error reading currentUser:', error);
+        return null;
+      }
+    }
+
+    const CURRENT_USER_ID = getCurrentUserId();
+    console.log("====getCurrentUserId function returns :", CURRENT_USER_ID);
+
+    // ==================== WISHLIST BACKEND FUNCTIONS (MATCHING REF) ====================
+    async function addToWishlistBackend(productId) {
+      if (!CURRENT_USER_ID) {
+        showToast("Please log in to add to wishlist");
+        return false;
+      }
+      try {
+        const response = await fetch(`${WISHLIST_API_BASE}/add-wishlist-items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: CURRENT_USER_ID,
+            productId: productId,
+            productType: "MEDICINE"
+          })
+        });
+        if (response.ok) {
+          console.log("Added to backend wishlist");
+          return true;
+        } else {
+          console.error("Failed to add to backend wishlist");
+          return false;
+        }
+      } catch (err) {
+        console.error("Error calling wishlist API:", err);
+        return false;
+      }
+    }
+
+    async function removeFromWishlistBackend(productId) {
+      if (!CURRENT_USER_ID) return false;
+      try {
+        const response = await fetch(`${WISHLIST_API_BASE}/remove-wishlist-items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: CURRENT_USER_ID,
+            productId: productId
+          })
+        });
+        if (response.ok) {
+          console.log("Removed from backend wishlist");
+          return true;
+        } else {
+          console.error("Failed to remove from backend wishlist");
+          return false;
+        }
+      } catch (err) {
+        console.error("Error removing from wishlist:", err);
+        return false;
+      }
+    }
+
+    async function loadWishlistFromBackend() {
+      if (!CURRENT_USER_ID) {
+        wishlist = [];
+        updateHeaderCounts();
+        return;
+      }
+      try {
+        const response = await fetch(`${WISHLIST_API_BASE}/get-wishlist-items?userId=${CURRENT_USER_ID}`);
+        if (!response.ok) {
+          console.error("Failed to fetch wishlist");
+          wishlist = [];
+          return;
+        }
+        const items = await response.json();
+        wishlist = items
+          .filter(item => item.productType === "MEDICINE")
+          .map(item => ({ id: item.productId }));
+        console.log("Loaded wishlist from backend:", wishlist.length, "items");
+        updateHeaderCounts();
+        renderProducts(); // Refresh heart icons
+      } catch (err) {
+        console.error("Error syncing wishlist:", err);
+        wishlist = [];
+      }
+    }
+
+    // ==================== WISHLIST UI FUNCTIONS (NOW SAME AS REF) ====================
+    async function toggleWishlist(id) {
+      const index = wishlist.findIndex(item => item.id === id);
+      if (index === -1) {
+        // Add
+        const success = await addToWishlistBackend(id);
+        if (success) {
+          wishlist.push({ id });
+          showToast("Added to wishlist ♥");
+        }
+      } else {
+        // Remove
+        const success = await removeFromWishlistBackend(id);
+        if (success) {
+          wishlist.splice(index, 1);
+          showToast("Removed from wishlist ♥");
+        }
+      }
+      updateHeaderCounts();
+      renderProducts(); // Re-render to update heart icons instantly
+    }
+
+    function isInWishlist(id) {
+      return wishlist.some(item => item.id === id);
+    }
+
+    function updateHeaderCounts() {
+      const updateBadge = (id, count) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = count;
+          el.classList.toggle("hidden", count === 0);
+        }
+      };
+      const cartTotal = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      updateBadge("cartCount", cartTotal);
+      updateBadge("wishlistCount", wishlist.length);
+    }
+
+    // ==================== HELPER FUNCTIONS ====================
+    function debugLog(...args) {
+      if (DEBUG_MODE) {
+        console.log('[PRESCRIPTION DEBUG]', ...args);
+      }
+    }
+
+    function setText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    function showToast(msg, type = "success") {
+      const existing = document.querySelector('.custom-toast');
+      if (existing) existing.remove();
+     
+      const toast = document.createElement("div");
+      toast.className = `custom-toast fixed bottom-20 left-1/2 -translate-x-1/2 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white px-6 py-3 rounded-full z-50 shadow-lg`;
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+     
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    }
+
+    
+    
+    // ==================== PRODUCT FETCHING ====================
+    async function fetchProducts() {
+      try {
+        debugLog('Fetching prescription products...');
+        setText("resultsCount", "Loading products...");
+       
+        allProducts = [];
+        filteredProducts = [];
+       
+        const url = `${API_BASE_URL}/get-by-category/Prescription Medicines (Upload Prescription)?page=0&size=500`;
+        debugLog('Fetching from URL:', url);
+       
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+       
+        debugLog('Response status:', response.status);
+       
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+       
+        const data = await response.json();
+        processProducts(data);
+       
+      } catch (error) {
+        console.error('Error in fetchProducts:', error);
+        showToast('Error loading products. Please check console for details.', "error");
+        setText("resultsCount", "Failed to load products");
+       
+        const grid = document.getElementById("productsGrid");
+        if (grid) {
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-10">
+              <div class="text-gray-400 mb-4">
+                <i class="fas fa-exclamation-triangle text-5xl"></i>
+              </div>
+              <p class="text-gray-500 mb-2">Failed to load products</p>
+              <p class="text-gray-400 text-sm">Error: ${error.message}</p>
+              <button onclick="fetchProducts()" class="mt-4 px-4 py-2 bg-[#C2A68C] text-white rounded-lg">
+                Retry
+              </button>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function processProducts(data) {
+      debugLog('API Response data:', data);
+     
+      let productsArray = [];
+     
+      if (Array.isArray(data)) {
+        productsArray = data;
+      } else if (data.content && Array.isArray(data.content)) {
+        productsArray = data.content;
+      } else if (data.products && Array.isArray(data.products)) {
+        productsArray = data.products;
+      } else if (typeof data === 'object' && data !== null) {
+        productsArray = [data];
+      }
+     
+      debugLog('Total products from API:', productsArray.length);
+     
+      const allTransformedProducts = transformBackendProducts(productsArray);
+     
+      debugLog('=== CHECKING PRESCRIPTION PRODUCT SUB CATEGORIES ===');
+      allTransformedProducts.forEach(product => {
+        debugLog(`Product: "${product.title}" - Subcategory: "${product.subcategory}"`);
+      });
+     
+      const allSubcategories = [...new Set(allTransformedProducts.map(p => p.subcategory))];
+      debugLog('All subcategories in DB:', allSubcategories);
+     
+      // FILTER: Only keep products that match our Prescription categories
+      allProducts = allTransformedProducts.filter(product => {
+        const productSubcategory = product.subcategory || '';
+       
+        const isPrescriptionProduct = PRESCRIPTION_CATEGORIES.some(category => {
+          if (category.id === 'all') return false;
+         
+          return category.backendSubcategories.some(backendSubcat => {
+            const productSubLower = productSubcategory.toLowerCase();
+            const backendSubLower = backendSubcat.toLowerCase();
+           
+            return productSubLower === backendSubLower ||
+                   productSubLower.includes(backendSubLower) ||
+                   backendSubLower.includes(productSubLower);
+          });
+        });
+       
+        if (!isPrescriptionProduct) {
+          debugLog(`Filtered out (non-Prescription): ${product.title} - ${product.subcategory}`);
+        }
+       
+        return isPrescriptionProduct;
+      });
+     
+      debugLog('Prescription products after filtering:', allProducts.length);
+      debugLog('Prescription product subcategories:', [...new Set(allProducts.map(p => p.subcategory))]);
+     
+      applyFilters();
+      updateUIWithProducts();
+    }
+
+    // function transformBackendProducts(backendProducts) {
+    //   if (!Array.isArray(backendProducts) || backendProducts.length === 0) {
+    //     return [];
+    //   }
+    
+    //   debugLog('Transforming', backendProducts.length, 'products');
+    
+    //   return backendProducts.map((product, index) => {
+    //     try {
+    //       const id = product.productId || product.id || index + 1;
+    //       const title = product.productName || product.name || 'Medicine';
+
+    //       // === IMPROVED: Robust handling for price fields (number, array, null, missing) ===
+    //       let price = 100; // Safe default fallback
+    //       if (product.productPrice != null) { // Check for null or undefined
+    //         if (Array.isArray(product.productPrice) && product.productPrice.length > 0) {
+    //           price = Number(product.productPrice[0]) || price;
+    //         } else {
+    //           price = Number(product.productPrice) || price;
+    //         }
+    //       }
+
+    //       let originalPrice = price * 1.2; // Default MRP fallback (20% higher)
+    //       if (product.productOldPrice != null) {
+    //         if (Array.isArray(product.productOldPrice) && product.productOldPrice.length > 0) {
+    //           originalPrice = Number(product.productOldPrice[0]) || originalPrice;
+    //         } else {
+    //           originalPrice = Number(product.productOldPrice) || originalPrice;
+    //         }
+    //       } else if (product.mrp != null) {
+    //         originalPrice = Number(product.mrp) || originalPrice;
+    //       }
+
+    //       // Ensure price and originalPrice are valid numbers > 0
+    //       price = isNaN(price) || price <= 0 ? 100 : Math.round(price);
+    //       originalPrice = isNaN(originalPrice) || originalPrice <= price ? price * 1.2 : Math.round(originalPrice);
+
+    //       const discount = originalPrice > price 
+    //         ? Math.round(((originalPrice - price) / originalPrice) * 100) 
+    //         : 0;
+
+    //       // === Rest remains 100% unchanged ===
+    //       const subcategory = product.productSubCategory || 'Unknown';
+    //       const brand = product.brandName || product.brand || product.manufacturer || 'Generic';
+    //       const description = product.productDescription || product.description || 'No description available';
+    //       const stockQuantity = product.productQuantity || product.stockQuantity || product.quantity || 0;
+    //       const inStock = product.productStock === 'In-Stock' || stockQuantity > 0;
+        
+    //       let imageUrl = 'https://goodneews.com/Images/product_details_fallback_img.jpg';
+        
+    //       if (product.productMainImage) {
+    //         if (product.productMainImage.startsWith('/api/')) {
+    //           imageUrl = `http://localhost:8083${product.productMainImage}`;
+    //         } else if (product.productMainImage.startsWith('data:image')) {
+    //           imageUrl = product.productMainImage;
+    //         } else if (product.productMainImage.startsWith('http')) {
+    //           imageUrl = product.productMainImage;
+    //         } else {
+    //           imageUrl = `data:image/jpeg;base64,${product.productMainImage}`;
+    //         }
+    //       } else if (product.productId) {
+    //         imageUrl = `${API_BASE_URL}/${product.productId}/image`;
+    //       }
+        
+    //       const sku = product.sku || `P${String(id).padStart(4, '0')}`;
+        
+    //       return {
+    //         id: id,
+    //         title: title,
+    //         price: price,
+    //         originalPrice: originalPrice,
+    //         discount: discount,
+    //         rating: product.rating || product.productRating || 4.0,
+    //         reviewCount: product.reviewCount || product.totalReviews || Math.floor(Math.random() * 1000),
+    //         subcategory: subcategory,
+    //         brand: brand,
+    //         image: imageUrl,
+    //         description: description,
+    //         inStock: inStock,
+    //         stockQuantity: stockQuantity,
+    //         sku: sku,
+    //         prescriptionRequired: true
+    //       };
+    //     } catch (error) {
+    //       console.error('Error transforming product:', product, error);
+    //       return null;
+    //     }
+    //   }).filter(product => product !== null);
+    // }
+    
+    
+    function transformBackendProducts(backendProducts) {
+  if (!Array.isArray(backendProducts) || backendProducts.length === 0) {
+    return [];
+  }
+
+  debugLog('Transforming', backendProducts.length, 'products');
+
+  return backendProducts.map((product, index) => {
+    try {
+      const id = product.productId || product.id || index + 1;
+      const title = product.productName || product.name || 'Medicine';
+
+      // ── Price handling ────────────────────────────────────────────────
+      let price = 0;
+      if (product.productPrice != null) {
+        if (Array.isArray(product.productPrice) && product.productPrice.length > 0) {
+          price = Number(product.productPrice[0]);
+        } else {
+          price = Number(product.productPrice);
+        }
+      }
+      // If still invalid → keep 0 (you can show "Price on request" in UI later)
+
+      // ── Original price / MRP handling ─────────────────────────────────
+      let originalPrice = 0;
+      if (product.productOldPrice != null) {
+        if (Array.isArray(product.productOldPrice) && product.productOldPrice.length > 0) {
+          originalPrice = Number(product.productOldPrice[0]);
+        } else {
+          originalPrice = Number(product.productOldPrice);
+        }
+      } else if (product.mrp != null) {
+        originalPrice = Number(product.mrp);
+      }
+      // If missing/invalid → keep 0
+
+      // ── Discount calculation ──────────────────────────────────────────
+      let discount = 0;
+      if (
+        price > 0 &&
+        originalPrice > price &&          // only if there's a real saving
+        !isNaN(price) &&
+        !isNaN(originalPrice)
+      ) {
+        discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+      }
+
+      // Rest of your fields (unchanged)
+      const subcategory = product.productSubCategory || 'Unknown';
+      const brand = product.brandName || product.brand || product.manufacturer || 'Generic';
+      const description = product.productDescription || product.description || 'No description available';
+      const stockQuantity = product.productQuantity || product.stockQuantity || product.quantity || 0;
+      const inStock = product.productStock === 'In-Stock' || stockQuantity > 0;
+
+      let imageUrl = 'http://localhost:8083/Images/product_details_fallback_img.jpg';
+
+      if (product.productMainImage) {
+        if (product.productMainImage.startsWith('/api/')) {
+          imageUrl = `http://localhost:8083${product.productMainImage}`;
+        } else if (product.productMainImage.startsWith('data:image')) {
+          imageUrl = product.productMainImage;
+        } else if (product.productMainImage.startsWith('http')) {
+          imageUrl = product.productMainImage;
+        } else {
+          imageUrl = `data:image/jpeg;base64,${product.productMainImage}`;
+        }
+      } else if (product.productId) {
+        imageUrl = `${API_BASE_URL}/${product.productId}/image`;
+      }
+
+      const sku = product.sku || `P${String(id).padStart(4, '0')}`;
+
+      return {
+        id: id,
+        title: title,
+        price: price,               // keep exact (can be 0 or float)
+        originalPrice: originalPrice,
+        discount: discount,         // 0 when same / missing / invalid
+        rating: product.rating || product.productRating || 0,
+        reviewCount: product.reviewCount || product.totalReviews || 0,
+        subcategory: subcategory,
+        brand: brand,
+        image: imageUrl,
+        description: description,
+        inStock: inStock,
+        stockQuantity: stockQuantity,
+        sku: sku,
+        prescriptionRequired: true
+      };
+    } catch (error) {
+      console.error('Error transforming product:', product, error);
+      return null;
+    }
+  }).filter(product => product !== null);
+}
+
+    // ==================== FILTERING ====================
+    function applyFilters() {
+      debugLog('Applying filters with', allProducts.length, 'products');
+      debugLog('Current filter state:', filterState);
+     
+      syncFilterStates();
+     
+      filteredProducts = allProducts.filter(p => {
+        let categoryMatch = false;
+       
+        if (filterState.category === 'all') {
+          categoryMatch = true;
+        } else {
+          const selectedCategory = PRESCRIPTION_CATEGORIES.find(cat => cat.id === filterState.category);
+          if (!selectedCategory || selectedCategory.id === 'all') {
+            categoryMatch = true;
+          } else {
+            const productSubcategory = (p.subcategory || '').toLowerCase().trim();
+           
+            categoryMatch = selectedCategory.backendSubcategories.some(backendSubcat => {
+              const backendSubLower = backendSubcat.toLowerCase().trim();
+             
+              if (DEBUG_MODE) {
+                debugLog(`Comparing: "${productSubcategory}" with "${backendSubLower}"`);
+              }
+             
+              const exactMatch = productSubcategory === backendSubLower;
+              const wordMatch = productSubcategory.split(/\s+/).some(word =>
+                word === backendSubLower || backendSubLower.split(/\s+/).some(w => w === word)
+              );
+             
+              const containsAsWord = productSubcategory.includes(backendSubLower) &&
+                                    (productSubcategory === backendSubLower ||
+                                     productSubcategory.startsWith(backendSubLower + ' ') ||
+                                     productSubcategory.endsWith(' ' + backendSubLower) ||
+                                     productSubcategory.includes(' ' + backendSubLower + ' '));
+             
+              const matches = exactMatch || wordMatch || containsAsWord;
+             
+              if (matches && DEBUG_MODE) {
+                debugLog(`MATCH: Product "${p.title}" matches "${backendSubLower}"`);
+              }
+             
+              return matches;
+            });
+           
+            if (!categoryMatch) {
+              const categoryNameLower = selectedCategory.name.toLowerCase();
+              if (productSubcategory.includes(categoryNameLower)) {
+                categoryMatch = true;
+                if (DEBUG_MODE) {
+                  debugLog(`Category name match: "${productSubcategory}" contains "${categoryNameLower}"`);
+                }
+              }
+            }
+          }
+        }
+       
+        const brandMatch = filterState.brand === 'all' || p.brand === filterState.brand;
+        const discMatch = p.discount >= filterState.discount;
+        const priceMatch = p.price >= filterState.minPrice && p.price <= filterState.maxPrice;
+       
+        const matches = categoryMatch && brandMatch && discMatch && priceMatch;
+       
+        return matches;
+      });
+      debugLog('After filtering:', filteredProducts.length, 'products');
+     
+      sortProducts(filterState.sort);
+      currentPage = 1;
+      renderProducts();
+    }
+
+    function sortProducts(type) {
+      switch (type) {
+        case 'price-low':
+          filteredProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          filteredProducts.sort((a, b) => b.price - a.price);
+          break;
+        case 'rating':
+          filteredProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          break;
+        case 'newest':
+          filteredProducts.sort((a, b) => b.id - a.id);
+          break;
+        default:
+          break;
+      }
+    }
+
+    function clearFilters() {
+      filterState = {
+        category: 'all',
+        brand: 'all',
+        discount: 0,
+        minPrice: 0,
+        maxPrice: 10000,
+        sort: 'default'
+      };
+     
+      const sortSelect = document.getElementById("sortSelect");
+      if (sortSelect) sortSelect.value = 'default';
+     
+      syncFilterStates();
+      fetchProducts();
+      resetAllFilters();
+    }
+
+    // ==================== UI UPDATES ====================
+    function updateUIWithProducts() {
+      updateBrandsDropdown();
+      updateCategoriesDropdown();
+      updatePriceRange();
+      initFilterEventListeners();
+      syncFilterStates();
+      renderProducts();
+    }
+
+    function updateCategoriesDropdown() {
+      debugLog('Updating categories dropdown with:', PRESCRIPTION_CATEGORIES);
+     
+      const desktopContainer = document.getElementById('desktopCategoryContainer');
+      if (desktopContainer) {
+        let html = '';
+        PRESCRIPTION_CATEGORIES.forEach(category => {
+          html += `
+            <label class="flex items-center text-sm cursor-pointer">
+              <input type="radio" name="desktopCategory" value="${category.id}" ${filterState.category === category.id ? 'checked' : ''} class="w-4 h-4 text-pink-600 rounded border-gray-300">
+              <span class="ml-3 text-gray-700">${category.name}</span>
+            </label>
+          `;
+        });
+        desktopContainer.innerHTML = html;
+      }
+     
+      const mobileContainer = document.getElementById('mobileCategoryContainer');
+      if (mobileContainer) {
+        let html = '';
+        PRESCRIPTION_CATEGORIES.forEach(category => {
+          html += `
+            <label class="flex items-center text-sm">
+              <input type="radio" name="mobileCategory" value="${category.id}" ${filterState.category === category.id ? 'checked' : ''} class="w-4 h-4 text-pink-600">
+              <span class="ml-3">${category.name}</span>
+            </label>
+          `;
+        });
+        mobileContainer.innerHTML = html;
+      }
+      
+        // Add event listeners after updating the HTML
+    setTimeout(() => {
+        const desktopRadios = document.querySelectorAll('input[name="desktopCategory"]');
+        desktopRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                filterState.category = e.target.value;
+                debugLog('Desktop category changed to:', filterState.category);
+                applyFilters();
+            });
+        });
+        
+        const mobileRadios = document.querySelectorAll('input[name="mobileCategory"]');
+        mobileRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                filterState.category = e.target.value;
+                debugLog('Mobile category changed to:', filterState.category);
+                applyFilters();
+            });
+        });
+    }, 100);
+
+    }
+
+    function updateBrandsDropdown() {
+      const brands = [...new Set(allProducts.map(p => p.brand).filter(Boolean))];
+      brands.sort();
+     
+      debugLog('Available brands:', brands);
+     
+      const desktopContainer = document.getElementById('desktopBrandContainer');
+      if (desktopContainer) {
+        let html = `
+          <label class="flex items-center text-sm cursor-pointer">
+            <input type="radio" name="desktopBrand" value="all" ${filterState.brand === 'all' ? 'checked' : ''} class="w-4 h-4 text-pink-600 rounded">
+            <span class="ml-3 text-gray-700">All Brands</span>
+          </label>
+        `;
+       
+        brands.forEach(brand => {
+          html += `
+            <label class="flex items-center text-sm cursor-pointer">
+              <input type="radio" name="desktopBrand" value="${brand}" ${filterState.brand === brand ? 'checked' : ''} class="w-4 h-4 text-pink-600 rounded">
+              <span class="ml-3 text-gray-700">${brand}</span>
+            </label>
+          `;
+        });
+       
+        desktopContainer.innerHTML = html;
+      }
+     
+      const mobileContainer = document.getElementById('mobileBrandContainer');
+      if (mobileContainer) {
+        let html = `
+          <label class="flex items-center text-sm">
+            <input type="radio" name="mobileBrand" value="all" ${filterState.brand === 'all' ? 'checked' : ''} class="w-4 h-4 text-pink-600">
+            <span class="ml-3">All Brands</span>
+          </label>
+        `;
+       
+        brands.forEach(brand => {
+          html += `
+            <label class="flex items-center text-sm">
+              <input type="radio" name="mobileBrand" value="${brand}" ${filterState.brand === brand ? 'checked' : ''} class="w-4 h-4 text-pink-600">
+              <span class="ml-3">${brand}</span>
+            </label>
+          `;
+        });
+       
+        mobileContainer.innerHTML = html;
+      }
+    }
+
+    function updatePriceRange() {
+      if (allProducts.length === 0) return;
+     
+      const prices = allProducts.map(p => p.price).filter(p => p > 0);
+      if (prices.length === 0) return;
+     
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+     
+      filterState.minPrice = minPrice;
+      filterState.maxPrice = Math.max(maxPrice, 10000);
+     
+      debugLog('Price range:', minPrice, 'to', filterState.maxPrice);
+     
+      updatePriceSliders(minPrice, filterState.maxPrice);
+    }
+
+    function updatePriceSliders(minPrice, maxPrice) {
+      minPrice = Math.max(0, Math.floor(minPrice));
+      maxPrice = Math.max(minPrice + 100, Math.ceil(maxPrice));
+     
+      const desktopMin = document.getElementById('desktopMin');
+      const desktopMax = document.getElementById('desktopMax');
+      const desktopMinVal = document.getElementById('desktopMinVal');
+      const desktopMaxVal = document.getElementById('desktopMaxVal');
+     
+      if (desktopMin && desktopMax) {
+        desktopMin.min = minPrice;
+        desktopMin.max = maxPrice;
+        desktopMin.value = minPrice;
+       
+        desktopMax.min = minPrice;
+        desktopMax.max = maxPrice;
+        desktopMax.value = maxPrice;
+       
+        if (desktopMinVal) desktopMinVal.textContent = `₹${minPrice}`;
+        if (desktopMaxVal) desktopMaxVal.textContent = `₹${maxPrice}`;
+       
+        filterState.minPrice = minPrice;
+        filterState.maxPrice = maxPrice;
+      }
+     
+      const mobileMin = document.getElementById('mobileMin');
+      const mobileMax = document.getElementById('mobileMax');
+      const mobileMinVal = document.getElementById('mobileMinVal');
+      const mobileMaxVal = document.getElementById('mobileMaxVal');
+     
+      if (mobileMin && mobileMax) {
+        mobileMin.min = minPrice;
+        mobileMin.max = maxPrice;
+        mobileMin.value = minPrice;
+       
+        mobileMax.min = minPrice;
+        mobileMax.max = maxPrice;
+        mobileMax.value = maxPrice;
+       
+        if (mobileMinVal) mobileMinVal.textContent = `₹${minPrice}`;
+        if (mobileMaxVal) mobileMaxVal.textContent = `₹${maxPrice}`;
+      }
+    }
+
+    function syncFilterStates() {
+      debugLog('Syncing filter states...');
+     
+      const desktopCategoryRadio = document.querySelector(`#desktopCategoryContainer input[name="desktopCategory"][value="${filterState.category}"]`);
+      if (desktopCategoryRadio) desktopCategoryRadio.checked = true;
+     
+      const mobileCategoryRadio = document.querySelector(`#mobileCategoryContainer input[name="mobileCategory"][value="${filterState.category}"]`);
+      if (mobileCategoryRadio) mobileCategoryRadio.checked = true;
+     
+      const categoryTitle = document.getElementById('categoryTitle');
+      if (categoryTitle) {
+        if (filterState.category === 'all') {
+          categoryTitle.textContent = 'All Prescription Medicines';
+        } else {
+          const category = PRESCRIPTION_CATEGORIES.find(cat => cat.id === filterState.category);
+          categoryTitle.textContent = category ? category.name : 'Prescription Medicines';
+        }
+      }
+    }
+
+    // ==================== RENDERING ====================
+    // function createProductCard(p) {
+    //   const isOutOfStock = !p.inStock;
+    //   const inWishlist = isInWishlist(p.id);
+     
+    //   return `
+    //     <div class="product-card bg-white rounded-lg shadow hover:shadow-xl transition p-4 relative  ${isOutOfStock ? 'out-of-stock' : ''}"
+    //          $!isOutOfStock ?
+    //          style="${isOutOfStock ? 'pointer-events: none;' : 'cursor: pointer;'}">
+         
+    //       <div class="relative">
+    //         ${isOutOfStock ?
+    //           `<div class="stock-badge out-of-stock-badge">Out of Stock</div>` :
+    //           `<div class="stock-badge in-stock-badge">In Stock</div>`
+    //         }
+           
+    //         <!-- Wishlist Icon -->
+    //         <button onclick="event.stopPropagation(); toggleWishlist(${p.id})"
+    //                 class="wishlist-btn ${inWishlist ? 'active' : ''}">
+    //           <i class="${inWishlist ? 'fas' : 'far'} fa-heart"></i>
+    //         </button>
+           
+    //         <img src="${p.image}" class="w-full h-40 object-contain rounded mb-3" alt="${p.title}"
+    //              onerror="this.src='https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=400&h=400&fit=crop'">
+    //       </div>
+         
+    //       <h3 class="font-semibold text-sm line-clamp-2">${p.title}</h3>
+    //       <p class="text-xs text-gray-600">${p.brand}</p>
+         
+    //       <div class="mt-2">
+    //         <p class="text-lg font-bold text-green-600">₹${p.price.toLocaleString()}</p>
+    //         ${p.originalPrice > p.price ? `
+    //           <p class="text-xs">
+    //             <span class="line-through text-gray-400">₹${p.originalPrice.toLocaleString()}</span>
+    //             <span class="text-green-600 ml-2">${p.discount}% off</span>
+    //           </p>
+    //         ` : ''}
+    //       </div>
+         
+    //       <p class="text-xs text-blue-600 mt-1">${p.subcategory || 'Medicine'}</p>
+         
+    //       <div class="flex items-center mt-2">
+    //         <div class="flex text-yellow-400 text-sm">
+    //           ${'★'.repeat(Math.floor(p.rating))}${'☆'.repeat(5-Math.floor(p.rating))}
+    //         </div>
+    //         <span class="text-xs text-gray-500 ml-2">(${p.reviewCount})</span>
+    //       </div>
+         
+    //       <button onclick="event.stopPropagation(); openUploadModal(${p.id})"
+    //               class="mt-3 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition"
+    //               ${isOutOfStock ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+    //         Upload Prescription
+    //       </button>
+    //     </div>
+    //   `;
+    // }
+    
+    function createProductCard(p) {
+      const isOutOfStock = !p.inStock;
+      const inWishlist = isInWishlist(p.id);
+     
+      return `
+        <div class="product-card bg-white rounded-lg shadow hover:shadow-xl transition p-4 relative flex flex-col h-full ${isOutOfStock ? 'out-of-stock' : ''}"
+             ${!isOutOfStock ? 'style="cursor: pointer;"' : 'style="pointer-events: none;"'}>
+         
+          <div class="relative">
+            ${isOutOfStock ?
+              `<div class="stock-badge out-of-stock-badge">Out of Stock</div>` :
+              `<div class="stock-badge in-stock-badge">In Stock</div>`
+            }
+           
+            <!-- Wishlist Icon -->
+             <!-- <button onclick="event.stopPropagation(); toggleWishlist(${p.id})"-->
+                    <!-- class="wishlist-btn ${inWishlist ? 'active' : ''}"> -->
+              <!-- <i class="${inWishlist ? 'fas' : 'far'} fa-heart"></i> -->
+           <!-- </button> -->
+           
+            <img src="${p.image}" class="w-full h-40 object-contain rounded mb-3 flex-shrink-0" alt="${p.title}"
+                 onerror="this.src='http://localhost:8083/Images/product_details_fallback_img.jpg'">
+          </div>
+         
+          <div class="flex-grow">
+            <h3 class="font-semibold text-sm line-clamp-2">${p.title}</h3>
+            <p class="text-xs text-gray-600 mt-1">${p.brand}</p>
+           
+            <div class="mt-2">
+              <p class="text-lg font-bold text-green-600">₹${p.price.toLocaleString()}</p>
+              ${p.originalPrice > p.price ? `
+                <p class="text-xs mt-1">
+                  <span class="line-through text-gray-400">₹${p.originalPrice.toLocaleString()}</span>
+                  <span class="text-green-600 ml-2">${p.discount}% off</span>
+                </p>
+              ` : ''}
+            </div>
+           
+            <p class="text-xs text-blue-600 mt-2">${p.subcategory || 'Medicine'}</p>
+           
+            <div class="flex items-center mt-2">
+              <div class="flex text-yellow-400 text-sm">
+                ${'★'.repeat(Math.floor(p.rating))}${'☆'.repeat(5-Math.floor(p.rating))}
+              </div>
+              <span class="text-xs text-gray-500 ml-2">(${p.reviewCount})</span>
+            </div>
+          </div>
+         
+          <button onclick="event.stopPropagation(); openUploadModal(${p.id})"
+                  class="mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg transition-colors duration-200"
+                  ${isOutOfStock ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+            Upload Prescription
+          </button>
+        </div>
+      `;
+    }
+
+    function renderProducts() {
+      debugLog('Rendering products, filteredProducts length:', filteredProducts.length);
+     
+      const start = (currentPage - 1) * pageSize;
+      const paginated = filteredProducts.slice(start, start + pageSize);
+      const grid = document.getElementById("productsGrid");
+      if (grid) {
+        if (paginated.length > 0) {
+          grid.innerHTML = paginated.map(createProductCard).join("");
+         
+          const showMoreBtn = document.getElementById('showMoreBtn');
+          if (showMoreBtn) {
+            if (filteredProducts.length > pageSize * currentPage) {
+              showMoreBtn.classList.remove('hidden');
+            } else {
+              showMoreBtn.classList.add('hidden');
+            }
+          }
+        } else {
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-10">
+              <div class="text-gray-400 mb-4">
+                <i class="fas fa-search text-5xl"></i>
+              </div>
+              <p class="text-gray-500 mb-2">No products found</p>
+              <p class="text-gray-400 text-sm">Try changing your filters</p>
+              <button onclick="clearFilters()" class="mt-4 px-4 py-2 bg-[#C2A68C] text-white rounded-lg">
+                Clear Filters
+              </button>
+            </div>
+          `;
+         
+          const showMoreBtn = document.getElementById('showMoreBtn');
+          if (showMoreBtn) showMoreBtn.classList.add('hidden');
+        }
+      }
+      setText("resultsCount", `Showing ${filteredProducts.length} product${filteredProducts.length !== 1 ? 's' : ''}`);
+    }
+
+    function showMoreProducts() {
+      if (filteredProducts.length > pageSize * currentPage) {
+        currentPage++;
+        renderProducts();
+      }
+    }
+
+    // ==================== EVENT LISTENERS ====================
+    function initFilterEventListeners() {
+      debugLog('Initializing filter event listeners...');
+      
+      // Add reset button event listener
+    const resetDesktopBtn = document.getElementById('resetDesktopFilters');
+    if (resetDesktopBtn) {
+        resetDesktopBtn.addEventListener('click', resetAllFilters);
+    }
+     
+      document.addEventListener('change', (e) => {
+        if (e.target.name === 'desktopCategory') {
+          filterState.category = e.target.value;
+          debugLog('Desktop category changed to:', filterState.category);
+          applyFilters();
+        }
+       
+        if (e.target.name === 'mobileCategory') {
+          filterState.category = e.target.value;
+          debugLog('Mobile category changed to:', filterState.category);
+          applyFilters();
+        }
+       
+        if (e.target.name === 'desktopBrand') {
+          filterState.brand = e.target.value;
+          debugLog('Desktop brand changed to:', filterState.brand);
+          applyFilters();
+        }
+       
+        if (e.target.name === 'mobileBrand') {
+          filterState.brand = e.target.value;
+          debugLog('Mobile brand changed to:', filterState.brand);
+          applyFilters();
+        }
+      });
+     
+      const applyDesktopBtn = document.getElementById('applyDesktopFilters');
+      if (applyDesktopBtn) {
+        applyDesktopBtn.addEventListener('click', applyFilters);
+      }
+     
+      const applyMobileBtn = document.getElementById('applyMobileFilters');
+      if (applyMobileBtn) {
+        applyMobileBtn.addEventListener('click', () => {
+          applyFilters();
+          document.getElementById('filterSheet').classList.add('translate-y-full');
+          document.getElementById('mobileSheetBackdrop').classList.add('hidden');
+        });
+      }
+     
+      const clearMobileBtn = document.getElementById('clearMobileFilters');
+      if (clearMobileBtn) {
+        clearMobileBtn.addEventListener('click', () => {
+          clearFilters();
+          document.getElementById('filterSheet').classList.add('translate-y-full');
+          document.getElementById('mobileSheetBackdrop').classList.add('hidden');
+        });
+      }
+     
+      const sortSelect = document.getElementById("sortSelect");
+      if (sortSelect) {
+        sortSelect.value = filterState.sort;
+        sortSelect.addEventListener("change", (e) => {
+          filterState.sort = e.target.value;
+          sortProducts(filterState.sort);
+          renderProducts();
+        });
+      }
+     
+      const applySortBtn = document.getElementById("applySortBtn");
+      if (applySortBtn) {
+        applySortBtn.addEventListener('click', () => {
+          const sort = document.querySelector('input[name="mobileSort"]:checked')?.value || 'default';
+          filterState.sort = sort;
+         
+          if (sortSelect) sortSelect.value = sort;
+         
+          sortProducts(sort);
+          renderProducts();
+         
+          document.getElementById('sortSheet').classList.add('translate-y-full');
+          document.getElementById('mobileSheetBackdrop').classList.add('hidden');
+        });
+      }
+     
+      debugLog('Filter event listeners initialized');
+    }
+
+    // ==================== PRICE SLIDERS ====================
+    function setupSlider(prefix) {
+      const minSlider = document.getElementById(prefix + 'Min');
+      const maxSlider = document.getElementById(prefix + 'Max');
+      const fill = document.getElementById(prefix + 'Fill');
+      const minVal = document.getElementById(prefix + 'MinVal');
+      const maxVal = document.getElementById(prefix + 'MaxVal');
+      function update() {
+        let min = parseInt(minSlider.value);
+        let max = parseInt(maxSlider.value);
+        if (min > max) [min, max] = [max, min];
+        filterState.minPrice = min;
+        filterState.maxPrice = max;
+        fill.style.left = (min / 10000) * 100 + '%';
+        fill.style.width = ((max - min) / 10000) * 100 + '%';
+        if (minVal) minVal.textContent = '₹' + min;
+        if (maxVal) maxVal.textContent = '₹' + max;
+      }
+     
+      if (minSlider && maxSlider) {
+        minSlider.oninput = maxSlider.oninput = update;
+        update();
+      }
+    }
+
+    // ==================== MOBILE SHEETS ====================
+    function initMobileSheets() {
+      const backdrop = document.getElementById("mobileSheetBackdrop");
+      const filterSheet = document.getElementById("filterSheet");
+      const sortSheet = document.getElementById("sortSheet");
+     
+      if (!backdrop || !filterSheet || !sortSheet) return;
+     
+      document.getElementById("openFilterSheet")?.addEventListener("click", () => {
+        filterSheet.classList.remove("translate-y-full");
+        backdrop.classList.remove("hidden");
+      });
+     
+      document.getElementById("openSortSheet")?.addEventListener("click", () => {
+        sortSheet.classList.remove("translate-y-full");
+        backdrop.classList.remove("hidden");
+      });
+     
+      document.getElementById("closeFilterSheet")?.addEventListener("click", () => {
+        filterSheet.classList.add("translate-y-full");
+        backdrop.classList.add("hidden");
+      });
+     
+      document.getElementById("closeSortSheet")?.addEventListener("click", () => {
+        sortSheet.classList.add("translate-y-full");
+        backdrop.classList.add("hidden");
+      });
+     
+      backdrop.addEventListener("click", () => {
+        filterSheet.classList.add("translate-y-full");
+        sortSheet.classList.add("translate-y-full");
+        backdrop.classList.add("hidden");
+      });
+    }
+
+    // ==================== PRODUCT DETAILS ====================
+    function viewProductDetails(id) {
+      const product = allProducts.find(p => p.id === id);
+      if (!product) {
+        showToast('Product not found');
+        return;
+      }
+     
+      if (!product.inStock) {
+        showToast('This product is currently out of stock', "info");
+        return;
+      }
+      sessionStorage.setItem('selectedProduct', JSON.stringify(product));
+      window.location.href = `productdetails.html?id=${product.id}&name=${encodeURIComponent(product.title)}&price=${product.price}`;
+    }
+
+    // ==================== UPLOAD MODAL ====================
+    function openUploadModal(productId) {
+      const product = allProducts.find(p => p.id === productId);
+      if (!product) return;
+     
+      document.getElementById('modalProductName').textContent = 'Upload Prescription for: ' + product.title;
+      document.getElementById('uploadModal').classList.remove('hidden');
+    }
+
+    function initUploadModal() {
+      const doctorNameInput = document.getElementById('doctorName');
+      const fileInput = document.getElementById('prescriptionFile');
+      const submitBtn = document.getElementById('submitPrescription');
+      const uploadModal = document.getElementById('uploadModal');
+      const API_BASE = "http://localhost:8083";
+      const CREATE_ORDER_ENDPOINT = `${API_BASE}/api/prescriptions/create-order`;
+
+      if (!doctorNameInput || !fileInput || !submitBtn || !uploadModal) {
+          console.warn('Upload modal elements not found');
+          return;
+      }
+
+      let formState = {
+          doctorName: '',
+          hasFile: false,
+          file: null
+      };
+
+      function updateSubmitButton() {
+          const hasName = formState.doctorName.trim().length > 0;
+          const hasFile = formState.hasFile;
+          submitBtn.disabled = !(hasName && hasFile);
+      }
+
+      doctorNameInput.addEventListener('input', function(e) {
+          formState.doctorName = e.target.value;
+          updateSubmitButton();
+      });
+
+      function handleFileSelect() {
+          if (fileInput.files && fileInput.files.length > 0) {
+              const file = fileInput.files[0];
+              formState.hasFile = true;
+              formState.file = file;
+              const preview = document.getElementById('prescriptionPreviewImg');
+              if (preview && file.type.startsWith('image/')) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                      preview.src = event.target.result;
+                      preview.classList.remove('hidden');
+                  };
+                  reader.readAsDataURL(file);
+              }
+          } else {
+              formState.hasFile = false;
+              formState.file = null;
+              const preview = document.getElementById('prescriptionPreviewImg');
+              if (preview) preview.classList.add('hidden');
+          }
+          updateSubmitButton();
+      }
+
+      fileInput.addEventListener('change', handleFileSelect);
+
+      function validateForm() {
+          const errors = [];
+          if (!formState.doctorName.trim()) {
+              errors.push('Doctor name is required');
+          }
+          if (!formState.hasFile || !formState.file) {
+              errors.push('Prescription image is required');
+          } else {
+              const file = formState.file;
+              const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+              const maxSize = 10 * 1024 * 1024;
+              if (!validTypes.includes(file.type)) {
+                  errors.push('Please upload only JPG, PNG, or PDF files');
+              }
+              if (file.size > maxSize) {
+                  errors.push('File size must be less than 10MB');
+              }
+          }
+          return errors;
+      }
+
+      function showLoading() {
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+          submitBtn.disabled = true;
+      }
+
+      function resetButtonState() {
+          submitBtn.innerHTML = 'Submit Prescription';
+          updateSubmitButton();
+      }
+
+      function showSuccessModal() {
+          const successModal = document.getElementById('successModal');
+          const successModalContent = document.getElementById('successModalContent');
+          if (successModal && successModalContent) {
+              successModal.classList.remove('hidden');
+              setTimeout(() => {
+                  successModalContent.classList.remove('scale-95', 'opacity-0');
+              }, 10);
+          }
+      }
+
+      function resetForm() {
+          doctorNameInput.value = '';
+          fileInput.value = '';
+          formState = {
+              doctorName: '',
+              hasFile: false,
+              file: null
+          };
+          const preview = document.getElementById('prescriptionPreviewImg');
+          if (preview) preview.classList.add('hidden');
+          resetButtonState();
+      }
+
+      async function handleSubmit(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    const errors = validateForm();
+    if (errors.length > 0) {
+        showToast(errors[0], "error");
+        return;
+    }
+    showLoading();
+    try {
+        const file = formState.file;
+        const doctorName = formState.doctorName.trim();
+
+        let userData = null;
+        let userId = 1;
+        let firstName = 'Patient';
+        let lastName = 'Name';
+        let email = '<patient@example.com>';
+        let mobileNumber = '0000000000';
+        let address = 'Not provided';
+
+        try {
+            const userDataString = sessionStorage.getItem('currentUser');
+            if (userDataString) {
+                userData = JSON.parse(userDataString);
+                if (userData) {
+                    userId = userData.userId || 1;
+                    firstName = userData.firstName || 'Patient';
+                    lastName = userData.lastName || 'Name';
+                    // FIXED: Removed the invalid markdown syntax
+                    email = userData.email || '<patient@example.com>';
+                    mobileNumber = userData.phone || userData.mobileNumber || 'NA';
+
+                    if (userData.addressArea && userData.addressCity && userData.addressPincode && userData.addressState) {
+                        address = `${userData.addressArea}, ${userData.addressCity}, ${userData.addressPincode}, ${userData.addressState}`;
+                        if (userData.addressLandmark) {
+                            address += ` (Near ${userData.addressLandmark})`;
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('Could not parse user data, using defaults');
+        }
+
+        const orderData = {
+            doctorName: doctorName,
+            email: email,
+            mobileNumber: mobileNumber,
+            firstName: firstName,
+            lastName: lastName,
+            userId: userId,
+            address: address,
+            notes: 'Uploaded via web portal',
+            orderStatus: 'PENDING',
+            prescriptionType: 'UPLOADED',
+            timestamp: new Date().toISOString()
+        };
+
+        const formData = new FormData();
+        formData.append('orderData', new Blob([JSON.stringify(orderData)], { type: 'application/json' }));
+        formData.append('prescriptionImg', file);
+
+        const response = await fetch(CREATE_ORDER_ENDPOINT, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+
+        const result = await response.json();
+
+        if (result.prescriptionId) {
+            showSuccessModal();
+        } else {
+            showToast('Prescription submitted successfully!', "success");
+        }
+
+        setTimeout(() => {
+            resetForm();
+            uploadModal.classList.add('hidden');
+        }, 2000);
+
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Failed to submit prescription. Please try again.', "error");
+        resetButtonState();
+    }
+}
+
+
+      submitBtn.addEventListener('click', handleSubmit);
+    }
+
+    function initSuccessModal() {
+        const successCloseBtn = document.getElementById('successCloseBtn');
+        if (successCloseBtn) {
+            successCloseBtn.addEventListener('click', function() {
+                const successModal = document.getElementById('successModal');
+                const successModalContent = document.getElementById('successModalContent');
+                if (successModal && successModalContent) {
+                    successModalContent.classList.remove('scale-100', 'opacity-100');
+                    successModalContent.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        successModal.classList.add('hidden');
+                    }, 300);
+                }
+            });
+        }
+    }
+
+    // ==================== INITIALIZATION ====================
+    async function init() {
+      console.log('Initializing Prescription Medicines page...');
+     
+      loadHeader();
+      loadFooter();
+      initMobileSheets();
+      setupSlider('desktop');
+      setupSlider('mobile');
+     
+      const sortSelect = document.getElementById("sortSelect");
+      if (sortSelect) {
+        sortSelect.value = filterState.sort;
+        sortSelect.addEventListener("change", (e) => {
+          filterState.sort = e.target.value;
+          sortProducts(filterState.sort);
+          renderProducts();
+        });
+      }
+     
+      const showMoreBtn = document.getElementById('showMoreBtn');
+      if (showMoreBtn) {
+        showMoreBtn.addEventListener('click', showMoreProducts);
+      }
+     
+      initUploadModal();
+      initSuccessModal();
+     
+      await fetchProducts();
+      await loadWishlistFromBackend(); // Sync wishlist from backend after products load
+    }
+
+    // ==================== ON LOAD ====================
+    document.addEventListener("DOMContentLoaded", () => {
+      init();
+    });
+</script>
+
+
+<script>
+// ===== SCROLL TO TOP ON PAGE REFRESH =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
+    // Handle browser back/forward navigation
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.scrollTo(0, 0);
+        }
+    };
+    
+    // Also scroll to top on page load (redundancy for safety)
+    window.onload = function() {
+        setTimeout(function() {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant'
+            });
+        }, 0);
+    };
+});
+
+// Force scroll to top even before DOM is fully loaded
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+} else {
+    window.onbeforeunload = function() {
+        window.scrollTo(0, 0);
+    };
+}
+</script>
+</body>
+</html>

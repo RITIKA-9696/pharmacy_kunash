@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title">pharmacy-kunash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&display=swap">
+  
+    <link rel="stylesheet" href="/Footer/footer.css">
+  
+  
+<style>
+/* ==============================================
+   Consolidated & Deduplicated CSS
+   ============================================== */
+
+/* ---------- General Reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  overflow-x: hidden;
+}
+
+/* ---------- Myntra Carousel Sections ---------- */
+.myntra-section {
+  position: relative;
+  width: 100%;
+  padding: 0 40px; /* Space for arrows */
+}
+
+.myntra-carousel {
+  position: relative;
+  padding: 0 30px; /* Add padding for arrows */
+}
+
+/* ---------- Horizontal Product Tracks ---------- */
+#feminine-track, #medicine-track {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth;
+  padding: 10px 15px !important;
+  gap: 16px !important;
+  width: 100% !important;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
+}
+
+/* Hide scrollbar */
+#feminine-track::-webkit-scrollbar,
+#medicine-track::-webkit-scrollbar {
+  height: 4px;
+}
+
+#feminine-track::-webkit-scrollbar-track,
+#medicine-track::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+#feminine-track::-webkit-scrollbar-thumb,
+#medicine-track::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+#feminine-track::-webkit-scrollbar-thumb:hover,
+#medicine-track::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+  display: none;
+}
+
+/* Individual cards in track */
+#feminine-track .myntra-card,
+#medicine-track .myntra-card {
+  flex: 0 0 auto !important;
+  width: 230px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  margin: 0 !important;
+}
+
+/* Track container parent */
+.myntra-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 5px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Ensure cards don't wrap */
+#feminine-track > div,
+#medicine-track > div {
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* ---------- FIXED: Search Suggestions ---------- */
+/* CRITICAL FIX: Search suggestions should appear above everything */
+/*#searchSuggestions {*/
+/*  position: absolute !important;*/
+/*  top: 100% !important;*/
+/*  left: 0 !important;*/
+/*  right: 0 !important;*/
+/*  z-index: 9999 !important; */
+/*  background: white !important;*/
+/*  border-radius: 1rem !important;*/
+/*  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;*/
+/*  border: 1px solid #e2e8f0 !important;*/
+/*  max-height: 400px !important;*/
+/*  overflow-y: auto !important;*/
+/*  margin-top: 0.5rem !important;*/
+/*  display: none;*/
+/*}*/
+
+#searchSuggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50; /* LOW z-index - header के search से कम */
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e2e8f0;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+/* When suggestions are visible */
+/*#searchSuggestions.visible {*/
+/*  display: block !important;*/
+/*  animation: fadeIn 0.2s ease-out !important;*/
+/*}*/
+
+#searchSuggestions.visible {
+  display: block;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Fix for search container positioning */
+/*.search-container {*/
+/*  position: relative !important;*/
+/*  z-index: 9998 !important;*/
+/*}*/
+
+.search-container {
+  position: relative !important;
+}
+
+
+/* Fix for main banner */
+#mainBannerSection {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Fix carousel - MUST be below search suggestions */
+.carousel-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0.5rem !important;
+  position: relative !important;
+  z-index: 10 !important; /* Much lower than search suggestions */
+}
+
+/* When suggestions are open, prevent body scrolling */
+body.suggestions-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+}
+
+/* ---------- Arrow Buttons ---------- */
+.myntra-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100 !important;
+  background: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.myntra-arrow:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.myntra-arrow-left {
+  left: 15px;
+}
+
+.myntra-arrow-right {
+  right: 15px;
+}
+
+/* ---------- Navigation Dots ---------- */
+#dotsContainer button {
+  width: 8px !important;
+  height: 8px !important;
+  min-width: 8px !important;
+  min-height: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  border: none !important;
+}
+
+#dotsContainer button.active {
+  background-color: white !important;
+  transform: scale(1) !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+/* ---------- Scroll to Top Button ---------- */
+.scroll-to-top {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #36C2CE 0%, #2aa9b4 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(54, 194, 206, 0.4);
+  border: 3px solid white;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1000;
+  transform: translateY(20px) scale(0.9);
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.scroll-to-top:hover {
+  background: linear-gradient(135deg, #2aa9b4 0%, #2391a0 100%);
+  transform: scale(1.15);
+  box-shadow: 0 10px 30px rgba(54, 194, 206, 0.6);
+}
+
+.scroll-to-top:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(54, 194, 206, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(54, 194, 206, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(54, 194, 206, 0); }
+}
+
+.scroll-to-top.pulse { animation: pulse 2s infinite; }
+
+/* ---------- General Page & Card Styles ---------- */
+.section-title {
+  font-size: 30px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #222;
+  font-weight: 600;
+  margin-top: 3%;
+}
+
+.scroll-container {
+  overflow: hidden;
+  padding: 30px 0;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  margin-bottom: 60px;
+}
+
+.cards-track,
+.carousel-track {
+  display: flex;
+  gap: 30px;
+  animation: scrollLeft 40s linear infinite;
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.scroll-container:hover .cards-track,
+.carousel-track:hover { animation-play-state: paused; }
+
+.card {
+  position: relative;
+  width: 280px;
+  height: 410px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(99, 108, 239, 0.908);
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+}
+
+@media (min-width: 768px) { .card { width: 300px; } }
+@media (min-width: 1024px) { .card { width: 340px; } }
+
+.card:hover {
+  transform: translateY(-15px) scale(1.05);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.22);
+  z-index: 10;
+  border: 1px solid #0056b3;
+}
+
+.card-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.card:hover .card-img { transform: scale(1.15); }
+
+.discount-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #ff3d00;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 7px 13px;
+  border-radius: 50px;
+}
+
+.wishlist {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 44px;
+  height: 44px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  transition: all 0.3s;
+}
+
+.wishlist:hover {
+  background: #ff1744;
+  transform: scale(1.1);
+}
+
+.wishlist svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: #333;
+  stroke-width: 2.2;
+}
+
+.wishlist:hover svg { stroke: white; }
+
+.card-content {
+  padding: 16px 18px 20px;
+  text-align: center;
+}
+
+.product-name {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 500;
+  overflow: hidden;
+}
+
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.current-price {
+  font-size: 20px;
+  font-weight: 600;
+  color: #5fec90;
+}
+
+.original-price {
+  font-size: 16px;
+  color: #888;
+  text-decoration: line-through;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.icon-btn {
+  width: 40%;
+  height: 36px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.view-btn {
+  background: #2391f2c0;
+  width: 20%;
+}
+
+.view-btn:hover {
+  background: #06a6b8bd;
+  transform: translateY(-3px);
+}
+
+.cart-btn {
+  background: #00b081;
+  width: 120%;
+}
+
+.cart-btn:hover {
+  background: #003c26;
+  transform: translateY(-3px);
+}
+
+.icon-btn svg {
+  width: 44px;
+  height: 22px;
+  stroke: white;
+  fill: none;
+}
+
+/* ---------- Additional Product Card Enhancements ---------- */
+@keyframes subtle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes smooth-scale {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.03); }
+}
+@keyframes quick-bounce {
+  0%, 20%, 53%, 80%, 100% { transform: scale(1); }
+  40%, 43% { transform: scale(1.1); }
+}
+
+.product-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #f1f5f9;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #e2e8f0;
+}
+
+.product-image {
+  transition: all 0.4s ease;
+  transform-origin: center;
+}
+
+.product-card:hover .product-image { transform: scale(1.05); }
+
+.wishlist-icon:hover { transform: scale(1.1); }
+.wishlist-icon.active {
+  color: #ef4444;
+  animation: quick-bounce 0.6s;
+}
+
+.product-card:hover .discount-badge { animation: subtle-float 2s ease-in-out infinite; }
+
+.scroll-btn {
+  transition: all 0.3s ease;
+  background: white;
+  border: 1px solid #e2e8f0;
+}
+
+.scroll-btn:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  transform: scale(1.1);
+}
+
+.scrollbar-hide,
+.scrollbar-hide::-webkit-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  display: none;
+}
+
+/* ---------- Overlay & Article Styles ---------- */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.overlay.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay-content {
+  background-color: white;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 12px;
+  overflow: hidden;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.close-btn {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  margin-right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.article-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.read-more-btn {
+  transition: all 0.3s ease;
+}
+
+.read-more-btn:hover { letter-spacing: 0.5px; }
+
+#articleOverlay { margin-top: 40px !important; }
+
+/* ---------- Loading & Skeleton ---------- */
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.image-placeholder {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ---------- Tailwind & Custom Animations ---------- */
+@keyframes ping {
+  75%, 100% { transform: scale(1.4); opacity: 0; }
+}
+.animate-ping { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+@keyframes draw-tick {
+  0% { stroke-dashoffset: 60; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes draw-circle {
+  0% { stroke-dashoffset: 166; }
+  100% { stroke-dashoffset: 0; }
+}
+.checkmark { width: 100px; height: 100px; }
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 3;
+  stroke-miterlimit: 10;
+  stroke: #4CAF50;
+  fill: none;
+  animation: draw-circle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: draw-tick 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes modalAppear {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+#successModalContent { animation: modalAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
+
+/* ---------- Responsive Design ---------- */
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+  .myntra-arrow {
+    display: flex !important;
+  }
+  
+  .myntra-arrow-left {
+    left: 15px !important;
+  }
+  
+  .myntra-arrow-right {
+    right: 15px !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 768px) and (min-width: 641px) {
+  .myntra-arrow {
+    width: 36px;
+    height: 36px;
+    display: none !important;
+  }
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+  /* Hide arrows on mobile */
+  .myntra-arrow {
+    display: none !important;
+  }
+  
+  /* Adjust track padding when arrows are hidden */
+  .myntra-track {
+    padding: 10px 5px !important;
+  }
+  
+  .myntra-carousel {
+    padding: 0 10px !important;
+  }
+  
+  /* Fix for Large Carousel Dots */
+  #dotsContainer {
+    bottom: 0.5rem !important;
+    gap: 4px !important;
+  }
+  
+  #dotsContainer button {
+    width: 8px !important;
+    height: 8px !important;
+    min-width: 8px !important;
+    min-height: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    border: none !important;
+  }
+  
+  #dotsContainer button.active {
+    background-color: white !important;
+    transform: scale(1) !important;
+    width: 10px !important;
+    height: 10px !important;
+  }
+  
+  /* Make arrows more touch-friendly */
+  #prev, #next {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+  
+  #prev {
+    left: 0.5rem !important;
+  }
+  
+  #next {
+    right: 0.5rem !important;
+  }
+  
+  /* Fix for mobile view empty gap on right side */
+  #mainBannerSection {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Fix for the content container inside banner */
+  #mainBannerSection > .relative.z-10 {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Categories Grid */
+  #categoryGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .category-card {
+    padding: 0.75rem !important;
+  }
+  
+  .category-card img { height: 100px !important; }
+  .category-card p { font-size: 0.75rem !important; }
+
+  /* Doctor Section */
+  #doctorSection { min-height: 350px !important; }
+  .doctor-grid { grid-template-columns: 1fr !important; }
+  .doctor-image { height: 300px !important; }
+  .doctor-content { padding: 1rem !important; }
+  .doctor-content h1 { font-size: 1.5rem !important; margin-bottom: 0.75rem !important; }
+  .doctor-content p { font-size: 0.875rem !important; line-height: 1.4 !important; }
+
+  /* Secondary Banner */
+  #secondaryBannerSection { padding: 0.5rem 0 !important; }
+  #secondaryBannerImage { max-height: 200px !important; }
+
+  /* Articles Section */
+  #articlesSection { padding: 2rem 0 !important; }
+  #articlesSection h2 { font-size: 1rem !important; margin-bottom: 1.5rem !important; }
+  .articles-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+  .article-card img { height: 150px !important; }
+  .article-card-content { padding: 1rem !important; }
+  .article-card h3 { font-size: 1.1rem !important; margin-bottom: 0.5rem !important; }
+  .article-card p { font-size: 0.875rem !important; margin-bottom: 0.75rem !important; }
+
+  /* Modals */
+  #uploadModal .modal-content,
+  #validPrescriptionModal .modal-content {
+    width: 95% !important;
+    margin: 1rem !important;
+    padding: 1rem !important;
+  }
+  .modal-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+  .upload-steps li { margin-bottom: 1rem !important; }
+  .upload-steps img { width: 2.5rem !important; height: 2.5rem !important; }
+  .prescription-icons-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+  .prescription-icon { font-size: 1.5rem !important; }
+  .prescription-icon span { font-size: 0.75rem !important; }
+
+  /* Product card hover scale reduced */
+  .product-card:hover { transform: translateY(-5px) scale(1.01); }
+}
+
+/* Extra small mobile */
+@media (max-width: 480px) {
+  .myntra-track {
+    padding: 10px 0 !important;
+  }
+  
+  #dotsContainer button {
+    width: 6px !important;
+    height: 6px !important;
+  }
+  
+  #dotsContainer button.active {
+    width: 8px !important;
+    height: 8px !important;
+  }
+}
+
+/* Responsive sizes for scroll-to-top */
+@media (min-width: 1440px) {
+  .scroll-to-top { width: 60px; height: 60px; font-size: 24px; bottom: 120px; right: 40px; }
+}
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .scroll-to-top { width: 54px; height: 54px; font-size: 22px; bottom: 100px; right: 25px; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .scroll-to-top { width: 50px; height: 50px; font-size: 20px; bottom: 90px; right: 20px; border-width: 2px; }
+}
+@media (min-width: 600px) and (max-width: 767px) {
+  .scroll-to-top { width: 48px; height: 48px; font-size: 19px; bottom: 85px; right: 18px; border-width: 2px; }
+}
+@media (min-width: 425px) and (max-width: 599px) {
+  .scroll-to-top { width: 46px; height: 46px; font-size: 18px; bottom: 80px; right: 16px; border-width: 2px; }
+}
+@media (min-width: 375px) and (max-width: 424px) {
+  .scroll-to-top { width: 44px; height: 44px; font-size: 17px; bottom: 75px; right: 14px; border-width: 2px; }
+}
+@media (min-width: 320px) and (max-width: 374px) {
+  .scroll-to-top { width: 42px; height: 42px; font-size: 16px; bottom: 70px; right: 12px; border-width: 2px; }
+}
+@media (max-width: 319px) {
+  .scroll-to-top { width: 40px; height: 40px; font-size: 15px; bottom: 65px; right: 10px; border-width: 2px; }
+}
+@media (min-width: 1025px) {
+  #footer-placeholder:not(:empty) + .scroll-to-top { bottom: 140px; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .scroll-to-top { width: 44px; height: 44px; bottom: 60px; right: 15px; font-size: 18px; }
+}
+@media print { .scroll-to-top { display: none !important; } }
+@media (prefers-contrast: high) {
+  .scroll-to-top { border: 3px solid #000; box-shadow: 0 4px 12px rgba(0,0,0,0.8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-to-top { transition: opacity 0.3s ease; }
+  .scroll-to-top:hover { transform: none; }
+}
+@media (prefers-color-scheme: dark) {
+  .scroll-to-top { border-color: #1e293b; background: linear-gradient(135deg, #36C2CE 0%, #1e6f7a 100%); }
+}
+</style>
+  
+  
+    
+   <script>
+    // Function to load header and initialize
+    function loadHeader() {
+        fetch('/Header/header.html')  // ← Absolute path from root
+            .then(response => {
+                if (!response.ok) throw new Error(`Header not found: ${response.status}`);
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+                console.log('✓ Header HTML loaded successfully');
+
+                // Load header.js after HTML is inserted — use absolute path
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = '/Header/header.js?v=1.1.8';  // ← Absolute + cache bust
+                    script.onload = () => {
+                        console.log('✓ Header JS loaded successfully');
+                        resolve();
+                    };
+                    script.onerror = (e) => {
+                        console.error('✗ Failed to load header.js:', e);
+                        reject(new Error('Failed to load header.js'));
+                    };
+                    document.head.appendChild(script);  // Better: append to head
+                });
+            })
+            .catch(error => {
+                console.error('✗ Error loading header:', error);
+            });
+    }
+
+    // Function to load footer
+    function loadFooter() {
+        fetch('/Footer/footer.html')  // ← Absolute path
+            .then(response => {
+                if (!response.ok) throw new Error(`Footer not found: ${response.status}`);
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+                console.log('✓ Footer loaded successfully');
+            })
+            .catch(error => {
+                console.error('✗ Error loading footer:', error);
+            });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeader();
+            loadFooter();
+        });
+    } else {
+        loadHeader();
+        loadFooter();
+    }
+</script>
+
+ 
+  
+  <script>
+    // ===== SCROLL TO TOP BUTTON =====
+document.addEventListener('DOMContentLoaded', function() {
+  const scrollToTopBtn = document.getElementById('scrollToTop');
+  
+  if (!scrollToTopBtn) return;
+  
+  // Show/hide button based on scroll position
+  function toggleScrollToTopButton() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Show button after 20% scroll or 300px (whichever is smaller)
+    const threshold = Math.min(300, documentHeight * 0.2);
+    
+    if (scrollY > threshold) {
+      scrollToTopBtn.classList.add('visible');
+      
+      // Add pulse animation when near bottom of page
+      const distanceFromBottom = documentHeight - (scrollY + windowHeight);
+      if (distanceFromBottom < 500) {
+        scrollToTopBtn.classList.add('pulse');
+      } else {
+        scrollToTopBtn.classList.remove('pulse');
+      }
+    } else {
+      scrollToTopBtn.classList.remove('visible');
+      scrollToTopBtn.classList.remove('pulse');
+    }
+  }
+  
+  // FIXED: Smooth scroll to top without infinite loop
+  function scrollToTop() {
+    // Remove pulse animation before scrolling
+    scrollToTopBtn.classList.remove('pulse');
+    
+    // Use native smooth scroll
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+    
+    // Alternative: Custom smooth scroll with proper stopping condition
+    // const startPosition = window.pageYOffset;
+    // const duration = 800; // ms
+    // const startTime = performance.now();
+    
+    // function animateScroll(currentTime) {
+    //   const elapsed = currentTime - startTime;
+    //   const progress = Math.min(elapsed / duration, 1);
+      
+    //   // Easing function (easeOutCubic)
+    //   const ease = 1 - Math.pow(1 - progress, 3);
+      
+    //   window.scrollTo(0, startPosition * (1 - ease));
+      
+    //   if (progress < 1) {
+    //     requestAnimationFrame(animateScroll);
+    //   } else {
+    //     // Add subtle bounce effect at the top
+    //     scrollToTopBtn.classList.add('pulse');
+    //     setTimeout(() => {
+    //       scrollToTopBtn.classList.remove('pulse');
+    //     }, 1000);
+    //   }
+    // }
+    
+    // requestAnimationFrame(animateScroll);
+  }
+  
+  // Keyboard accessibility
+  function handleKeyDown(e) {
+    if (e.key === 'Escape' && scrollToTopBtn.classList.contains('visible')) {
+      scrollToTopBtn.focus();
+    }
+    
+    if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === scrollToTopBtn) {
+      e.preventDefault();
+      scrollToTop();
+    }
+  }
+  
+  // Touch device optimizations
+  function handleTouchStart() {
+    scrollToTopBtn.style.transform = 'scale(0.95)';
+  }
+  
+  function handleTouchEnd() {
+    scrollToTopBtn.style.transform = '';
+  }
+  
+  // Event Listeners
+  window.addEventListener('scroll', toggleScrollToTopButton, { passive: true });
+  window.addEventListener('resize', toggleScrollToTopButton, { passive: true });
+  scrollToTopBtn.addEventListener('click', scrollToTop);
+  document.addEventListener('keydown', handleKeyDown);
+  
+  // Touch events for mobile
+  scrollToTopBtn.addEventListener('touchstart', handleTouchStart, { passive: true });
+  scrollToTopBtn.addEventListener('touchend', handleTouchEnd, { passive: true });
+  scrollToTopBtn.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+  
+  // Prevent multiple rapid clicks
+  let isScrolling = false;
+  scrollToTopBtn.addEventListener('click', function(e) {
+    if (isScrolling) {
+      e.preventDefault();
+      return;
+    }
+    
+    isScrolling = true;
+    scrollToTop();
+    
+    // Re-enable after animation completes
+    setTimeout(() => {
+      isScrolling = false;
+    }, 1000);
+  });
+  
+  // Initial check
+  toggleScrollToTopButton();
+  
+  // Performance optimization: throttle scroll events
+  let scrollTimeout;
+  window.addEventListener('scroll', function() {
+    if (scrollTimeout) {
+      window.cancelAnimationFrame(scrollTimeout);
+    }
+    scrollTimeout = window.requestAnimationFrame(toggleScrollToTopButton);
+  }, { passive: true });
+  
+  console.log('✓ Scroll to Top button initialized - Fixed scrolling issue');
+});
+    </script>
+
+<script>
+// FULLY WORKING UPLOAD PRESCRIPTION MODAL - 100% FIXED
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('uploadModal');
+    const doctorNameInput = document.getElementById('doctorName');
+    const fileInput = document.getElementById('prescriptionFileInput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const selectedFileName = document.getElementById('selectedFileName');
+    const submitBtn = document.getElementById('submitPrescriptionBtn');
+
+    if (!modal || !doctorNameInput || !fileInput || !submitBtn) {
+        console.warn('Upload modal elements not found');
+        return;
+    }
+
+    // Check if form is valid
+    function checkFormValid() {
+        const hasDoctorName = doctorNameInput.value.trim().length > 0;
+        const hasFile = fileInput.files && fileInput.files.length > 0;
+        submitBtn.disabled = !(hasDoctorName && hasFile);
+    }
+
+    // File selected
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+            selectedFileName.textContent = fileInput.files[0].name;
+            fileNameDisplay.classList.remove('hidden');
+        } else {
+            fileNameDisplay.classList.add('hidden');
+        }
+        checkFormValid();
+    });
+
+    // Doctor name input
+    doctorNameInput.addEventListener('input', checkFormValid);
+
+    // Submit prescription
+    submitBtn.addEventListener('click', function () {
+        if (submitBtn.disabled) return;
+
+        const file = fileInput.files[0];
+        const doctorName = doctorNameInput.value.trim();
+
+        // Success message
+        alert(`Prescription Submitted Successfully!\n\nDoctor: ${doctorName}\nFile: ${file.name}\n\nOur pharmacist will review and contact you shortly.`);
+
+        // Reset and close
+        modal.classList.add('hidden');
+        doctorNameInput.value = '';
+        fileInput.value = '';
+        fileNameDisplay.classList.add('hidden');
+        submitBtn.disabled = true;
+    });
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+
+    console.log('Upload Prescription Modal - Fully Working');
+});
+</script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#36C2CE',
+                        secondary: '#0ea5e9',
+                        accent: '#10b981',
+                        dark: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+
+  
+
+
+</head>
+<body class="">
+  <!-- Header Placeholder (loads header.html dynamically) -->
+  <div id="header-placeholder"></div>
+  
+ 
+  <!-- Main container -->
+  
+      
+      
+    <!-- Enhanced Banner Section with Search and Carousel -->
+    <!--<section class="relative max-w-8xl h-[800px]  " id="mainBannerSection">-->
+      <!-- Image Background -->
+    <!--  <div class="absolute inset-0 overflow-hidden">-->
+    <!--    <img id="" src="/Images/IMG/pharmacyBanner11.jpg" alt="" class="w-full h-full object-cover">-->
+  
+    <!--  </div>-->
+      <!-- Content Container -->
+    <!--  <div class="relative z-10 px-1 mt-24 ">-->
+        <!-- Search Container -->
+    <!--    <div class="flex items-start justify-center mb-1">-->
+    <!--      <div class="search-container w-full max-w-4xl p-6 mt-20px rounded-2xl">-->
+    <!--        <h1 class="text-white text-2xl md:text-4xl font-bold text-center mt-24 md:mb-4 drop-shadow-lg">-->
+    <!--          Find Your Medications-->
+    <!--        </h1>-->
+    <!--        <h4 class="text-white text-2xl md:text-2xl font-bold text-center mb-6 md:mb-8">-->
+    <!--          <span class="text-yellow-300">Get Medicines Fast</span> With Superfast Delivery In Your City-->
+    <!--        </h4>-->
+
+            <!-- Search Bar -->
+            <!-- SEARCH BAR WITH WHITE TEXT DROPDOWN (like your screenshot) -->
+    <!--        <div class="relative max-w-4xl mx-auto px-4 mt-2 ">-->
+    <!--          <div class="relative">-->
+                  
+    <!--            <input type="text" id="searchInput" placeholder="Search medicines, vitamins, health products..."-->
+    <!--              class="w-full px-8 py-2 pr-16 text-lg rounded-full bg-white border-4 border-white shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-400/30 transition-all duration-300 text-gray-800 placeholder-gray-500"-->
+    <!--              autocomplete="off">-->
+                  
+    <!--            <button-->
+    <!--              class="absolute right-3 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full transition-all duration-200 shadow-lg">-->
+    <!--              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+    <!--                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"-->
+    <!--                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>-->
+    <!--              </svg>-->
+    <!--            </button>-->
+  
+  
+                <!-- SEARCH SUGGESTIONS DROPDOWN (WHITE TEXT ON DARK BLUE) -->
+    <!--            <div id="searchSuggestions"-->
+    <!--              class="absolute top-full left-0 right-0 mt-3 bg-gradient-to-b from-white to-white rounded-3xl shadow-sm border-2 border-white/20 overflow-hidden hidden z-50">-->
+  
+    <!--            </div>-->
+  
+    <!--          </div>-->
+    <!--        </div>-->
+  
+  
+    <!--      </div>-->
+    <!--    </div>-->
+  
+        <!-- Order Options (Below Search Bar) -->
+    <!--    <div class="flex flex-col items-center">-->
+  
+    <!--      <div class="flex flex-wrap justify-center gap-3 ">-->
+            <!-- WhatsApp Button -->
+            <!-- Doctor Consultation WhatsApp Button - FULLY WORKING -->
+    <!--        <a href="https://wa.me/919876543210?text=Hello%2C%20I%20have%20a%20query%20regarding%20doctor%20consultation"-->
+    <!--          target="_blank" rel="noopener noreferrer"-->
+    <!--          class="flex items-center px-4 py-2  border rounded-lg shadow-md bg-white/50 hover:bg-green-500 hover:text-black transition">-->
+  
+              <!-- WhatsApp Icon -->
+    <!--          <svg class="w-5 h-5 text-white mr-2" fill="currentColor" viewBox="0 0 24 24">-->
+    <!--            <path-->
+    <!--              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 5.044h-.004c-1.997-.001-3.952-.785-5.377-2.212l-.386-.406 3.783-.985.405.384c1.244 1.181 2.898 1.83 4.658 1.83.345 0 .69-.021 1.03-.062l.428.111-3.783.985-.386-.406c-.297-.312-.474-.667-.578-1.03z" />-->
+    <!--          </svg>-->
+  
+    <!--          <span class="font-medium text-white">Doctor Consultation</span>-->
+    <!--        </a>-->
+            <!-- Upload Prescription Button -->
+    <!--        <a href="#upload-prescription"-->
+    <!--          class="flex items-center px-4 py-2  border rounded-lg shadow-md bg-white/50 hover:bg-green-500 hover:text-black transition">-->
+    <!--          <svg class="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+    <!--            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
+    <!--              d="M12 16v-8m0 0l-4 4m4-4l4 4M4 20h16" />-->
+    <!--          </svg>-->
+    <!--          <span class="font-medium text-white">Upload Prescription</span>-->
+    <!--        </a>-->
+    <!--      </div>-->
+    <!--    </div>-->
+        
+        <!-- Upload Prescription Modal -->
+    <!--    <div id="uploadModal" class="bg-black/50 hidden fixed inset-0 flex items-center justify-center"-->
+    <!--        style="z-index: 1000;"-->
+    <!--    >-->
+    <!--      <div-->
+    <!--        class="overflow-auto bg-gray-100 rounded-2xl shadow-2xl w-11/12 max-w-3xl p-8 h-[400px] lg:mt-[167px] relative">-->
+    <!--        <button id="closeUploadModal" class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold">-->
+    <!--          ✕-->
+    <!--        </button>-->
+    <!--        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">-->
+              <!-- Left Side -->
+    <!--          <div class="space-y-6">-->
+    <!--            <h2 class="text-2xl font-bold text-gray-800">Upload Your Prescription</h2>-->
+  
+                <!-- Doctor Name -->
+    <!--            <div>-->
+    <!--              <label class="block text-sm font-medium text-gray-700 mb-2">-->
+    <!--                Doctor's Name <span class="text-red-500">*</span>-->
+    <!--              </label>-->
+    <!--              <input type="text" id="doctorName" placeholder="Enter doctor's name"-->
+    <!--                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">-->
+    <!--            </div>-->
+  
+                <!-- File Upload -->
+    <!--            <div>-->
+    <!--              <label class="block text-sm font-medium text-gray-700 mb-2">-->
+    <!--                Upload Prescription <span class="text-red-500">*</span>-->
+    <!--              </label>-->
+  
+                  <!-- Clickable Upload Area -->
+    <!--              <div id="uploadFileArea"-->
+    <!--                class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-400 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">-->
+    <!--                <div class="flex flex-col items-center justify-center pt-5 pb-6">-->
+    <!--                  <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+    <!--                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
+    <!--                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">-->
+    <!--                    </path>-->
+    <!--                  </svg>-->
+    <!--                  <p class="text-sm text-gray-600">Click to upload or drag and drop</p>-->
+    <!--                  <p class="text-xs text-gray-500 mt-1">Image or PDF (max 10MB)</p>-->
+    <!--                </div>-->
+    <!--                <input type="file" id="prescriptionFileInput" accept="image/*,.pdf" class="hidden">-->
+    <!--              </div>-->
+  
+                  <!-- Show Selected File Name -->
+    <!--              <div id="selectedFileName" class="mt-3 text-sm text-gray-700 hidden">-->
+    <!--                Selected: <span id="fileNameText" class="font-semibold text-blue-600"></span>-->
+    <!--              </div>-->
+    <!--            </div>-->
+  
+                <!-- Submit Button -->
+    <!--            <button id="submitPrescriptionBtn"-->
+    <!--              class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition disabled:bg-gray-400 disabled:cursor-not-allowed"-->
+    <!--              disabled>-->
+    <!--              <i class="fas fa-paper-plane mr-2"></i>Submit Prescription-->
+    <!--            </button>-->
+    <!--          </div>-->
+  
+              <!-- Right Side - Instructions -->
+    <!--          <div class="space-y-6">-->
+    <!--            <div>-->
+    <!--              <h3 class="text-xl font-bold text-gray-800 mb-4">How It Works</h3>-->
+    <!--              <ol class="space-y-4 text-gray-700">-->
+    <!--                <li class="flex gap-3">-->
+    <!--                  <span-->
+    <!--                    class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-sm">1</span>-->
+    <!--                  <span>Upload clear photo of your prescription</span>-->
+    <!--                </li>-->
+    <!--                <li class="flex gap-3">-->
+    <!--                  <span-->
+    <!--                    class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-sm">2</span>-->
+    <!--                  <span>Our pharmacist will verify and add medicines to your cart</span>-->
+    <!--                </li>-->
+    <!--                <li class="flex gap-3">-->
+    <!--                  <span-->
+    <!--                    class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-sm">3</span>-->
+    <!--                  <span>Choose delivery slot and complete payment</span>-->
+    <!--                </li>-->
+    <!--              </ol>-->
+    <!--            </div>-->
+  
+    <!--            <div class="bg-red-50 border border-red-200 rounded-lg p-4">-->
+    <!--              <h4 class="font-bold text-red-800 mb-2">Important:</h4>-->
+    <!--              <ul class="text-sm text-red-700 space-y-1">-->
+    <!--                <li>• Upload clear, uncropped image</li>-->
+    <!--                <li>• Doctor's name & signature must be visible</li>-->
+    <!--                <li>• Do not upload medicine packets</li>-->
+    <!--              </ul>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+  
+  
+        <!-- Carousel Container -->
+    <!--    <div class="w-full max-w-5xl mx-auto">-->
+    <!--      <div class="carousel-container p-8  rounded-2xl ">-->
+            <!-- Carousel -->
+    <!--        <div class="relative w-full  overflow-hidden rounded-xl">-->
+              <!-- Slides (will be inserted dynamically) -->
+    <!--          <div id="carousel" class="flex transition-transform duration-700  mb-12 ease-in-out">-->
+    <!--          </div>-->
+              <!-- Prev Button -->
+    <!--          <button id="prev"-->
+    <!--            class="absolute top-1/2 left-3 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors ">-->
+    <!--            &#10094;-->
+    <!--          </button>-->
+              <!-- Next Button -->
+    <!--          <button id="next"-->
+    <!--            class="absolute top-1/2 right-3 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors ">-->
+    <!--            &#10095;-->
+    <!--          </button>-->
+              <!-- Indicators (will be inserted dynamically) -->
+    <!--          <div id="dotsContainer" class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-2">-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--  </div>-->
+    <!--</section>-->
+    
+     <section class="relative max-w-8xl h-[800px] " id="mainBannerSection">
+         
+         
+      <!-- Image Background -->
+      <div class="absolute inset-0 overflow-hidden">
+        <img id="" src="/Images/IMG/pharmacyBanner-100.png" alt="" class="w-full h-full object-cover">
+  
+      </div>
+      <!-- Content Container -->
+      <div class="relative ">
+        <!-- Search Container -->
+        <div class="flex items-start justify-center mb-1">
+          <div class="search-container w-full max-w-4xl p-6  rounded-2xl">
+            <h1 id= "h1-heading-mobile" class="text-white text-2xl md:text-4xl font-bold text-center mt-24 md:mb-4 drop-shadow-lg">
+              Find Your Medications
+            </h1>
+            <h4 class="text-white text-2xl md:text-2xl font-bold text-center mb-6 md:mb-8">
+              <span class="text-yellow-300">Get Medicines Fast</span> With Superfast Delivery In Your City
+            </h4>
+
+            <!-- Search Bar -->
+            <!-- SEARCH BAR WITH WHITE TEXT DROPDOWN (like your screenshot) -->
+            
+           <div class="relative max-w-4xl mx-auto px-4 mt-2 mb-8">
+  <div class="relative">
+    <input 
+      type="text" 
+      id="searchInput"
+      placeholder="Search medicines, vitamins, health products..."
+      class="w-full px-8 py-2 pr-16 text-lg rounded-full bg-white border-4 border-white shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-400/30 transition-all duration-300 text-gray-800 placeholder-gray-500"
+      autocomplete="off"
+    >
+    <button class="absolute right-1 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full transition-all duration-200 shadow-lg">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- SEARCH SUGGESTIONS DROPDOWN (WHITE TEXT ON DARK BLUE) -->
+ <div id="searchSuggestions" 
+     class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden hidden">
+    
+    <!-- Header -->
+    <!--<div class="px-8 py-2 border-b border-white/10">-->
+    <!--  <h3 class="text-gray-700 font-bold text-lg">Popular Searches</h3>-->
+    <!--</div>-->
+
+    <!-- Suggestions List -->
+<!--    <div class="py-2">-->
+      <!-- Vitamin D3 -->
+<!--      <div class="flex items-center px-8 py-4 hover:bg-white/30 cursor-pointer transition-all group">-->
+<!--        <div class="bg-yellow-400/30 p-3 rounded-xl mr-5 group-hover:bg-yellow-400/30 transition">-->
+<!--          <svg class="w-6 h-6 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+<!--            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-11.66l-.7.7m-13.32 0l-.7-.7m14.02 7.36l-.7-.7m-13.32 0l-.7.7M12 7a5 5 0 100 10 5 5 0 000-10z"></path>-->
+<!--          </svg>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <p class="text-gray-700 font-semibold text-lg">Vitamin D3</p>-->
+<!--          <p class="text-gray-500 text-sm">Supplements • Immunity Booster</p>-->
+<!--        </div>-->
+<!--      </div>-->
+
+      <!-- Blood Pressure Monitor -->
+<!--      <div class="flex items-center px-8 py-4 hover:bg-white/10 cursor-pointer transition-all group">-->
+<!--        <div class="bg-red-400/30 p-3 rounded-xl mr-5 group-hover:bg-red-500/30 transition">-->
+<!--          <svg class="w-6 h-6 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+<!--            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 19.5l15-15m-15 0l15 15"></path>-->
+<!--          </svg>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <p class="text-gray-700 font-semibold text-lg">Blood Pressure Monitor</p>-->
+<!--          <p class="text-gray-500 text-sm">Medical Devices • Home Use</p>-->
+<!--        </div>-->
+<!--      </div>-->
+
+      <!-- Omega-3 Fish Oil -->
+<!--      <div class="flex items-center px-8 py-4 hover:bg-white/10 cursor-pointer transition-all group">-->
+<!--        <div class="bg-green-400/30 p-3 rounded-xl mr-5 group-hover:bg-green-500/30 transition">-->
+<!--          <svg class="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+<!--            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V7a2 2 0 012-2h14a2 2 0 012 2v10m-18 0h18"></path>-->
+<!--          </svg>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <p class="text-gray-700 font-semibold text-lg">Omega-3 Fish Oil</p>-->
+<!--          <p class="text-gray-500 text-sm">Heart Health • Joint Support</p>-->
+<!--        </div>-->
+<!--      </div>-->
+
+      <!-- Pain Relievers -->
+<!--      <div class="flex items-center px-8 py-4 hover:bg-white/10 cursor-pointer transition-all group">-->
+<!--        <div class="bg-orange-400/30 p-3 rounded-xl mr-5 group-hover:bg-orange-500/30 transition">-->
+<!--          <svg class="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+<!--            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>-->
+<!--          </svg>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <p class="text-gray-700 font-semibold text-lg">Pain Relievers</p>-->
+<!--          <p class="text-gray-500 text-sm">Headache • Body Pain • Fever</p>-->
+<!--        </div>-->
+<!--      </div>-->
+
+      <!-- First Aid Kit -->
+<!--      <div class="flex items-center px-8 py-4 hover:bg-white/10 cursor-pointer transition-all group">-->
+<!--        <div class="bg-purple-400/30 p-3 rounded-xl mr-5 group-hover:bg-purple-500/30 transition">-->
+<!--          <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+<!--            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-6 0H5m2 0h4"></path>-->
+<!--          </svg>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <p class="text-gray-700 font-semibold text-lg">First Aid Kit</p>-->
+<!--          <p class="text-gray-500 text-sm">Emergency • Home & Travel</p>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+    <!-- Footer -->
+<!--    <div class="px-8 py-5 bg-gray-300 border-t border-white/10">-->
+<!--      <p class="text-black-300 text-sm">Press Enter to search • Use ↑↓ arrows to navigate</p>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--</div>-->
+  
+  
+          </div>
+        </div>
+  
+        <!-- Order Options (Below Search Bar) -->
+        <div class="flex flex-col items-center mt-2 mb-4">
+  
+          <div class="flex flex-wrap justify-center gap-3 ">
+            <!-- WhatsApp Button -->
+            <!-- Doctor Consultation WhatsApp Button - FULLY WORKING -->
+            <a href="https://wa.me/919876543210?text=Hello%2C%20I%20have%20a%20query%20regarding%20doctor%20consultation"
+              target="_blank" rel="noopener noreferrer"
+              class="flex items-center px-4 py-2  border rounded-lg shadow-md bg-white/50 hover:bg-green-500 hover:text-black transition">
+  
+              <!-- WhatsApp Icon -->
+              <svg class="w-5 h-5 text-white mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 5.044h-.004c-1.997-.001-3.952-.785-5.377-2.212l-.386-.406 3.783-.985.405.384c1.244 1.181 2.898 1.83 4.658 1.83.345 0 .69-.021 1.03-.062l.428.111-3.783.985-.386-.406c-.297-.312-.474-.667-.578-1.03z" />
+              </svg>
+  
+              <span class="font-medium text-white">Doctor Consultation</span>
+            </a>
+            <!-- Upload Prescription Button -->
+            <a href="#upload-prescription"
+              class="flex items-center px-4 py-2  border rounded-lg shadow-md bg-white/50 hover:bg-green-500 hover:text-black transition">
+              <svg class="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 16v-8m0 0l-4 4m4-4l4 4M4 20h16" />
+              </svg>
+              <span class="font-medium text-white">Upload Prescription</span>
+            </a>
+          </div>
+        </div>
+
+        
+        <!-- Upload Prescription Modal -->
+        <div id="uploadModal" class="bg-black/50 hidden fixed inset-0 flex items-center justify-center mt-48 "
+         style="z-index: 2000;">
+          <div
+              
+              class="overflow-auto bg-gray-100 rounded-2xl shadow-2xl w-11/12 max-w-4xl p-10 h-[400px] relative">
+            <button id="closeUploadModal" class="absolute top-3 right-5 text-gray-500 hover:text-black text-xl font-bold">
+              ✕
+            </button>
+            <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 " >
+              <!-- Left Side -->
+              <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800">Upload Your Prescription</h2>
+  
+                <!-- Doctor Name -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Doctor's Name <span class="text-red-500">*</span>
+                  </label>
+                  <input type="text" id="doctorName" placeholder="Enter doctor's name"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                </div>
+  
+                <!-- File Upload -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Upload Prescription <span class="text-red-500">*</span>
+                  </label>
+  
+                  <!-- Clickable Upload Area -->
+                  <div id="uploadFileArea"
+                    class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-400 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                      <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                        </path>
+                      </svg>
+                      <p class="text-sm text-gray-600">Click to upload or drag and drop</p>
+                      <p class="text-xs text-gray-500 mt-1">Image or PDF (max 10MB)</p>
+                    </div>
+                    <input type="file" id="prescriptionFileInput" accept="image/*,.pdf" class="hidden">
+                  </div>
+  
+                  <!-- Show Selected File Name -->
+                  <div id="selectedFileName" class="mt-3 text-sm text-gray-700 hidden">
+                    Selected: <span id="fileNameText" class="font-semibold text-blue-600"></span>
+                  </div>
+                </div>
+  
+                <!-- Submit Button -->
+                <button id="submitPrescriptionBtn"
+                  class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  disabled>
+                  <i class="fas fa-paper-plane mr-2"></i>Submit Prescription
+                </button>
+              </div>
+  
+              <!-- Right Side - Instructions -->
+              <div class="space-y-6">
+                <div>
+                  <h3 class="text-xl font-bold text-gray-800 mb-4">How It Works</h3>
+                  <ol class="space-y-4 text-gray-700">
+                    <li class="flex gap-3">
+                      <span
+                        class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-sm">1</span>
+                      <span>Upload clear photo of your prescription</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span
+                        class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-sm">2</span>
+                      <span>Our pharmacist will verify and add medicines to your cart</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span
+                        class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-sm">3</span>
+                      <span>Choose delivery slot and complete payment</span>
+                    </li>
+                  </ol>
+                </div>
+  
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h4 class="font-bold text-red-800 mb-2">Important:</h4>
+                  <ul class="text-sm text-red-700 space-y-1">
+                    <li>• Upload clear, uncropped image</li>
+                    <li>• Doctor's name & signature must be visible</li>
+                    <li>• Do not upload medicine packets</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add this somewhere visible inside the modal (e.g. above the form or below title) -->
+          <!--<div id="loginWarning" class="text-center text-red-600 font-medium p-4 hidden">-->
+          <!--  Please login to upload prescription-->
+          <!--</div>-->
+        </div>
+  
+  
+        <!-- Carousel Container -->
+        <div class="w-full max-w-5xl mx-auto">
+          <div class="carousel-container p-8  rounded-2xl ">
+            <!-- Carousel -->
+            <div class="relative w-full  overflow-hidden rounded-xl">
+              <!-- Slides (will be inserted dynamically) -->
+              <div id="carousel" class="flex transition-transform duration-700  mb-12 ease-in-out">
+              </div>
+              <!-- Prev Button -->
+              <button id="prev"
+                class="absolute top-1/2 left-3 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors ">
+                &#10094;
+              </button>
+              <!-- Next Button -->
+              <button id="next"
+                class="absolute top-1/2 right-3 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors ">
+                &#10095;
+              </button>
+              <!-- Indicators (will be inserted dynamically) -->
+              <!--<div id="dotsContainer" class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-2">-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+          <!-- Browse By Category section-->
+    <div class="container mx-auto px-4 mt-10">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-12 ">Browse by Health Categories</h2>
+        
+        <!-- Categories Section -->
+        <div class="relative max-w-7xl mx-auto mb-8">
+            <!-- Navigation Arrows -->
+            <button id="scrollLeft" class="absolute left-0 top-1/3 transform -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-blue-500 hover:text-white transition-all duration-300">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="scrollRight" class="absolute right-0 top-1/3 transform -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-blue-500 hover:text-white transition-all duration-300">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <!-- Categories Container -->
+            <div id="categoryContainer" class="category-scroll flex overflow-x-auto py-6 px-2 gap-8 scroll-smooth">
+                <!-- Categories will be dynamically inserted here -->
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <div id="scrollIndicator" class="flex justify-center mt-8 space-x-2">
+                <!-- Indicator dots will be added dynamically -->
+            </div>
+        </div>
+        
+    </div>
+  
+  
+    <!-- Feminine Hygiene Carousel -->
+    <section class="myntra-section mb-8">
+      <h2 class="myntra-title text-2xl font-bold text-center text-gray-800 mb-12">Feminine Hygiene</h2>
+      <div class="myntra-carousel">
+        <button class="myntra-arrow myntra-arrow-left" id="fem-prev">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="myntra-track" id="feminine-track"></div>
+        <button class="myntra-arrow myntra-arrow-right" id="fem-next">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+  
+    <!-- Medicine Carousel -->
+    <section class="myntra-section mb-8">
+      <h2 class="myntra-title text-2xl font-bold text-center text-gray-800 mb-12">Medicines & Healthcare</h2>
+      <div class="myntra-carousel">
+        <button class="myntra-arrow myntra-arrow-left" id="med-prev">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="myntra-track" id="medicine-track"></div>
+        <button class="myntra-arrow myntra-arrow-right" id="med-next">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+    
+    <!-- Articles Section -->
+    <section class="text-xl font-semibold text-center text-gray-700 mb-12 container mx-auto py-14" id="articlesSection">
+        <!-- Dynamic articles will be inserted here -->
+    </section>
+
+     <!-- Overlay for Article Details -->
+    <div id="articleOverlay" class="overlay">
+        <button id="closeOverlay" class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="overlayContent" class="overlay-content">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+    </div>
+  
+    <!-- Articles Section -->
+    <!--<section class="text-xl font-semibold text-center text-gray-700 mb-12 container mx-auto py-14" id="articlesSection">-->
+        <!-- Dynamic articles will be inserted here -->
+    <!--</section>-->
+    
+    <!-- Overlay for Article Details -->
+    <!--<div id="articleOverlay" class="overlay">-->
+    <!--    <button id="closeOverlay" class="close-btn">-->
+    <!--        <i class="fas fa-times"></i>-->
+    <!--    </button>-->
+    <!--    <div id="overlayContent" class="overlay-content">-->
+            <!-- Dynamic content will be inserted here -->
+    <!--    </div>-->
+    <!--</div>-->
+  
+    <!-- Floating WhatsApp Chat Button - Sticky Bottom Right -->
+    <!-- Floating WhatsApp Button - FULLY WORKING -->
+    <!-- <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://wa.me/1234567890?text=Hello,%20I%20have%20a%20query" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="flex items-center justify-center w-16 h-16 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 active:scale-95"> -->
+  
+    <!-- WhatsApp Icon -->
+    <!-- <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 5.044h-.004c-1.997-.001-3.952-.785-5.377-2.212l-.386-.406 3.783-.985.405.384c1.244 1.181 2.898 1.83 4.658 1.83.345 0 .69-.021 1.03-.062l.428.111-3.783.985-.386-.406c-.297-.312-.474-.667-.578-1.03z"/>
+      </svg>
+    </a> -->
+  
+    <!-- Tooltip (Desktop only) -->
+    <!-- <span class="absolute right-20 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-sm font-medium px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 whitespace-nowrap hidden md:block">
+      Chat on WhatsApp
+      <span class="absolute top-1/2 -right-2 -translate-y-1/2 w-0 h-0 border-l-8 border-l-gray-800 border-y-8 border-y-transparent"></span>
+    </span> -->
+  
+    <!-- Pulse Animation -->
+    <!-- <span class="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75"></span>
+  </div> -->
+  
+  
+  
+    <!-- Footer Section -->
+    <!-- Placeholder for Footer -->
+    <div id="footer-placeholder"></div>
+  </div>
+  
+  
+  <!-- Success Modal -->
+  <div id="successModal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-black bg-opacity-70"></div>
+    <div
+      class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300 scale-95 opacity-0"
+      id="successModalContent">
+      <div class="text-center">
+        <!-- Animated Green Tick -->
+        <div class="w-24 h-24 mx-auto mb-6">
+          <svg class="checkmark animate-draw-tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" stroke="#4CAF50" stroke-width="3" />
+            <path class="checkmark__check" fill="none" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"
+              stroke-linejoin="round" stroke-miterlimit="10" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          </svg>
+        </div>
+  
+        <!-- Success Message -->
+        <h3 class="text-2xl font-bold text-gray-800 mb-3">Success!</h3>
+        <p class="text-gray-600 mb-6">Your prescription has been uploaded successfully. We will review it and contact you
+          shortly.</p>
+  
+        <!-- Close Button -->
+        <button id="successCloseBtn"
+          class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105">
+          OK, Got It
+        </button>
+      </div>
+    </div>
+  </div>
+  
+   <!-- Scroll to Top Button -->
+<button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top" title="Back to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+
+
+  <!--<script src="./cart-wishlist-system.js"></script>-->
+  <!--<script src="./cart.js?v=1.0.1"></script>-->
+  <script src="/home.js?v=1.5.9"></script>
+  
+  </body>
+  
+  </html>
